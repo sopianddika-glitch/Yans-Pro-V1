@@ -1,0 +1,599 @@
+
+{
+  "appName": "Yans Pro",
+  "general": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "close": "Close",
+    "income": "Income",
+    "expense": "Expense",
+    "description": "Description",
+    "amount": "Amount",
+    "category": "Category",
+    "date": "Date",
+    "time": "Time",
+    "status": "Status",
+    "actions": "Actions",
+    "notes": "Notes",
+    "draft": "Draft",
+    "sent": "Sent",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "error": {
+      "unknown": "An unknown error occurred.",
+      "requiredFields": "Please fill in all required fields.",
+      "positiveAmount": "Please enter a valid, positive amount."
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "pos": "Cashier",
+    "transactions": "Transactions",
+    "invoices": "Invoices",
+    "investments": "Investments",
+    "products": "Products",
+    "budgets": "Budgets",
+    "goals": "Goals",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "header": {
+    "manageProfiles": "Manage Profiles"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "addFromReceipt": "Add from Receipt",
+    "addTransaction": "Add Transaction",
+    "stats": {
+      "totalRevenue": "Total Revenue",
+      "totalExpenses": "Total Expenses",
+      "netProfit": "Net Profit",
+      "outstanding": "Outstanding",
+      "overdue": "Overdue",
+      "balance": "Balance"
+    },
+    "overviewChart": {
+      "title": "Income vs Expenses Overview"
+    },
+    "forecast": {
+      "title": "Cash Flow Forecast",
+      "subtitle": "AI-powered prediction for the next 3 months",
+      "generate": "Forecast",
+      "refresh": "Update",
+      "notEnoughData": "Not enough historical data to generate a forecast. Add at least 2 months of transactions."
+    },
+    "expenseChart": {
+      "title": "Expense Breakdown",
+      "noData": "No expense data available."
+    },
+    "recentTransactions": {
+      "title": "Recent Transactions"
+    },
+    "actionableInvoices": {
+      "title": "Actionable Invoices",
+      "allCaughtUp": "All caught up!",
+      "noOutstanding": "No outstanding or overdue invoices."
+    },
+    "upcomingRecurring": {
+      "title": "Upcoming Recurring",
+      "noUpcoming": "No upcoming payments.",
+      "viewAll": "View All",
+      "dueOn": "Due on {date}"
+    },
+    "platformDownload": {
+      "title": "Get Yans Pro Everywhere",
+      "description": "Access your financial data on any device. Follow our guides to install the app for the best experience.",
+      "windows": "Windows",
+      "macOS": "macOS",
+      "googlePlay": "Android",
+      "appStore": "iOS / iPadOS",
+      "notAvailable": "Installation guide for {platform} is not yet available."
+    }
+  },
+  "posPage": {
+    "title": "Point of Sale",
+    "searchPlaceholder": "Search products...",
+    "scanBarcode": "Scan Barcode",
+    "allProducts": "All",
+    "goods": "Goods",
+    "services": "Services",
+    "orderSummary": "Order Summary",
+    "noItems": "No items in cart.",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "charge": "Charge",
+    "noProductsTitle": "No Products to Sell",
+    "noProductsDescription": "Add some products or services in the 'Products' page to get started with the cashier.",
+    "addProduct": "Add Product",
+    "outOfStock": "{name} is out of stock!",
+    "notEnoughStock": "Not enough stock for {name}.",
+    "addedToCart": "{name} added to cart!",
+    "productNotFound": "Product with code {code} not found."
+  },
+  "productsPage": {
+    "title": "Products & Services",
+    "create": "Add Product",
+    "searchPlaceholder": "Search by product name or SKU...",
+    "noProducts": "No Products or Services Yet",
+    "getStarted": "Add your first product or service to get started.",
+    "deleteConfirm": "Are you sure you want to delete the product '{productName}'? This cannot be undone.",
+    "type": "Type",
+    "price": "Price",
+    "stock": "Stock: {count}",
+    "lowStock": "Low Stock",
+    "outOfStock": "Out of Stock"
+  },
+  "transactionsPage": {
+    "title": "All Transactions",
+    "exportCsv": "Export CSV",
+    "searchPlaceholder": "Search description or category...",
+    "allTypes": "All Types",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "deleteSelected": "Delete",
+    "selected": "{count} selected",
+    "deleteConfirm": "Are you sure you want to delete {count} transaction(s)?",
+    "noTransactions": "No transactions found.",
+    "adjustFilters": "Try adjusting your filters or date range.",
+    "viewInvoice": "View Linked Invoice",
+    "createInvoice": "Generate Paid Invoice",
+    "createInvoiceTooltip": "Instantly create a 'Paid' invoice from these transactions. This links them as a formal record of payment received."
+  },
+  "reportsPage": {
+    "title": "Financial Reports",
+    "generate": "Generate Report",
+    "print": "Print Report",
+    "close": "Close Report",
+    "periods": {
+      "last30": "Last 30 Days",
+      "last90": "Last 90 Days",
+      "ytd": "Year to Date",
+      "all": "All Time"
+    },
+    "pnl": {
+      "title": "Profit & Loss Statement",
+      "description": "Get a summary of revenues, costs, and expenses over a specified period.",
+      "totalRevenue": "Total Revenue",
+      "totalExpenses": "Total Expenses",
+      "netProfit": "Net Profit"
+    },
+    "expenseByCategory": {
+      "title": "Expense by Category",
+      "description": "Analyze your spending habits by breaking down expenses into categories.",
+      "amount": "Amount",
+      "percentage": "% of Total",
+      "noData": "No expense data for this period."
+    },
+    "incomeBySource": {
+      "title": "Income by Source",
+      "description": "Track which income sources are your most valuable by analyzing categories.",
+      "source": "Source (Category)",
+      "noData": "No income data for this period."
+    },
+    "cashFlow": {
+      "title": "Cash Flow Statement",
+      "description": "Monitor the movement of cash in and out of your business.",
+      "inflows": "Cash Inflows",
+      "outflows": "Cash Outflows",
+      "net": "Net Cash Flow"
+    },
+    "taxSummary": {
+      "title": "Tax Summary Report",
+      "description": "Simplify tax season with a report that summarizes taxable income and deductible expenses.",
+      "selectYear": "Select Tax Year",
+      "taxableIncome": "Total Taxable Income",
+      "deductibleExpenses": "Total Deductible Expenses",
+      "estimatedNet": "Estimated Net Income"
+    },
+    "financialSnapshot": {
+      "title": "Financial Snapshot",
+      "description": "A simplified balance sheet showing your company's current financial health.",
+      "asOfToday": "As of Today",
+      "assets": "Total Assets (Current Balance)",
+      "liabilities": "Total Liabilities",
+      "equity": "Total Equity",
+      "simplifiedNote": "* This is a simplified snapshot based on your current balance. Advanced asset and liability tracking is not yet implemented."
+    }
+  },
+  "budgetsPage": {
+    "title": "Budgets",
+    "create": "Create Budget",
+    "spentOf": "spent of",
+    "noBudgets": "No Budgets Created Yet",
+    "getStarted": "Get started by creating a new budget.",
+    "deleteConfirm": "Are you sure you want to delete this budget?"
+  },
+  "goalsPage": {
+    "title": "Financial Goals",
+    "create": "Create New Goal",
+    "noGoals": "No Goals Yet",
+    "getStarted": "Set a target to start saving towards something great.",
+    "savedOf": "{current} of {target} saved",
+    "targetDate": "Target: {date}",
+    "noTargetDate": "No target date set",
+    "deleteConfirm": "Are you sure you want to delete the goal '{goalName}'?",
+    "addFunds": "Add Funds",
+    "editGoal": "Edit Goal",
+    "deleteGoal": "Delete Goal"
+  },
+  "invoicesPage": {
+    "title": "Invoices",
+    "new": "New Invoice",
+    "searchPlaceholder": "Search by client name or invoice ID...",
+    "invoiceNo": "Invoice #",
+    "client": "Client",
+    "dueDate": "Due Date",
+    "total": "Total",
+    "noInvoices": "No Invoices Found",
+    "createFirst": "Create your first invoice to get started.",
+    "deleteConfirm": "Are you sure you want to delete the invoice for {clientName}? This action is irreversible and will also delete any linked payment transaction."
+  },
+  "invoiceEditor": {
+    "createTitle": "Create New Invoice",
+    "editTitle": "Edit Invoice #{id}",
+    "back": "Back to Invoices",
+    "save": "Save Invoice",
+    "clientName": "Client Name",
+    "issueDate": "Issue Date",
+    "itemDescription": "Description",
+    "itemQty": "Qty",
+    "itemPrice": "Price",
+    "itemTotal": "Total",
+    "addItem": "Add Item",
+    "subtotal": "Subtotal",
+    "errorItems": "All invoice items must have a description and a quantity/price of 0 or more.",
+    "paidNoticeTitle": "Payment Recorded.",
+    "paidNoticeDescription": "This invoice is locked. To make changes, please delete the associated payment transaction first."
+  },
+  "settingsPage": {
+    "title": "Settings",
+    "profiles": {
+      "title": "Manage Profiles",
+      "yourProfiles": "Your Profiles",
+      "add": "Add New Profile",
+      "active": "ACTIVE",
+      "deleteConfirm": "Are you sure you want to delete this profile? All its data (transactions, budgets, etc.) will be permanently lost.",
+      "deleteLastProfile": "You cannot delete the last profile."
+    },
+    "language": {
+      "title": "Language & Region",
+      "search": "Search language...",
+      "select": "Select language"
+    },
+    "data": {
+      "title": "Data Management",
+      "description": "Export your profile data or import new transactions from a CSV file.",
+      "export": "Export Data (JSON)",
+      "import": "Import from CSV",
+      "dangerZone": "Danger Zone",
+      "dangerWarning": "This action is permanent and cannot be undone. Please proceed with caution.",
+      "resetProfile": "Reset Profile Data",
+      "resetWarning": "This will delete all transactions, invoices, and budgets for the current profile.",
+      "resetConfirm": "Are you absolutely sure?\n\nThis will permanently delete ALL transactions, invoices, and budgets for the \"{profileName}\" profile. Categories will not be affected.\n\nThis action cannot be undone.",
+      "resetSuccess": "Profile data has been reset."
+    },
+    "recurring": {
+      "title": "Manage Recurring Transactions",
+      "activeSchedules": "Active Schedules",
+      "add": "Add New",
+      "repeats": "Repeats every {interval}{frequency}",
+      "noRecurring": "No recurring transactions have been set up."
+    },
+    "categories": {
+      "title": "Manage Categories",
+      "add": "Add New Category",
+      "newFormTitle": "Add New Category",
+      "name": "Category Name",
+      "type": "Type",
+      "parent": "Parent Group (Optional)",
+      "parentGroup": "None (Create new group)",
+      "save": "Save Category",
+      "deleteConfirm": "Are you sure you want to delete this category? This might affect existing transactions and budgets.",
+      "noCategories": "No categories found for this profile."
+    }
+  },
+  "modals": {
+    "addTransaction": {
+      "title": "Add New Transaction",
+      "editRecurringTitle": "Edit Recurring Transaction",
+      "type": "Transaction Type",
+      "selectCategory": "Select a category",
+      "makeRecurring": "Make this transaction recurring",
+      "frequency": "Frequency",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "every": "Every",
+      "startDate": "Start Date",
+      "endDate": "End Date (Optional)",
+      "errorRecurring": "Start Date and a valid Interval are required for recurring transactions.",
+      "errorDate": "Date is required for a single transaction.",
+      "updateRule": "Update Rule",
+      "addRecurringRule": "Add Recurring Rule",
+      "addTransaction": "Add Transaction"
+    },
+    "addBudget": {
+      "createTitle": "Create Budget",
+      "editTitle": "Edit Budget",
+      "category": "Budget Category",
+      "selectCategory": "Select a category",
+      "entireGroup": "(Entire Group)",
+      "period": "Period",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "aiSuggestion": "Get AI Suggestion",
+      "suggest": "Suggest",
+      "gettingSuggestion": "Getting Suggestion...",
+      "selectCategoryFirst": "Please select a category first to get a suggestion.",
+      "suggestionFailed": "Failed to get suggestion: {error}",
+      "saveChanges": "Save Changes"
+    },
+    "addGoal": {
+      "createTitle": "Create New Goal",
+      "editTitle": "Edit Goal",
+      "name": "Goal Name",
+      "namePlaceholder": "e.g., New Office Equipment",
+      "targetAmount": "Target Amount",
+      "targetDate": "Target Date (Optional)",
+      "aiHelperTitle": "Need help setting a goal?",
+      "aiHelperDescription": "Describe what you're saving for, and our AI will suggest a name and target amount.",
+      "aiPlaceholder": "e.g., save up for a high-end video editing computer",
+      "getSuggestion": "Get Suggestion",
+      "suggestionFailed": "Failed to get suggestion: {error}"
+    },
+    "addFunds": {
+      "title": "Add Funds to Goal",
+      "amountToAdd": "Amount to Add",
+      "currentProgress": "Current Progress",
+      "newProgress": "New Progress After Adding",
+      "errorPositiveAmount": "Please enter a positive amount to add.",
+      "addAndRecord": "Add Funds & Record Transaction"
+    },
+    "addProduct": {
+      "createTitle": "Add New Product or Service",
+      "editTitle": "Edit Product or Service",
+      "name": "Product/Service Name",
+      "namePlaceholder": "e.g., Web Design Package",
+      "price": "Price",
+      "type": "Type",
+      "service": "Service",
+      "good": "Good",
+      "description": "Description (Optional)",
+      "descriptionPlaceholder": "e.g., 5-page responsive website design",
+      "product": "Product",
+      "selectProduct": "Select an existing product...",
+      "sku": "SKU / Barcode",
+      "scanBarcode": "Scan Barcode",
+      "trackStock": "Track Inventory Stock",
+      "currentStock": "Current Stock",
+      "minStock": "Low Stock Alert At"
+    },
+    "profileManager": {
+      "addTitle": "Add New Profile",
+      "editTitle": "Edit Profile",
+      "name": "Business / Profile Name",
+      "namePlaceholder": "e.g., My Consulting Biz",
+      "currency": "Currency",
+      "address": "Business Address",
+      "phone": "Phone Number",
+      "email": "Business Email",
+      "website": "Website",
+      "taxId": "Tax ID / NPWP",
+      "errorEmptyName": "Profile name cannot be empty.",
+      "create": "Create Profile"
+    },
+    "payment": {
+      "title": "Complete Sale",
+      "totalDue": "Total Due",
+      "confirm": "Confirm Sale"
+    },
+    "clientSelector": {
+      "title": "Create Invoice",
+      "description": "Enter a client name to generate a 'Paid' invoice for the selected transactions.",
+      "clientName": "Client Name",
+      "clientNamePlaceholder": "e.g., John Doe Corp",
+      "confirm": "Create & Link Invoice"
+    },
+    "receiptScanner": {
+      "title": "Scan Receipt",
+      "description": "Upload an image of your receipt to automatically extract the details.",
+      "selectImage": "Select Image",
+      "analyzing": "AI is analyzing your receipt...",
+      "analyzingWait": "This may take a few seconds.",
+      "analysisFailed": "Analysis Failed",
+      "errorReadFile": "Failed to read the file."
+    },
+    "installGuide": {
+      "title": "How to Install {appName}",
+      "chrome_windows": "For Chrome on Windows / macOS",
+      "step1_chrome": "Look for the Install icon in the address bar at the top right of your browser.",
+      "step2_chrome": "Click the icon and then click the 'Install' button in the prompt.",
+      "step3_desktop": "The app will now be available on your Desktop and in your Start Menu (Windows) or Launchpad (macOS).",
+      "safari_ios": "For Safari on iOS & iPadOS",
+      "step1_safari": "Tap the 'Share' button in the Safari toolbar.",
+      "step2_safari": "Scroll down and tap 'Add to Home Screen'.",
+      "step3_safari": "Confirm the name and tap 'Add'. The app icon will now appear on your Home Screen.",
+      "android": "For Chrome on Android",
+      "step1_android": "Tap the three-dots menu icon in the top right corner of Chrome.",
+      "step2_android": "Tap 'Install app' or 'Add to Home screen' from the menu.",
+      "step3_android": "Follow the on-screen prompts to add the app to your home screen."
+    },
+    "import": {
+      "title": "Import Transactions from CSV",
+      "instructionsTitle": "How to Format Your CSV",
+      "instructionsBody": "Your CSV file must have a header row with the following columns: date, description, amount, type, category. The 'type' must be either 'Income' or 'Expense'.",
+      "selectFile": "Select CSV File",
+      "preview": "Import Preview ({count} transactions found)",
+      "confirm": "Import {count} Transactions",
+      "errorHeaders": "CSV file is missing required headers: date, description, amount, type, category.",
+      "errorAmount": "Invalid amount on line {line}. Please provide a valid number.",
+      "errorType": "Invalid type on line {line}. Must be 'Income' or 'Expense'.",
+      "errorDate": "Invalid date format on line {line}. Please use YYYY-MM-DD."
+    },
+    "addInvestment": {
+      "title": "Add Investment",
+      "searchLabel": "Search Asset (AI Powered)",
+      "searchPlaceholder": "e.g., Apple, Bitcoin...",
+      "searching": "Searching markets...",
+      "noResults": "No assets found.",
+      "symbol": "Asset Symbol (e.g., AAPL, BTC)",
+      "name": "Asset Name",
+      "quantity": "Quantity Held",
+      "avgPrice": "Average Buy Price",
+      "type": "Asset Type",
+      "add": "Add Asset"
+    },
+    "manageInvestment": {
+      "title": "Manage {symbol}",
+      "buy": "Buy",
+      "sell": "Sell",
+      "rebalance": "Rebalance",
+      "targetAllocation": "Target Allocation",
+      "availableCash": "Buying Power",
+      "currentPrice": "Current Price",
+      "estCost": "Est. Cost",
+      "proceeds": "Est. Proceeds",
+      "insufficientFunds": "Insufficient funds in wallet.",
+      "insufficientQty": "Insufficient quantity to sell.",
+      "currentAlloc": "Current Allocation",
+      "deviation": "Deviation",
+      "actionRequired": "Action Required",
+      "buyMore": "Buy {qty} {symbol}",
+      "sellSome": "Sell {qty} {symbol}",
+      "onTrack": "On Track",
+      "saveTarget": "Save Target %"
+    }
+  },
+  "enterprise": {
+    "menu": "Command Center",
+    "title": "Enterprise Financial Health",
+    "subtitle": "High-level metrics, anomaly detection, and strategic analysis for your business.",
+    "metrics": {
+      "valuation": "Est. Business Valuation",
+      "valuationNote": "Based on 4x EBITDA or 1.5x Revenue",
+      "runway": "Runway",
+      "months": "months",
+      "burnRate": "Burn Rate",
+      "healthScore": "Health Score",
+      "healthGood": "Strong financial position.",
+      "healthNeedsWork": "Needs attention to cash flow.",
+      "ebitda": "Est. EBITDA",
+      "trailing12m": "Trailing 12 Months"
+    },
+    "anomalies": {
+      "title": "Smart Audit & Anomalies",
+      "detected": "Issues Found",
+      "none": "No anomalies detected. Your books look clean!",
+      "type": "Issue Type",
+      "description": "Description",
+      "severity": "Severity"
+    },
+    "summary": {
+      "title": "CFO Executive Summary",
+      "placeholder": "Click generate to get an AI-powered executive briefing on your company's financial status.",
+      "generate": "Generate CFO Report"
+    }
+  },
+  "portfolioAdvisor": {
+    "title": "AI Portfolio Advisor",
+    "subtitle": "Get real-time suggestions based on your holdings and market trends.",
+    "getAdvice": "Get AI Advice",
+    "analyzing": "Analyzing Portfolio...",
+    "symbol": "Symbol",
+    "action": "Action",
+    "reasoning": "Analysis",
+    "risk": "Risk",
+    "buy": "BUY",
+    "sell": "SELL",
+    "hold": "HOLD",
+    "rebalance": "REBALANCE"
+  },
+  "sap2025": {
+    "title": "STRUKTUR INTI PORTOFOLIO — SAP 2025",
+    "subtitle": "Smart Adaptive Portfolio Strategy",
+    "core": "CORE (INTI)",
+    "satellite": "SATELLITE (SATELIT)",
+    "defensive": "DEFENSIVE (MITIGASI)",
+    "coreDesc": "Stable long-term growth (Stocks, ETFs, Real Estate)",
+    "satelliteDesc": "High growth potential & speculation (Crypto)",
+    "defensiveDesc": "Safety & capital preservation (Bonds, Cash)",
+    "current": "Current",
+    "target": "Target",
+    "status": "Portfolio Status"
+  },
+  "components": {
+    "scanner": {
+      "title": "Scan Barcode",
+      "instruction": "Point your camera at a barcode to scan it."
+    }
+  },
+  "ai": {
+    "financialInsight": "AI Financial Insight",
+    "askQuery": "Ask about your finances:",
+    "queryPlaceholder": "e.g., How can I reduce my expenses?",
+    "generateInsight": "Generate Insight",
+    "analyzing": "Analyzing...",
+    "error": "Failed to generate insight: {error}",
+    "sources": "Sources",
+    "chat": {
+      "title": "AI Assistant",
+      "placeholder": "Ask a question or give a command...",
+      "welcome": "Hello! I'm your financial assistant. How can I help you manage your finances today?",
+      "error": "Sorry, I ran into a problem: {error}"
+    },
+    "suggestedQueries": {
+      "summary": "Summarize my financial health",
+      "spending": "Where do I spend the most?",
+      "improvement": "Suggest one area for improvement"
+    }
+  },
+  "invoice": {
+    "dueIn": "Due in {days} days",
+    "dueToday": "Due today",
+    "overdueBy": "{days} days overdue",
+    "getReminder": "Get AI Reminder"
+  },
+  "investmentsPage": {
+    "title": "Investment Portfolio",
+    "refresh": "Refresh Market Data",
+    "refreshing": "Updating...",
+    "add": "Add Asset",
+    "wallet": "Portfolio Cash Wallet",
+    "deposit": "Deposit",
+    "withdraw": "Withdraw",
+    "buyingPower": "Buying Power",
+    "manage": "Manage",
+    "totalFunds": {
+        "title": "Total Company Funds",
+        "operating": "Operating Cash",
+        "portfolio": "Portfolio Value"
+    },
+    "stats": {
+      "totalValue": "Total Value",
+      "totalReturn": "Unrealized P/L",
+      "dailyChange": "24h Change"
+    },
+    "table": {
+      "asset": "Asset",
+      "qty": "Qty",
+      "avgPrice": "Avg. Price",
+      "currentPrice": "Current Price",
+      "value": "Value",
+      "alloc": "Alloc %",
+      "target": "Target %",
+      "return": "Return",
+      "actions": "Actions",
+      "deleteConfirm": "Remove this asset from your portfolio?"
+    },
+    "marketInsights": {
+      "title": "AI Market Opportunities",
+      "subtitle": "Real-time trends & recommendations powered by Google Search",
+      "refresh": "Refresh Insights"
+    }
+  }
+}

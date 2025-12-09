@@ -1,0 +1,90 @@
+
+version: '3.8'
+
+services:
+  # Main Application (Static File Server)
+  app:
+    build: .
+    container_name: yans_pro_app
+    restart: always
+    environment:
+      - API_KEY=${GEMINI_API_KEY}
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+
+  # Reverse Proxy & SSL Termination
+  nginx:
+    image: nginx:alpine
+    container_name: yans_pro_gateway
+    restart: always
+    ports:
+      - "${APP_PORT:-80}:80"
+      - "${APP_SSL_PORT:-443}:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Database (Prepared for future backend)
+  db:
+    image: postgres:15-alpine
+    container_name: yans_pro_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-yans_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-yans_db}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-yans_admin} -d ${DB_NAME:-yans_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+
+  # Certbot (SSL Certificate Manager)
+  certbot:
+    image: certbot/certbot
+    container_name: yans_pro_certbot
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    depends_on:
+      nginx:
+        condition: service_started
+
+volumes:
+  db_data:
+  certbot_conf:
+  certbot_www:
+
+networks:
+  app_network:
+    driver: bridge

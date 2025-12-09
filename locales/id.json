@@ -1,0 +1,599 @@
+
+{
+  "appName": "Yans Pro",
+  "general": {
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "edit": "Ubah",
+    "add": "Tambah",
+    "search": "Cari",
+    "close": "Tutup",
+    "income": "Pemasukan",
+    "expense": "Pengeluaran",
+    "description": "Deskripsi",
+    "amount": "Jumlah",
+    "category": "Kategori",
+    "date": "Tanggal",
+    "time": "Waktu",
+    "status": "Status",
+    "actions": "Aksi",
+    "notes": "Catatan",
+    "draft": "Draf",
+    "sent": "Terkirim",
+    "paid": "Lunas",
+    "overdue": "Jatuh Tempo",
+    "error": {
+      "unknown": "Terjadi kesalahan yang tidak diketahui.",
+      "requiredFields": "Harap isi semua kolom yang wajib diisi.",
+      "positiveAmount": "Harap masukkan jumlah yang valid dan positif."
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dasbor",
+    "pos": "Kasir",
+    "transactions": "Transaksi",
+    "invoices": "Faktur",
+    "investments": "Investasi",
+    "products": "Produk",
+    "budgets": "Anggaran",
+    "goals": "Target",
+    "reports": "Laporan",
+    "settings": "Pengaturan"
+  },
+  "header": {
+    "manageProfiles": "Kelola Profil"
+  },
+  "dashboard": {
+    "title": "Dasbor",
+    "addFromReceipt": "Tambah dari Struk",
+    "addTransaction": "Tambah Transaksi",
+    "stats": {
+      "totalRevenue": "Total Pendapatan",
+      "totalExpenses": "Total Pengeluaran",
+      "netProfit": "Laba Bersih",
+      "outstanding": "Belum Dibayar",
+      "overdue": "Jatuh Tempo",
+      "balance": "Saldo"
+    },
+    "overviewChart": {
+      "title": "Gambaran Pendapatan vs Pengeluaran"
+    },
+    "forecast": {
+      "title": "Prediksi Arus Kas",
+      "subtitle": "Prediksi bertenaga AI untuk 3 bulan ke depan",
+      "generate": "Mulai Prediksi",
+      "refresh": "Perbarui",
+      "notEnoughData": "Data historis tidak cukup untuk membuat prediksi. Tambahkan setidaknya 2 bulan transaksi."
+    },
+    "expenseChart": {
+      "title": "Rincian Pengeluaran",
+      "noData": "Tidak ada data pengeluaran yang tersedia."
+    },
+    "recentTransactions": {
+      "title": "Transaksi Terkini"
+    },
+    "actionableInvoices": {
+      "title": "Faktur Mendesak",
+      "allCaughtUp": "Semua sudah beres!",
+      "noOutstanding": "Tidak ada faktur yang belum dibayar atau jatuh tempo."
+    },
+    "upcomingRecurring": {
+      "title": "Pembayaran Berulang Berikutnya",
+      "noUpcoming": "Tidak ada pembayaran mendatang.",
+      "viewAll": "Lihat Semua",
+      "dueOn": "Jatuh tempo pada {date}"
+    },
+    "platformDownload": {
+      "title": "Dapatkan Yans Pro di Mana Saja",
+      "description": "Akses data keuangan Anda di perangkat apa pun. Ikuti panduan kami untuk menginstal aplikasi demi pengalaman terbaik.",
+      "windows": "Windows",
+      "macOS": "macOS",
+      "googlePlay": "Android",
+      "appStore": "iOS / iPadOS",
+      "notAvailable": "Panduan instalasi untuk {platform} belum tersedia."
+    }
+  },
+  "posPage": {
+    "title": "Point of Sale",
+    "searchPlaceholder": "Cari produk...",
+    "scanBarcode": "Pindai Barcode",
+    "allProducts": "Semua",
+    "goods": "Barang",
+    "services": "Jasa",
+    "orderSummary": "Ringkasan Pesanan",
+    "noItems": "Tidak ada item di keranjang.",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "charge": "Charge",
+    "noProductsTitle": "Tidak Ada Produk untuk Dijual",
+    "noProductsDescription": "Tambahkan beberapa produk atau layanan di halaman 'Produk' untuk memulai dengan kasir.",
+    "addProduct": "Tambah Produk",
+    "outOfStock": "{name} habis!",
+    "notEnoughStock": "Stok {name} tidak cukup.",
+    "addedToCart": "{name} ditambahkan ke keranjang!",
+    "productNotFound": "Produk dengan kode {code} tidak ditemukan."
+  },
+  "productsPage": {
+    "title": "Produk & Layanan",
+    "create": "Tambah Produk",
+    "searchPlaceholder": "Cari berdasarkan nama atau SKU...",
+    "noProducts": "Belum Ada Produk atau Layanan",
+    "getStarted": "Tambahkan produk atau layanan pertama Anda untuk memulai.",
+    "deleteConfirm": "Anda yakin ingin menghapus produk '{productName}'? Tindakan ini tidak dapat dibatalkan.",
+    "type": "Jenis",
+    "price": "Harga",
+    "stock": "Stok: {count}",
+    "lowStock": "Stok Menipis",
+    "outOfStock": "Stok Habis"
+  },
+  "transactionsPage": {
+    "title": "Semua Transaksi",
+    "exportCsv": "Ekspor CSV",
+    "searchPlaceholder": "Cari deskripsi atau kategori...",
+    "allTypes": "Semua Jenis",
+    "startDate": "Tanggal Mulai",
+    "endDate": "Tanggal Akhir",
+    "deleteSelected": "Hapus",
+    "selected": "{count} dipilih",
+    "deleteConfirm": "Anda yakin ingin menghapus {count} transaksi?",
+    "noTransactions": "Tidak ada transaksi yang ditemukan.",
+    "adjustFilters": "Coba sesuaikan filter atau rentang tanggal Anda.",
+    "viewInvoice": "Lihat Faktur Terkait",
+    "createInvoice": "Buat Faktur Lunas",
+    "createInvoiceTooltip": "Buat faktur 'Lunas' secara instan dari transaksi ini. Ini akan menautkannya sebagai catatan pembayaran resmi."
+  },
+  "reportsPage": {
+    "title": "Laporan Keuangan",
+    "generate": "Buat Laporan",
+    "print": "Cetak Laporan",
+    "close": "Tutup Laporan",
+    "periods": {
+      "last30": "30 Hari Terakhir",
+      "last90": "90 Hari Terakhir",
+      "ytd": "Tahun Ini",
+      "all": "Semua Waktu"
+    },
+    "pnl": {
+      "title": "Laporan Laba Rugi",
+      "description": "Dapatkan ringkasan pendapatan, biaya, dan pengeluaran selama periode tertentu.",
+      "totalRevenue": "Total Pendapatan",
+      "totalExpenses": "Total Pengeluaran",
+      "netProfit": "Laba Bersih"
+    },
+    "expenseByCategory": {
+      "title": "Pengeluaran per Kategori",
+      "description": "Analisis kebiasaan belanja Anda dengan merinci pengeluaran ke dalam kategori.",
+      "amount": "Jumlah",
+      "percentage": "% dari Total",
+      "noData": "Tidak ada data pengeluaran untuk periode ini."
+    },
+    "incomeBySource": {
+      "title": "Pendapatan per Sumber",
+      "description": "Lacak sumber pendapatan mana yang paling berharga dengan menganalisis kategori.",
+      "source": "Sumber (Kategori)",
+      "noData": "Tidak ada data pendapatan untuk periode ini."
+    },
+    "cashFlow": {
+      "title": "Laporan Arus Kas",
+      "description": "Pantau pergerakan kas masuk dan keluar dari bisnis Anda.",
+      "inflows": "Arus Kas Masuk",
+      "outflows": "Arus Kas Keluar",
+      "net": "Arus Kas Bersih"
+    },
+    "taxSummary": {
+      "title": "Ringkasan Pajak",
+      "description": "Sederhanakan musim pajak dengan laporan yang merangkum pendapatan kena pajak dan biaya yang dapat dikurangkan.",
+      "selectYear": "Pilih Tahun Pajak",
+      "taxableIncome": "Total Pendapatan Kena Pajak",
+      "deductibleExpenses": "Total Biaya yang Dapat Dikurangkan",
+      "estimatedNet": "Perkiraan Laba Bersih"
+    },
+    "financialSnapshot": {
+      "title": "Potret Keuangan",
+      "description": "Neraca sederhana yang menunjukkan kesehatan keuangan perusahaan Anda saat ini.",
+      "asOfToday": "Per Hari Ini",
+      "assets": "Total Aset (Saldo Saat Ini)",
+      "liabilities": "Total Kewajiban",
+      "equity": "Total Ekuitas",
+      "simplifiedNote": "* Ini adalah potret sederhana berdasarkan saldo Anda saat ini. Pelacakan aset dan kewajiban lanjutan belum diimplementasikan."
+    }
+  },
+  "budgetsPage": {
+    "title": "Anggaran",
+    "create": "Buat Anggaran",
+    "spentOf": "terpakai dari",
+    "noBudgets": "Belum Ada Anggaran yang Dibuat",
+    "getStarted": "Mulailah dengan membuat anggaran baru.",
+    "deleteConfirm": "Anda yakin ingin menghapus anggaran ini?"
+  },
+  "goalsPage": {
+    "title": "Target Keuangan",
+    "create": "Buat Target Baru",
+    "noGoals": "Belum Ada Target",
+    "getStarted": "Tentukan target untuk mulai menabung demi sesuatu yang hebat.",
+    "savedOf": "{current} dari {target} tersimpan",
+    "targetDate": "Target: {date}",
+    "noTargetDate": "Tidak ada tanggal target",
+    "deleteConfirm": "Anda yakin ingin menghapus target '{goalName}'?",
+    "addFunds": "Tambah Dana",
+    "editGoal": "Ubah Target",
+    "deleteGoal": "Hapus Target"
+  },
+  "invoicesPage": {
+    "title": "Faktur",
+    "new": "Faktur Baru",
+    "searchPlaceholder": "Cari berdasarkan nama klien atau ID faktur...",
+    "invoiceNo": "No. Faktur",
+    "client": "Klien",
+    "dueDate": "Tanggal Jatuh Tempo",
+    "total": "Total",
+    "noInvoices": "Tidak Ada Faktur Ditemukan",
+    "createFirst": "Buat faktur pertama Anda untuk memulai.",
+    "deleteConfirm": "Anda yakin ingin menghapus faktur untuk {clientName}? Tindakan ini tidak dapat dibatalkan dan juga akan menghapus transaksi pembayaran terkait."
+  },
+  "invoiceEditor": {
+    "createTitle": "Buat Faktur Baru",
+    "editTitle": "Ubah Faktur #{id}",
+    "back": "Kembali ke Faktur",
+    "save": "Simpan Faktur",
+    "clientName": "Nama Klien",
+    "issueDate": "Tanggal Terbit",
+    "itemDescription": "Deskripsi",
+    "itemQty": "Jml",
+    "itemPrice": "Harga",
+    "itemTotal": "Total",
+    "addItem": "Tambah Item",
+    "subtotal": "Subtotal",
+    "errorItems": "Semua item faktur harus memiliki deskripsi, dan kuantitas/harga 0 atau lebih.",
+    "paidNoticeTitle": "Pembayaran Tercatat.",
+    "paidNoticeDescription": "Faktur ini terkunci. Untuk membuat perubahan, silakan hapus transaksi pembayaran terkait terlebih dahulu."
+  },
+  "settingsPage": {
+    "title": "Pengaturan",
+    "profiles": {
+      "title": "Kelola Profil",
+      "yourProfiles": "Profil Anda",
+      "add": "Tambah Profil Baru",
+      "active": "AKTIF",
+      "deleteConfirm": "Anda yakin ingin menghapus profil ini? Semua datanya (transaksi, anggaran, dll.) akan hilang secara permanen.",
+      "deleteLastProfile": "Anda tidak dapat menghapus profil terakhir."
+    },
+    "language": {
+      "title": "Bahasa & Wilayah",
+      "search": "Cari bahasa...",
+      "select": "Pilih bahasa"
+    },
+    "data": {
+      "title": "Manajemen Data",
+      "description": "Ekspor data profil Anda atau impor transaksi baru dari file CSV.",
+      "export": "Ekspor Data (JSON)",
+      "import": "Impor dari CSV",
+      "dangerZone": "Zona Berbahaya",
+      "dangerWarning": "Tindakan ini bersifat permanen dan tidak dapat dibatalkan. Harap lanjutkan dengan hati-hati.",
+      "resetProfile": "Atur Ulang Data Profil",
+      "resetWarning": "Ini akan menghapus semua transaksi, faktur, dan anggaran untuk profil saat ini.",
+      "resetConfirm": "Apakah Anda benar-benar yakin?\n\nIni akan menghapus SEMUA transaksi, faktur, dan anggaran untuk profil \"{profileName}\" secara permanen. Kategori tidak akan terpengaruh.\n\nTindakan ini tidak dapat dibatalkan.",
+      "resetSuccess": "Data profil telah diatur ulang."
+    },
+    "recurring": {
+      "title": "Kelola Transaksi Berulang",
+      "activeSchedules": "Jadwal Aktif",
+      "add": "Tambah Baru",
+      "repeats": "Berulang setiap {interval}{frequency}",
+      "noRecurring": "Tidak ada transaksi berulang yang telah diatur."
+    },
+    "categories": {
+      "title": "Kelola Kategori",
+      "add": "Tambah Kategori Baru",
+      "newFormTitle": "Tambah Kategori Baru",
+      "name": "Nama Kategori",
+      "type": "Jenis",
+      "parent": "Grup Induk (Opsional)",
+      "parentGroup": "Tidak ada (Buat grup baru)",
+      "save": "Simpan Kategori",
+      "deleteConfirm": "Anda yakin ingin menghapus kategori ini? Ini mungkin memengaruhi transaksi dan anggaran yang ada.",
+      "noCategories": "Tidak ada kategori yang ditemukan untuk profil ini."
+    }
+  },
+  "modals": {
+    "addTransaction": {
+      "title": "Tambah Transaksi Baru",
+      "editRecurringTitle": "Ubah Transaksi Berulang",
+      "type": "Jenis Transaksi",
+      "selectCategory": "Pilih kategori",
+      "makeRecurring": "Jadikan transaksi ini berulang",
+      "frequency": "Frekuensi",
+      "daily": "Harian",
+      "weekly": "Mingguan",
+      "monthly": "Bulanan",
+      "yearly": "Tahunan",
+      "every": "Setiap",
+      "startDate": "Tanggal Mulai",
+      "endDate": "Tanggal Selesai (Opsional)",
+      "errorRecurring": "Tanggal Mulai dan Interval yang valid diperlukan untuk transaksi berulang.",
+      "errorDate": "Tanggal diperlukan untuk satu transaksi.",
+      "updateRule": "Perbarui Aturan",
+      "addRecurringRule": "Tambah Aturan Berulang",
+      "addTransaction": "Tambah Transaksi"
+    },
+    "addBudget": {
+      "createTitle": "Buat Anggaran",
+      "editTitle": "Ubah Anggaran",
+      "category": "Kategori Anggaran",
+      "selectCategory": "Pilih kategori",
+      "entireGroup": "(Seluruh Grup)",
+      "period": "Periode",
+      "monthly": "Bulanan",
+      "yearly": "Tahunan",
+      "aiSuggestion": "Dapatkan Saran AI",
+      "suggest": "Sarankan",
+      "gettingSuggestion": "Mendapatkan Saran...",
+      "selectCategoryFirst": "Harap pilih kategori terlebih dahulu untuk mendapatkan saran.",
+      "suggestionFailed": "Gagal mendapatkan saran: {error}",
+      "saveChanges": "Simpan Perubahan"
+    },
+    "addGoal": {
+      "createTitle": "Buat Target Baru",
+      "editTitle": "Ubah Target",
+      "name": "Nama Target",
+      "namePlaceholder": "cth., Peralatan Kantor Baru",
+      "targetAmount": "Jumlah Target",
+      "targetDate": "Tanggal Target (Opsional)",
+      "aiHelperTitle": "Butuh bantuan menentukan target?",
+      "aiHelperDescription": "Jelaskan apa yang ingin Anda tabung, dan AI kami akan menyarankan nama dan jumlah target.",
+      "aiPlaceholder": "cth., menabung untuk membeli komputer editing video canggih",
+      "getSuggestion": "Dapatkan Saran",
+      "suggestionFailed": "Gagal mendapatkan saran: {error}"
+    },
+    "addFunds": {
+      "title": "Tambah Dana ke Target",
+      "amountToAdd": "Jumlah yang Ditambahkan",
+      "currentProgress": "Progres Saat Ini",
+      "newProgress": "Progres Baru Setelah Ditambah",
+      "errorPositiveAmount": "Harap masukkan jumlah positif untuk ditambahkan.",
+      "addAndRecord": "Tambah Dana & Catat Transaksi"
+    },
+    "addProduct": {
+      "createTitle": "Tambah Produk atau Layanan Baru",
+      "editTitle": "Ubah Produk atau Layanan",
+      "name": "Nama Produk/Layanan",
+      "namePlaceholder": "cth., Paket Desain Web",
+      "price": "Harga",
+      "type": "Jenis",
+      "service": "Layanan",
+      "good": "Barang",
+      "description": "Deskripsi (Opsional)",
+      "descriptionPlaceholder": "cth., Desain situs web responsif 5 halaman",
+      "product": "Produk",
+      "selectProduct": "Pilih produk yang ada...",
+      "sku": "SKU / Barcode",
+      "scanBarcode": "Pindai Barcode",
+      "trackStock": "Lacak Stok Inventaris",
+      "currentStock": "Stok Saat Ini",
+      "minStock": "Peringatan Stok Rendah Pada"
+    },
+    "profileManager": {
+      "addTitle": "Tambah Profil Baru",
+      "editTitle": "Ubah Profil",
+      "name": "Nama Bisnis / Profil",
+      "namePlaceholder": "cth., Bisnis Konsultasi Saya",
+      "currency": "Mata Uang",
+      "address": "Alamat Bisnis",
+      "phone": "Nomor Telepon",
+      "email": "Email Bisnis",
+      "website": "Situs Web",
+      "taxId": "NPWP / Tax ID",
+      "errorEmptyName": "Nama profil tidak boleh kosong.",
+      "create": "Buat Profil"
+    },
+    "payment": {
+      "title": "Selesaikan Penjualan",
+      "totalDue": "Total Tagihan",
+      "confirm": "Konfirmasi Penjualan"
+    },
+    "clientSelector": {
+      "title": "Buat Faktur",
+      "description": "Masukkan nama klien untuk membuat faktur 'Lunas' untuk transaksi yang dipilih.",
+      "clientName": "Nama Klien",
+      "clientNamePlaceholder": "cth., PT Maju Mundur",
+      "confirm": "Buat & Tautkan Faktur"
+    },
+    "receiptScanner": {
+      "title": "Pindai Struk",
+      "description": "Unggah gambar struk Anda untuk mengekstrak detail secara otomatis.",
+      "selectImage": "Pilih Gambar",
+      "analyzing": "AI sedang menganalisis struk Anda...",
+      "analyzingWait": "Ini mungkin memakan waktu beberapa detik.",
+      "analysisFailed": "Analisis Gagal",
+      "errorReadFile": "Gagal membaca file."
+    },
+    "installGuide": {
+      "title": "Cara Instal {appName}",
+      "chrome_windows": "Untuk Chrome di Windows / macOS",
+      "step1_chrome": "Cari ikon Instal di bilah alamat di kanan atas browser Anda.",
+      "step2_chrome": "Klik ikon tersebut lalu klik tombol 'Instal' pada prompt yang muncul.",
+      "step3_desktop": "Aplikasi sekarang akan tersedia di Desktop Anda dan di Start Menu (Windows) atau Launchpad (macOS).",
+      "safari_ios": "Untuk Safari di iOS & iPadOS",
+      "step1_safari": "Ketuk tombol 'Bagikan' di bilah alat Safari.",
+      "step2_safari": "Gulir ke bawah dan ketuk 'Tambah ke Layar Utama'.",
+      "step3_safari": "Konfirmasi nama dan ketuk 'Tambah'. Ikon aplikasi sekarang akan muncul di Layar Utama Anda.",
+      "android": "Untuk Chrome di Android",
+      "step1_android": "Ketuk menu tiga titik di pojok kanan atas Chrome.",
+      "step2_android": "Ketuk 'Instal aplikasi' atau 'Tambahkan ke layar utama' dari menu.",
+      "step3_android": "Ikuti petunjuk di layar untuk menambahkan aplikasi ke layar utama Anda."
+    },
+    "import": {
+        "title": "Impor Transaksi dari CSV",
+        "instructionsTitle": "Cara Memformat CSV Anda",
+        "instructionsBody": "File CSV Anda harus memiliki baris header dengan kolom berikut: date, description, amount, type, category. Kolom 'type' harus berisi 'Income' atau 'Expense'.",
+        "selectFile": "Pilih File CSV",
+        "preview": "Pratinjau Impor ({count} transaksi ditemukan)",
+        "confirm": "Impor {count} Transaksi",
+        "errorHeaders": "File CSV tidak memiliki header yang diperlukan: date, description, amount, type, category.",
+        "errorAmount": "Jumlah tidak valid di baris {line}. Harap berikan angka yang valid.",
+        "errorType": "Jenis tidak valid di baris {line}. Harus 'Income' atau 'Expense'.",
+        "errorDate": "Format tanggal tidak valid di baris {line}. Harap gunakan YYYY-MM-DD."
+    },
+    "addInvestment": {
+        "title": "Tambah Investasi",
+        "searchLabel": "Cari Aset (Didukung AI)",
+        "searchPlaceholder": "cth., Apple, Bitcoin...",
+        "searching": "Mencari data pasar...",
+        "noResults": "Aset tidak ditemukan.",
+        "symbol": "Simbol Aset (cth., AAPL, BTC)",
+        "name": "Nama Aset",
+        "quantity": "Jumlah Dimiliki",
+        "avgPrice": "Rata-rata Harga Beli",
+        "type": "Jenis Aset",
+        "add": "Tambah Aset"
+    },
+    "manageInvestment": {
+      "title": "Kelola {symbol}",
+      "buy": "Beli",
+      "sell": "Jual",
+      "rebalance": "Seimbangkan",
+      "targetAllocation": "Target Alokasi",
+      "availableCash": "Daya Beli",
+      "currentPrice": "Harga Saat Ini",
+      "estCost": "Est. Biaya",
+      "proceeds": "Est. Hasil",
+      "insufficientFunds": "Dana tidak mencukupi di dompet.",
+      "insufficientQty": "Jumlah tidak mencukupi untuk dijual.",
+      "currentAlloc": "Alokasi Saat Ini",
+      "deviation": "Deviasi",
+      "actionRequired": "Tindakan Diperlukan",
+      "buyMore": "Beli {qty} {symbol}",
+      "sellSome": "Jual {qty} {symbol}",
+      "onTrack": "Sesuai Target",
+      "saveTarget": "Simpan Target %"
+    }
+  },
+  "enterprise": {
+    "menu": "Command Center",
+    "title": "Kesehatan Finansial Perusahaan",
+    "subtitle": "Metrik tingkat tinggi, deteksi anomali, dan analisis strategis untuk bisnis Anda.",
+    "metrics": {
+      "valuation": "Est. Valuasi Bisnis",
+      "valuationNote": "Berdasarkan 4x EBITDA atau 1.5x Pendapatan",
+      "runway": "Sisa Waktu Operasional (Runway)",
+      "months": "bulan",
+      "burnRate": "Laju Pembakaran Kas",
+      "healthScore": "Skor Kesehatan",
+      "healthGood": "Posisi keuangan kuat.",
+      "healthNeedsWork": "Perlu perhatian pada arus kas.",
+      "ebitda": "Est. EBITDA",
+      "trailing12m": "12 Bulan Terakhir"
+    },
+    "anomalies": {
+      "title": "Audit Cerdas & Anomali",
+      "detected": "Masalah Ditemukan",
+      "none": "Tidak ada anomali terdeteksi. Pembukuan Anda terlihat bersih!",
+      "type": "Jenis Masalah",
+      "description": "Deskripsi",
+      "severity": "Keparahan"
+    },
+    "summary": {
+      "title": "Ringkasan Eksekutif CFO",
+      "placeholder": "Klik hasilkan untuk mendapatkan pengarahan eksekutif bertenaga AI tentang status keuangan perusahaan Anda.",
+      "generate": "Buat Laporan CFO"
+    }
+  },
+  "portfolioAdvisor": {
+    "title": "Penasihat Portofolio AI",
+    "subtitle": "Dapatkan saran real-time berdasarkan kepemilikan Anda dan tren pasar.",
+    "getAdvice": "Dapatkan Saran AI",
+    "analyzing": "Menganalisis Portofolio...",
+    "symbol": "Simbol",
+    "action": "Aksi",
+    "reasoning": "Analisis",
+    "risk": "Risiko",
+    "buy": "BELI",
+    "sell": "JUAL",
+    "hold": "TAHAN",
+    "rebalance": "SEIMBANGKAN"
+  },
+  "sap2025": {
+    "title": "STRUKTUR INTI PORTOFOLIO — SAP 2025",
+    "subtitle": "Strategi Portofolio Cerdas Adaptif",
+    "core": "INTI (CORE)",
+    "satellite": "SATELIT (SATELLITE)",
+    "defensive": "MITIGASI (DEFENSIVE)",
+    "coreDesc": "Pertumbuhan stabil jangka panjang (Saham, Reksa Dana)",
+    "satelliteDesc": "Pertumbuhan tinggi & spekulasi (Kripto)",
+    "defensiveDesc": "Keamanan & pelestarian modal (Obligasi, Tunai)",
+    "current": "Saat Ini",
+    "target": "Target",
+    "status": "Status Portofolio"
+  },
+  "components": {
+      "scanner": {
+          "title": "Pindai Barcode",
+          "instruction": "Arahkan kamera Anda ke barcode untuk memindainya."
+      }
+  },
+  "ai": {
+    "financialInsight": "Wawasan Keuangan AI",
+    "askQuery": "Tanyakan tentang keuangan Anda:",
+    "queryPlaceholder": "cth., Bagaimana cara mengurangi pengeluaran saya?",
+    "generateInsight": "Hasilkan Wawasan",
+    "analyzing": "Menganalisis...",
+    "error": "Gagal menghasilkan wawasan: {error}",
+    "sources": "Sumber",
+    "chat": {
+      "title": "Asisten AI",
+      "placeholder": "Ajukan pertanyaan atau berikan perintah...",
+      "welcome": "Halo! Saya adalah asisten keuangan Anda. Ada yang bisa saya bantu untuk mengelola keuangan Anda hari ini?",
+      "error": "Maaf, saya mengalami masalah: {error}"
+    },
+    "suggestedQueries": {
+        "summary": "Ringkas kondisi keuangan saya",
+        "spending": "Di mana pengeluaran terbesar saya?",
+        "improvement": "Sarankan satu area untuk perbaikan"
+    }
+  },
+  "invoice": {
+    "dueIn": "Jatuh tempo dalam {days} hari",
+    "dueToday": "Jatuh tempo hari ini",
+    "overdueBy": "Terlambat {days} hari",
+    "getReminder": "Dapatkan Pengingat AI"
+  },
+  "investmentsPage": {
+      "title": "Portofolio Investasi",
+      "refresh": "Perbarui Data Pasar",
+      "refreshing": "Memperbarui...",
+      "add": "Tambah Aset",
+      "wallet": "Dompet Tunai Portofolio",
+      "deposit": "Setor",
+      "withdraw": "Tarik",
+      "buyingPower": "Daya Beli",
+      "manage": "Kelola",
+      "totalFunds": {
+        "title": "Total Dana Perusahaan",
+        "operating": "Saldo Operasional",
+        "portfolio": "Nilai Portofolio"
+      },
+      "stats": {
+          "totalValue": "Total Nilai",
+          "totalReturn": "L/R Belum Terealisasi",
+          "dailyChange": "Perubahan 24j"
+      },
+      "table": {
+          "asset": "Aset",
+          "qty": "Jml",
+          "avgPrice": "Harga Rata2",
+          "currentPrice": "Harga Saat Ini",
+          "value": "Nilai",
+          "alloc": "Alokasi %",
+          "target": "Target %",
+          "return": "Kembali",
+          "actions": "Aksi",
+          "deleteConfirm": "Hapus aset ini dari portofolio Anda?"
+      },
+      "marketInsights": {
+          "title": "Peluang Pasar AI",
+          "subtitle": "Tren & rekomendasi real-time didukung oleh Google Search",
+          "refresh": "Perbarui Wawasan"
+      }
+  }
+}
