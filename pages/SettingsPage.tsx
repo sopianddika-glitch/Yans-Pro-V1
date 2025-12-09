@@ -1,9 +1,10 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { Category, TransactionType, RecurringTransaction, Frequency, Profile, SupportedLocale, Language } from '../types';
-import { EditIcon, DeleteIcon, SaveIcon, AddIcon, XIcon, FolderIcon, RepeatIcon, BriefcaseIcon, ExportIcon, ImportIcon, AlertTriangleIcon, LanguageIcon, ChevronLeftIcon, SettingsIcon } from '../components/Icons';
+import { EditIcon, DeleteIcon, SaveIcon, AddIcon, XIcon, FolderIcon, RepeatIcon, BriefcaseIcon, ExportIcon, ImportIcon, AlertTriangleIcon, LanguageIcon, ChevronLeftIcon, SettingsIcon, DesktopComputerIcon } from '../components/Icons';
 import ProfileManagerModal from '../components/ProfileManagerModal';
 import { useI18n } from '../hooks/useI18n';
+import { smoothEngine } from '../ui/smoothEngine';
+import { SmoothCard } from '../components/SmoothCard';
 
 interface SettingsPageProps {
     categories: Category[];
@@ -24,6 +25,50 @@ interface SettingsPageProps {
     locale: SupportedLocale;
     onSetLocale: (locale: SupportedLocale) => void;
 }
+
+const FeatureFlagManager: React.FC = () => {
+    const [isUltraSmooth, setIsUltraSmooth] = useState(smoothEngine.status);
+
+    const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const enabled = e.target.checked;
+        setIsUltraSmooth(enabled);
+        smoothEngine.toggle(enabled);
+    };
+
+    return (
+        <div className="space-y-6">
+            <p className="text-gray-600 dark:text-gray-300 text-sm">Experimental features for advanced users.</p>
+            
+            <div className="bg-gray-50 dark:bg-brand-primary p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between mb-4">
+                    <div>
+                        <h4 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                            <DesktopComputerIcon className="w-4 h-4 text-purple-500" /> 
+                            ULTRA_SMOOTH_UI
+                        </h4>
+                        <p className="text-xs text-gray-500 mt-1">Enables 500Hz logic loop & interpolated rendering.</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            className="sr-only peer" 
+                            checked={isUltraSmooth}
+                            onChange={handleToggle}
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600"></div>
+                    </label>
+                </div>
+
+                {isUltraSmooth && (
+                    <div className="mt-4 animate-fade-in-scale">
+                        <p className="text-xs font-bold text-gray-400 uppercase mb-2">Live Preview</p>
+                        <SmoothCard />
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 
 const LanguageManager: React.FC<{
     currentLocale: SupportedLocale;
@@ -578,6 +623,13 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             description: 'Import, export, or reset data',
             icon: <SaveIcon className="w-8 h-8"/>,
             colorClass: 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+        },
+        {
+            id: 'features',
+            title: 'Feature Flags',
+            description: 'Experimental & Beta features',
+            icon: <DesktopComputerIcon className="w-8 h-8"/>,
+            colorClass: 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
         }
     ];
 
@@ -593,6 +645,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 return <LanguageManager currentLocale={locale} onSetLocale={onSetLocale} />;
             case 'data':
                 return <DataManagement activeProfileId={activeProfileId} profileName={activeProfile.name} onExportData={onExportData} onResetProfileData={onResetProfileData} onOpenImportModal={onOpenImportModal} onUpdateProfileSettings={handleUpdateProfileSettings} currentSettings={activeProfile.settings} />;
+            case 'features':
+                return <FeatureFlagManager />;
             default:
                 return null;
         }

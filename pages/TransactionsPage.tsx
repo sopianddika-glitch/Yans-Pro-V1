@@ -130,9 +130,6 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
     };
 
     const handleDeleteSingle = async (id: string) => {
-        // This is called by TransactionDeleteButton.
-        // For standard view, it performs soft delete via App.tsx logic
-        // For 'deleted' view, it performs hard delete via App.tsx logic
         onDeleteTransactions([id], showDeleted);
     };
     
@@ -445,11 +442,10 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
                                                 </>
                                             )}
                                             
-                                            {/* New Delete Button Component */}
                                             <TransactionDeleteButton 
                                                 transactionId={transaction.id}
                                                 onDelete={handleDeleteSingle}
-                                                disabled={!allowEdit && !showDeleted} // Disable delete if edit is disabled (unless it's hard delete in trash)
+                                                disabled={!allowEdit && !showDeleted}
                                             />
                                         </div>
                                     </td>
