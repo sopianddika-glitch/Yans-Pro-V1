@@ -1,4 +1,3 @@
-<div style={{ width: '100%', height: 400 }}>
 
 import React, { useState, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
@@ -67,7 +66,7 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
         
         // Connect the last historical point to the first forecast point for visual continuity
         const lastHistorical = historicalData[historicalData.length - 1];
-        const connectedForecast = (\ ?? []).map((point, index) => {
+        const connectedForecast = (forecastData ?? []).map((point, index) => {
              if (index === 0 && lastHistorical) {
                  // No special handling needed for AreaChart if we structure data right, 
                  // but for strict separation we just append.
@@ -86,7 +85,7 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
         setIsLoading(true);
         setError(null);
         try {
-            const inputForAi = (\ ?? []).map(d => ({ month: d.month, netFlow: d.historicalAmount || 0 }));
+            const inputForAi = (forecastData ?? []).map(d => ({ month: d.month, netFlow: d.historicalAmount || 0 }));
             const result = await generateCashFlowForecast(inputForAi);
             setForecastData(result);
         } catch (err) {
@@ -190,7 +189,7 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
                             fillOpacity={1} 
                             fill="url(#colorForecast)" 
                             connectNulls
-                            data={(\ ?? []).map(d => d.isForecast || d.month === historicalData[historicalData.length-1].month ? d : { ...d, forecastAmount: null })}
+                            data={(forecastData ?? []).map(d => d.isForecast || d.month === historicalData[historicalData.length-1].month ? d : { ...d, forecastAmount: null })}
                         />
                     </AreaChart>
                 </ResponsiveContainer>
@@ -201,5 +200,3 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
 
 export default CashFlowForecastChart;
 
-
-</div>

@@ -1,4 +1,4 @@
-﻿# Normalize line endings, clean workspace, and improve repo hygiene
+# Normalize line endings, clean workspace, and improve repo hygiene
 
 ## Summary
 This PR introduces repository hygiene updates without modifying any functional logic. 

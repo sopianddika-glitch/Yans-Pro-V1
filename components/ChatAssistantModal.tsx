@@ -48,7 +48,7 @@ const ChatAssistantModal: React.FC<ChatAssistantModalProps> = ({ isOpen, onClose
                 </div>
 
                 <div className="flex-grow p-4 overflow-y-auto space-y-4">
-                    {(\ ?? []).map((msg, index) => (
+                    {history.map((msg, index) => (
                         <div key={index} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                             {msg.role === 'ai' && <div className="w-8 h-8 rounded-full bg-brand-accent flex items-center justify-center flex-shrink-0"><SparklesIcon className="w-5 h-5 text-white"/></div>}
                             <div className={`max-w-md p-3 rounded-2xl ${msg.role === 'user' ? 'bg-brand-accent text-white rounded-br-none' : 'bg-gray-100 dark:bg-brand-primary text-gray-800 dark:text-gray-200 rounded-bl-none'}`}>

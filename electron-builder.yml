@@ -1,0 +1,32 @@
+appId: "com.yansdev.yansapp"
+productName: "YansApp"
+copyright: "© 2025 YansDev"
+
+directories:
+  output: "dist"
+  buildResources: "build"
+
+files:
+  - "src/**/*"
+  - "package.json"
+
+asar: true
+
+win:
+  target:
+    - nsis
+    - msi
+  icon: "build/icon.ico"
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  uninstallDisplayName: "YansApp"
+  shortcutName: "YansApp"
+
+msi:
+  perMachine: false
+  shortcutName: "YansApp"

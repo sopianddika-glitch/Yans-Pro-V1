@@ -90,7 +90,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
             {/* Stat Cards */}
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 sm:gap-6 mb-6">
-                {(\ ?? []).map((card, index) => (
+                {statCards.map((card, index) => (
                     <div key={card.title} className="animate-slide-in-up" style={{ animationDelay: `${index * 100}ms`, opacity: 0 }}>
                         <StatCard {...card} />
                     </div>
@@ -134,4 +134,3 @@ const Dashboard: React.FC<DashboardProps> = ({
 };
 
 export default Dashboard;
-

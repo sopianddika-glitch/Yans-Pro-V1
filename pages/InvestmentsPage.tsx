@@ -1,5 +1,4 @@
-<div style={{ width: '100%', height: 400 }}>
-
+﻿
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Investment, MarketTrendRecommendation, PortfolioSuggestion } from '../types';
 import { AddIcon, TrendingUpIcon, SparklesIcon, DeleteIcon, ProfitIcon, BalanceIcon, BriefcaseIcon, CheckIcon } from '../components/Icons';
@@ -543,7 +542,7 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
                     {isLoadingRecs ? (
                         [1, 2, 3].map(i => <div key={i} className="h-40 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>)
                     ) : (
-                        (\ ?? []).map((rec, idx) => (
+                        (recs ?? []).map((rec, idx) => (
                             <div key={idx} className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md border-t-4 border-brand-accent flex flex-col hover:-translate-y-1 transition-transform">
                                 <div className="flex justify-between items-start mb-2">
                                     <h3 className="font-bold text-gray-800 dark:text-white">{rec.sector}</h3>
@@ -561,7 +560,7 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
                 {recommendationSources.length > 0 && !isLoadingRecs && (
                     <div className="bg-gray-50 dark:bg-brand-secondary/50 p-3 rounded-lg text-xs text-gray-500 dark:text-gray-400">
                         <span className="font-bold mr-2">Search Sources:</span>
-                        {(\ ?? []).map((source, idx) => (
+                        {(recs ?? []).map((source, idx) => (
                             <a key={idx} href={source.uri} target="_blank" rel="noopener noreferrer" className="mr-3 hover:text-brand-accent underline decoration-dotted">
                                 {source.title}
                             </a>
@@ -602,8 +601,6 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
 
 export default InvestmentsPage;
 
-
-</div>
 
 
 

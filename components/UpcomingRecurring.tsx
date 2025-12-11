@@ -67,7 +67,7 @@ const UpcomingRecurring: React.FC<UpcomingRecurringProps> = ({ transactions, rec
             </div>
             {upcomingPayments.length > 0 ? (
                 <ul className="space-y-3 overflow-y-auto flex-grow">
-                    {(\ ?? []).map(payment => (
+                    {upcomingPayments.map(payment => (
                         <li key={payment.id} className="flex items-center gap-3">
                             <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-brand-primary">
                                 <RepeatIcon className="h-5 w-5 text-brand-accent"/>
@@ -93,4 +93,3 @@ const UpcomingRecurring: React.FC<UpcomingRecurringProps> = ({ transactions, rec
 };
 
 export default UpcomingRecurring;
-
