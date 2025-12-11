@@ -1,15 +1,24 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+﻿import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  build: {
-    outDir: 'dist',
-    sourcemap: false,
-  },
   server: {
-    port: 3000,
-    host: true
+    host: 'localhost',   // paksa host
+    port: 5173,          // paksa port Vite dev server
+    strictPort: false,
+    hmr: {
+      protocol: 'ws',
+      host: 'localhost',
+      port: 5173,
+      clientPort: 5173
+    }
+  },
+  define: {
+    // small shim so legacy code referencing process.env won't crash in browser
+    "process.env": {}
+  },
+  optimizeDeps: {
+    include: ['process']
   }
 });

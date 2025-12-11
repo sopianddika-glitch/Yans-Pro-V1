@@ -1,10 +1,70 @@
-
+﻿
 import React, { useMemo, useState } from 'react';
+function ensureString(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  try {
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  } catch {
+    return "";
+  }
+}
 import { Transaction, FinancialSummary, EnterpriseMetrics, Anomaly } from '../types';
+function ensureString(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  try {
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  } catch {
+    return "";
+  }
+}
 import { calculateEnterpriseMetrics, detectAnomalies } from '../services/enterpriseService';
+function ensureString(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  try {
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  } catch {
+    return "";
+  }
+}
 import { generateExecutiveSummary } from '../services/geminiService';
+function ensureString(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  try {
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  } catch {
+    return "";
+  }
+}
 import { useI18n } from '../hooks/useI18n';
+function ensureString(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  try {
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  } catch {
+    return "";
+  }
+}
 import { BriefcaseIcon, TrendingUpIcon, AlertTriangleIcon, SparklesIcon, CheckIcon } from '../components/Icons';
+function ensureString(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  try {
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  } catch {
+    return "";
+  }
+}
 
 interface EnterprisePageProps {
     transactions: Transaction[];
@@ -68,7 +128,7 @@ const EnterprisePage: React.FC<EnterprisePageProps> = ({ transactions, summary, 
                     <div>
                         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('enterprise.metrics.runway')}</p>
                         <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
-                            {metrics.runwayMonths >= 99 ? '∞' : metrics.runwayMonths.toFixed(1)} <span className="text-lg font-medium text-gray-500">{t('enterprise.metrics.months')}</span>
+                            {metrics.runwayMonths >= 99 ? 'âˆž' : metrics.runwayMonths.toFixed(1)} <span className="text-lg font-medium text-gray-500">{t('enterprise.metrics.months')}</span>
                         </p>
                     </div>
                     <div className="mt-4">
@@ -197,3 +257,4 @@ const EnterprisePage: React.FC<EnterprisePageProps> = ({ transactions, summary, 
 };
 
 export default EnterprisePage;
+
