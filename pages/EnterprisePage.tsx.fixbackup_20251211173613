@@ -1,16 +1,70 @@
 ﻿
 import React, { useMemo, useState } from 'react';
-
+function ensureString(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  try {
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  } catch {
+    return "";
+  }
+}
 import { Transaction, FinancialSummary, EnterpriseMetrics, Anomaly } from '../types';
-
+function ensureString(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  try {
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  } catch {
+    return "";
+  }
+}
 import { calculateEnterpriseMetrics, detectAnomalies } from '../services/enterpriseService';
-
+function ensureString(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  try {
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  } catch {
+    return "";
+  }
+}
 import { generateExecutiveSummary } from '../services/geminiService';
-
+function ensureString(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  try {
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  } catch {
+    return "";
+  }
+}
 import { useI18n } from '../hooks/useI18n';
-
+function ensureString(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  try {
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  } catch {
+    return "";
+  }
+}
 import { BriefcaseIcon, TrendingUpIcon, AlertTriangleIcon, SparklesIcon, CheckIcon } from '../components/Icons';
-import { ensureString } from '../utils/ensureString';
+function ensureString(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  try {
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+  } catch {
+    return "";
+  }
+}
 
 interface EnterprisePageProps {
     transactions: Transaction[];
@@ -203,7 +257,4 @@ const EnterprisePage: React.FC<EnterprisePageProps> = ({ transactions, summary, 
 };
 
 export default EnterprisePage;
-
-
-
 
