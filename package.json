@@ -1,20 +1,9 @@
-{
+﻿{
     "name":  "yans-pro",
     "version":  "1.0.0",
     "description":  "A professional business finance tracker with AI-powered insights.",
-    "main":  "electron/main.js",
+    "main":  "src/main.cjs",
     "type":  "module",
-    "scripts":  {
-                    "start":  "vite",
-                    "build":  "vite build",
-                    "preview":  "vite preview",
-                    "serve":  "serve -s dist -l 3000",
-                    "electron:start":  "electron .",
-                    "electron:dist":  "electron-builder"
-                },
-    "keywords":  [
-
-                 ],
     "author":  "",
     "license":  "ISC",
     "dependencies":  {
@@ -25,16 +14,11 @@
                          "recharts":  "^3.1.0",
                          "serve":  "^14.2.1"
                      },
-    "devDependencies":  {
-                            "@types/node":  "^20.11.0",
-                            "@types/react":  "^19.0.0",
-                            "@types/react-dom":  "^19.0.0",
-                            "@vitejs/plugin-react":  "^4.2.1",
-                            "concurrently":  "^9.2.1",
-                            "electron":  "^39.2.6",
-                            "electron-builder":  "^24.13.3",
-                            "typescript":  "^5.3.3",
-                            "vite":  "^5.0.12",
-                            "wait-on":  "^9.0.3"
-                        }
+    "scripts":  {
+                    "build:web":  "vite build",
+                    "build:app":  "electron-builder build --win",
+                    "build":  "npm run build:web \u0026\u0026 npm run build:app",
+                    "preview":  "vite preview",
+                    "serve":  "serve -s dist -l 3000"
+                }
 }
