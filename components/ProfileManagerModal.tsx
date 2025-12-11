@@ -94,7 +94,7 @@ const ProfileManagerModal: React.FC<ProfileManagerModalProps> = ({ isOpen, onClo
                                     onChange={e => setCurrency(e.target.value)}
                                     className="w-full bg-white dark:bg-brand-primary border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-brand-accent focus:outline-none transition"
                                 >
-                                    {supportedCurrencies.map(c => <option key={c} value={c}>{c}</option>)}
+                                    {(\ ?? []).map(c => <option key={c} value={c}>{c}</option>)}
                                 </select>
                             </div>
                              <div>

@@ -1,3 +1,4 @@
+<div style={{ width: '100%', height: 400 }}>
 
 import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
@@ -67,7 +68,7 @@ const ExpenseBreakdownChart: React.FC<ExpenseBreakdownChartProps> = ({ transacti
                                 );
                             }}
                         >
-                            {data.map((entry, index) => (
+                            {(\ ?? []).map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
@@ -86,3 +87,6 @@ const ExpenseBreakdownChart: React.FC<ExpenseBreakdownChartProps> = ({ transacti
 };
 
 export default ExpenseBreakdownChart;
+
+
+</div>

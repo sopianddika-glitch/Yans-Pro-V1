@@ -91,7 +91,7 @@ const GoalsPage: React.FC<GoalsPageProps> = ({ goals, currency, onOpenGoalModal,
 
             {sortedGoals.length > 0 ? (
                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {sortedGoals.map(goal => (
+                    {(\ ?? []).map(goal => (
                         <GoalCard 
                             key={goal.id} 
                             goal={goal} 
@@ -118,3 +118,4 @@ const GoalsPage: React.FC<GoalsPageProps> = ({ goals, currency, onOpenGoalModal,
 };
 
 export default GoalsPage;
+

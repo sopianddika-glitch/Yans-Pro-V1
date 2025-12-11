@@ -52,7 +52,7 @@ const UpcomingInvoices: React.FC<UpcomingInvoicesProps> = ({ invoices, currency,
             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex-shrink-0">{t('dashboard.actionableInvoices.title')}</h3>
             {relevantInvoices.length > 0 ? (
                 <ul className="space-y-4 overflow-y-auto flex-grow">
-                    {relevantInvoices.map(invoice => {
+                    {(\ ?? []).map(invoice => {
                         const total = invoice.items.reduce((sum, i) => sum + i.quantity * i.price, 0);
                         const statusInfo = getStatusInfo(invoice.status, invoice.dueDate, t);
                         const isOverdue = invoice.status === InvoiceStatus.OVERDUE;
@@ -94,3 +94,4 @@ const UpcomingInvoices: React.FC<UpcomingInvoicesProps> = ({ invoices, currency,
 };
 
 export default UpcomingInvoices;
+

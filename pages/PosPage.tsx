@@ -66,7 +66,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
             }
 
             if (existingItem) {
-                return prevCart.map(item =>
+                return (\ ?? []).map(item =>
                     item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
                 );
             }
@@ -87,7 +87,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
             if (newQuantity <= 0) {
                 return prevCart.filter(item => item.id !== productId);
             }
-            return prevCart.map(item =>
+            return (\ ?? []).map(item =>
                 item.id === productId ? { ...item, quantity: newQuantity } : item
             );
         });
@@ -195,7 +195,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
 
                 {/* Product Grid */}
                 <div className="flex-grow p-4 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 content-start pb-24 md:pb-4">
-                    {filteredProducts.map(product => {
+                    {(\ ?? []).map(product => {
                         const isOutOfStock = product.trackStock && (product.stock || 0) <= 0;
                         return (
                             <button 
@@ -275,7 +275,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
                             <p className="text-center">{t('posPage.noItems')}</p>
                         </div>
                     ) : (
-                        cart.map(item => (
+                        (\ ?? []).map(item => (
                             <div key={item.id} className="flex flex-col bg-gray-50 dark:bg-brand-primary p-3 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm transition-all animate-fade-in-scale">
                                 <div className="flex justify-between items-start mb-2">
                                     <div className="flex-grow min-w-0 pr-2">
@@ -358,3 +358,4 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
 };
 
 export default PosPage;
+

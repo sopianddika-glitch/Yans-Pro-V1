@@ -91,7 +91,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onMobileClose, isMini, 
                 </div>
                 <nav className="flex-1 px-4 py-6 overflow-y-auto">
                     <ul className="space-y-2">
-                        {navItems.map(item => (
+                        {(\ ?? []).map(item => (
                              <NavLink
                                 key={item.page}
                                 page={item.page}
@@ -131,3 +131,4 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onMobileClose, isMini, 
 };
 
 export default Sidebar;
+

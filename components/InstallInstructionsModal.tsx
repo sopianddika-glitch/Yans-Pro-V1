@@ -71,7 +71,7 @@ const InstallInstructionsModal: React.FC<InstallInstructionsModalProps> = ({ isO
             <div className="p-6 space-y-6">
                  <h3 className="text-lg font-semibold text-center text-gray-800 dark:text-white">{title}</h3>
                  <ol className="space-y-4">
-                    {steps.map((step, index) => (
+                    {(\ ?? []).map((step, index) => (
                         <li key={index} className="flex items-start gap-4">
                             <div className="flex-shrink-0 w-8 h-8 bg-brand-accent text-white font-bold text-lg rounded-full flex items-center justify-center">{index + 1}</div>
                             <div className="flex-grow pt-1">
@@ -97,7 +97,7 @@ const InstallInstructionsModal: React.FC<InstallInstructionsModalProps> = ({ isO
 
                 <div className="border-b border-gray-200 dark:border-gray-700 px-4">
                     <nav className="-mb-px flex space-x-4" aria-label="Tabs">
-                        {tabs.map((tab) => (
+                        {(\ ?? []).map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}

@@ -129,7 +129,7 @@ const AddBudgetModal: React.FC<AddBudgetModalProps> = ({ isOpen, onClose, onAddB
                                 className="w-full bg-white dark:bg-brand-primary border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-brand-accent focus:outline-none transition"
                             >
                                 <option value="" disabled>{t('modals.addBudget.selectCategory')}</option>
-                                {budgetableCategories.map(cat => (
+                                {(\ ?? []).map(cat => (
                                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                                 ))}
                             </select>
@@ -223,3 +223,4 @@ const AddBudgetModal: React.FC<AddBudgetModalProps> = ({ isOpen, onClose, onAddB
 };
 
 export default AddBudgetModal;
+

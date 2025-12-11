@@ -161,3 +161,4 @@ const ImportTransactionsModal: React.FC<ImportTransactionsModalProps> = ({ isOpe
 };
 
 export default ImportTransactionsModal;
+

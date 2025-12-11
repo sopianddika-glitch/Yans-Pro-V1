@@ -101,7 +101,7 @@ const LanguageManager: React.FC<{
                 <fieldset>
                     <legend className="sr-only">{t('settingsPage.language.select')}</legend>
                     <div className="space-y-2">
-                        {filteredLanguages.map((lang) => (
+                        {(\ ?? []).map((lang) => (
                              <label key={lang.code} htmlFor={`lang-${lang.code}`} className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${currentLocale === lang.code ? 'bg-brand-accent text-white' : 'bg-gray-50 dark:bg-brand-primary hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
                                 <input
                                     type="radio"
@@ -139,7 +139,7 @@ const ProfileManager: React.FC<{
                 </button>
             </div>
             <ul className="space-y-3">
-                {profiles.map(profile => (
+                {(\ ?? []).map(profile => (
                      <li key={profile.id} className={`bg-gray-50 dark:bg-brand-primary p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${profile.id === activeProfileId ? 'ring-2 ring-brand-accent shadow-md' : 'border border-gray-200 dark:border-gray-700'}`}>
                         <div className="flex items-center gap-4 min-w-0">
                              <div className={`flex-shrink-0 h-12 w-12 flex items-center justify-center rounded-full ${profile.id === activeProfileId ? 'bg-brand-accent text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}`}>
@@ -223,7 +223,7 @@ const AddCategoryForm: React.FC<{
                     <label htmlFor="cat-parent" className="block text-sm font-medium text-gray-600 dark:text-brand-muted mb-1">{t('settingsPage.categories.parent')}</label>
                     <select id="cat-parent" value={parentId || ''} onChange={e => setParentId(e.target.value || null)} className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-brand-accent focus:outline-none transition" disabled={parentCandidates.length === 0}>
                         <option value="">{t('settingsPage.categories.parentGroup')}</option>
-                        {parentCandidates.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                        {(\ ?? []).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                 </div>
             </div>
@@ -314,7 +314,7 @@ const CategoryManager: React.FC<{
                             className="w-full text-sm bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-500 rounded-md py-1 px-2 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-brand-accent focus:outline-none"
                         >
                             <option value="">{t('settingsPage.categories.parentGroup')}</option>
-                            {parentCandidates.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                            {(\ ?? []).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                         </select>
                     </div>
                  )}
@@ -323,7 +323,7 @@ const CategoryManager: React.FC<{
     }
 
     const renderCategories = (cats: Category[], level = 0) => {
-        const categoryMap = new Map(cats.map(c => [c.id, {...c, children: [] as Category[]}]));
+        const categoryMap = new Map((\ ?? []).map(c => [c.id, {...c, children: [] as Category[]}]));
         const roots: (Category & { children: Category[] })[] = [];
         for (const cat of cats) {
             const mappedCat = categoryMap.get(cat.id)!;
@@ -334,7 +334,7 @@ const CategoryManager: React.FC<{
             }
         }
 
-        return roots.map(cat => (
+        return (\ ?? []).map(cat => (
             <React.Fragment key={cat.id}>
                 <CategoryItem category={cat} level={level} />
                 {cat.children && cat.children.length > 0 && <ul className="space-y-2 mt-2">{renderCategories(cat.children, level + 1)}</ul>}
@@ -435,7 +435,7 @@ const RecurringTransactionManager: React.FC<{
                 </button>
             </div>
             <ul className="space-y-3">
-                {recurringTransactions.map(rule => (
+                {(\ ?? []).map(rule => (
                     <li key={rule.id} className="bg-gray-50 dark:bg-brand-primary p-4 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border border-gray-200 dark:border-gray-700 shadow-sm hover:border-brand-accent/50 transition-colors">
                         <div className="flex items-center gap-4 min-w-0">
                             <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
@@ -691,7 +691,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 ) : (
                     // Grid View (App Drawer)
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {settingsApps.map(app => (
+                        {(\ ?? []).map(app => (
                             <button
                                 key={app.id}
                                 onClick={() => setActiveSection(app.id)}

@@ -46,7 +46,7 @@ const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ theme, onSetTheme }) => {
             {isOpen && (
                 <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-brand-secondary rounded-lg shadow-2xl z-40 border border-gray-200 dark:border-gray-700">
                     <div className="p-1">
-                        {themeOptions.map(option => (
+                        {(\ ?? []).map(option => (
                              <button
                                 key={option.value}
                                 onClick={() => handleSelectTheme(option.value)}

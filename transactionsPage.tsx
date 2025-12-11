@@ -97,7 +97,7 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({ transactions, curre
         if (selectedIds.size === filteredAndSortedTransactions.length) {
             setSelectedIds(new Set());
         } else {
-            setSelectedIds(new Set(filteredAndSortedTransactions.map(t => t.id)));
+            setSelectedIds(new Set((\ ?? []).map(t => t.id)));
         }
     };
 
@@ -117,7 +117,7 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({ transactions, curre
 
     const handleExportCSV = () => {
         const headers = ["ID", "Date", "Description", "Amount", "Type", "Category", "Currency", "InvoiceID"];
-        const rows = filteredAndSortedTransactions.map(t => 
+        const rows = (\ ?? []).map(t => 
             [t.id, new Date(t.date).toISOString(), `"${t.description.replace(/"/g, '""')}"`, t.amount, t.type, t.category, currency, t.invoiceId || ''].join(',')
         );
 
@@ -239,7 +239,7 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({ transactions, curre
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                            {filteredAndSortedTransactions.map((transaction) => (
+                            {(\ ?? []).map((transaction) => (
                                 <tr key={transaction.id} className={`hover:bg-gray-50 dark:hover:bg-gray-800/40 ${selectedIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}>
                                     <td className="py-4 pl-4 pr-3 sm:pl-6">
                                         <input type="checkbox"
@@ -282,7 +282,7 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({ transactions, curre
 
                 {/* Mobile Card View */}
                 <div className="md:hidden p-4 space-y-4">
-                     {filteredAndSortedTransactions.map((transaction) => (
+                     {(\ ?? []).map((transaction) => (
                         <div key={transaction.id} className={`p-4 rounded-lg shadow-sm border ${selectedIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20 border-brand-accent' : 'bg-gray-50 dark:bg-brand-primary border-gray-200 dark:border-gray-700'}`}>
                             <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-3">
@@ -328,3 +328,4 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({ transactions, curre
 };
 
 export default TransactionsPage;
+

@@ -50,7 +50,7 @@ const FinancialInsight: React.FC<FinancialInsightProps> = ({ transactions, summa
   // Helper to parse bold text within a string
   const parseBold = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*)/g);
-    return parts.map((part, i) => {
+    return (\ ?? []).map((part, i) => {
       if (part.startsWith('**') && part.endsWith('**')) {
         return <strong key={i} className="font-semibold text-gray-900 dark:text-white">{part.slice(2, -2)}</strong>;
       }
@@ -108,7 +108,7 @@ const FinancialInsight: React.FC<FinancialInsightProps> = ({ transactions, summa
                 {t('ai.askQuery')}
             </label>
             <div className="flex flex-wrap gap-2">
-              {suggestedQueries.map(sq => (
+              {(\ ?? []).map(sq => (
                  <button 
                     key={sq.key} 
                     onClick={() => handleSuggestedQueryClick(sq.text)} 
@@ -173,7 +173,7 @@ const FinancialInsight: React.FC<FinancialInsightProps> = ({ transactions, summa
                             <span>🔍</span> {t('ai.sources')}
                         </h4>
                         <ul className="space-y-1">
-                            {sources.map((source, idx) => (
+                            {(\ ?? []).map((source, idx) => (
                                 <li key={idx} className="truncate">
                                     <a 
                                         href={source.uri} 
@@ -203,3 +203,4 @@ const FinancialInsight: React.FC<FinancialInsightProps> = ({ transactions, summa
 };
 
 export default FinancialInsight;
+

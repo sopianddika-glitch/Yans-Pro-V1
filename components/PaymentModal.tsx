@@ -57,7 +57,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onConfirm,
                 <div className="px-6 pb-2">
                     <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-2 uppercase">Quick Cash</p>
                     <div className="grid grid-cols-2 gap-3">
-                        {quickAmounts.map(amount => (
+                        {(\ ?? []).map(amount => (
                             <button
                                 key={amount}
                                 onClick={onConfirm} // Logic for cash change can be added here
@@ -91,3 +91,4 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onConfirm,
 };
 
 export default PaymentModal;
+

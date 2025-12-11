@@ -114,7 +114,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ products, currency, onOpenM
 
             {filteredProducts.length > 0 ? (
                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {filteredProducts.map(product => (
+                    {(\ ?? []).map(product => (
                         <ProductCard 
                             key={product.id} 
                             product={product} 
@@ -146,3 +146,4 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ products, currency, onOpenM
 };
 
 export default ProductsPage;
+

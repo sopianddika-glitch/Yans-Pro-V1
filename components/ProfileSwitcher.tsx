@@ -48,7 +48,7 @@ const ProfileSwitcher: React.FC<ProfileSwitcherProps> = ({ activeProfile, profil
                     <div className="p-2">
                         <p className="px-2 py-1 text-xs font-semibold text-gray-500 dark:text-brand-muted uppercase">Switch Profile</p>
                         <ul className="max-h-60 overflow-y-auto">
-                            {profiles.map(profile => (
+                            {(\ ?? []).map(profile => (
                                 <li key={profile.id}>
                                     <button
                                         onClick={() => handleSwitch(profile.id)}

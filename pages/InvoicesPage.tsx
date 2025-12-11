@@ -132,7 +132,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                                {filteredAndSortedInvoices.map((invoice) => {
+                                {(\ ?? []).map((invoice) => {
                                     const total = invoice.items.reduce((sum, i) => sum + i.quantity * i.price, 0);
                                     return (
                                     <tr key={invoice.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
@@ -153,7 +153,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
 
                     {/* Mobile Card View */}
                     <div className="md:hidden p-4 space-y-4">
-                        {filteredAndSortedInvoices.map((invoice) => {
+                        {(\ ?? []).map((invoice) => {
                             const total = invoice.items.reduce((sum, i) => sum + i.quantity * i.price, 0);
                             return (
                                 <div key={invoice.id} className="p-4 rounded-lg shadow-sm border bg-gray-50 dark:bg-brand-primary border-gray-200 dark:border-gray-700">
@@ -195,3 +195,4 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
 };
 
 export default InvoicesPage;
+

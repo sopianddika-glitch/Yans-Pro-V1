@@ -17,3 +17,25 @@ Thumbs.db
 *.bak*
 *.cleanbak*
 *_fix_*
+# local / build
+node_modules/
+dist/
+
+# auto-fix backups we created
+*.bak
+*.bak.autofix
+*.bak.wsfix
+
+# OS
+.DS_Store
+# local / build
+node_modules/
+dist/
+
+# auto-fix backups we created
+*.bak
+*.bak.autofix
+*.bak.wsfix
+
+# OS
+.DS_Store

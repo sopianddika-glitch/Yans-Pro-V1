@@ -65,7 +65,7 @@ const ClientSelectorModal: React.FC<ClientSelectorModalProps> = ({ isOpen, onClo
                                 placeholder={t('modals.clientSelector.clientNamePlaceholder')}
                             />
                             <datalist id="existing-clients">
-                                {existingClients.map(client => <option key={client} value={client} />)}
+                                {(\ ?? []).map(client => <option key={client} value={client} />)}
                             </datalist>
                         </div>
                         
@@ -90,3 +90,4 @@ const ClientSelectorModal: React.FC<ClientSelectorModalProps> = ({ isOpen, onClo
 };
 
 export default ClientSelectorModal;
+

@@ -26,14 +26,14 @@ const BudgetsPage: React.FC<BudgetsPageProps> = ({ budgets, categories, transact
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
 
-    const categoryMap = useMemo(() => new Map(categories.map(c => [c.id, c])), [categories]);
+    const categoryMap = useMemo(() => new Map((\ ?? []).map(c => [c.id, c])), [categories]);
 
     const budgetDetails = useMemo(() => {
         const now = new Date();
         const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
         const daysRemaining = daysInMonth - now.getDate();
 
-        return budgets.map(budget => {
+        return (\ ?? []).map(budget => {
             const budgetCategory = categoryMap.get(budget.categoryId);
             if (!budgetCategory) return null;
 
@@ -155,7 +155,7 @@ const BudgetsPage: React.FC<BudgetsPageProps> = ({ budgets, categories, transact
 
                     {/* Budget Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {budgetDetails.map(budget => {
+                        {(\ ?? []).map(budget => {
                             const isOverBudget = budget.spent > budget.amount;
                             const isWarning = !isOverBudget && budget.percentage > 85;
                             
@@ -263,3 +263,4 @@ const BudgetsPage: React.FC<BudgetsPageProps> = ({ budgets, categories, transact
 };
 
 export default BudgetsPage;
+
