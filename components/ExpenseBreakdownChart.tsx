@@ -67,7 +67,7 @@ const ExpenseBreakdownChart: React.FC<ExpenseBreakdownChartProps> = ({ transacti
                                 );
                             }}
                         >
-                            {(entries ?? []).map((entry, index) => (
+                            {(data ?? []).map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
