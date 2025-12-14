@@ -21,7 +21,9 @@ const AppContainer = () => {
   );
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
+    // Register service worker only in production/preview builds.
+    // During development the SW interferes with HMR and cached assets.
+    if ('serviceWorker' in navigator && import.meta.env.PROD) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then(registration => {
           console.log('SW registered: ', registration);

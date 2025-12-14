@@ -21,14 +21,14 @@
       "short_name": "Transaction",
       "description": "Quickly add a new income or expense.",
       "url": "/index.html?action=new_transaction",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "favicon.ico", "sizes": "48x48" }]
     },
     {
       "name": "New Invoice",
       "short_name": "Invoice",
       "description": "Create and send a new invoice.",
       "url": "/index.html?action=new_invoice",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "favicon.ico", "sizes": "48x48" }]
     }
   ]
 }
