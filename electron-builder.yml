@@ -17,6 +17,12 @@ win:
     - nsis
     - msi
   icon: "build/icon.ico"
+  # For signing, set the environment variables `CSC_LINK` (local path or URL
+  # to the PFX) and `CSC_KEY_PASSWORD` (the PFX password). Do NOT commit
+  # private keys to the repository.
+  # If the publisher name cannot be auto-extracted from the certificate,
+  # specify it here as a fallback:
+  publisherName: "YansDev"
 
 nsis:
   oneClick: false

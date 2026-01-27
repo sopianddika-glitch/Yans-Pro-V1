@@ -21,6 +21,10 @@ Thumbs.db
 node_modules/
 dist/
 
+# Do not commit PFX/key files
+build/*.pfx
+build/*.p12
+
 # auto-fix backups we created
 *.bak
 *.bak.autofix
