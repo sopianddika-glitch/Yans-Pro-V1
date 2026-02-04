@@ -24,7 +24,7 @@ const ProductCard: React.FC<{ product: Product; currency: string; onEdit: () => 
     const stockCount = product.trackStock ? product.stock : null;
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md dark:shadow-lg flex flex-col justify-between transform hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+        <div className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md dark:shadow-lg flex flex-col justify-between transform hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group min-w-0">
             {isLowStock && (
                 <div className="absolute top-0 right-0 bg-brand-red text-white text-xs font-bold px-2 py-1 rounded-bl-lg z-10">
                     {t('productsPage.lowStock')}
@@ -32,7 +32,7 @@ const ProductCard: React.FC<{ product: Product; currency: string; onEdit: () => 
             )}
             <div>
                 <div className="flex justify-between items-start gap-2">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex-grow line-clamp-1" title={product.name}>{product.name}</h3>
+                    <h3 className="text-base sm:text-lg font-bold text-gray-800 dark:text-white flex-grow line-clamp-1" title={product.name}>{product.name}</h3>
                     <div className="flex items-center flex-shrink-0 pt-1">
                         <button onClick={(e) => { e.stopPropagation(); onEdit(); }} className="p-1 text-gray-500 dark:text-gray-400 hover:text-brand-accent transition-colors"><EditIcon className="w-4 h-4" /></button>
                         <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="p-1 text-gray-500 dark:text-gray-400 hover:text-brand-red transition-colors"><DeleteIcon className="w-4 h-4" /></button>
@@ -49,10 +49,10 @@ const ProductCard: React.FC<{ product: Product; currency: string; onEdit: () => 
                     )}
                 </div>
                 {product.sku && <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 font-mono">SKU: {product.sku}</p>}
-                {product.description && <p className="text-sm text-gray-500 dark:text-brand-muted mt-2 line-clamp-2">{product.description}</p>}
+                {product.description && <p className="text-xs sm:text-sm text-gray-500 dark:text-brand-muted mt-2 line-clamp-2">{product.description}</p>}
             </div>
             <div className="mt-4 text-right">
-                <p className="text-2xl font-bold text-gray-800 dark:text-white">{formatCurrency(product.price, currency)}</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">{formatCurrency(product.price, currency)}</p>
             </div>
         </div>
     );

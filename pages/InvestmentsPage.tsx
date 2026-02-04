@@ -374,14 +374,14 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
             </div>
 
             {/* Total Company Funds Card */}
-            <div className="bg-gray-900 dark:bg-black rounded-xl p-6 text-white shadow-xl relative overflow-hidden">
+            <div className="bg-gray-900 dark:bg-black rounded-xl p-6 text-white shadow-xl relative overflow-hidden min-w-0">
                 <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
                     <BriefcaseIcon className="w-32 h-32" />
                 </div>
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
                     <div>
-                        <p className="text-gray-400 text-sm font-semibold uppercase tracking-wider">{t('investmentsPage.totalFunds.title')}</p>
-                        <p className="text-4xl md:text-5xl font-bold mt-2">{formatCurrency(totalCompanyFunds)}</p>
+                        <p className="text-gray-400 text-xs sm:text-sm font-semibold uppercase tracking-wider">{t('investmentsPage.totalFunds.title')}</p>
+                        <p className="text-3xl sm:text-4xl md:text-5xl font-bold mt-2 break-words">{formatCurrency(totalCompanyFunds)}</p>
                     </div>
                     <div className="flex gap-8 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
                         <div>
@@ -401,11 +401,11 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
                 {/* 1. Wallet Card */}
-                <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md border-l-4 border-blue-500">
+                <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md border-l-4 border-blue-500 min-w-0">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <p className="text-sm font-semibold text-gray-500 dark:text-brand-muted uppercase tracking-wider">{t('investmentsPage.wallet')}</p>
-                            <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{formatCurrency(cashWallet.quantity)}</p>
+                            <p className="text-xs sm:text-sm font-semibold text-gray-500 dark:text-brand-muted uppercase tracking-wider">{t('investmentsPage.wallet')}</p>
+                            <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1 break-words">{formatCurrency(cashWallet.quantity)}</p>
                         </div>
                         <BriefcaseIcon className="w-8 h-8 text-blue-500 opacity-50" />
                     </div>
@@ -426,13 +426,13 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
                 </div>
 
                 {/* 2. Portfolio Stats */}
-                <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md flex flex-col justify-between">
+                <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md flex flex-col justify-between min-w-0">
                     <div>
-                        <p className="text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.stats.totalValue')}</p>
-                        <p className="text-3xl font-bold text-gray-900 dark:text-white">{formatCurrency(portfolioSummary.currentValue)}</p>
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.stats.totalValue')}</p>
+                        <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white break-words">{formatCurrency(portfolioSummary.currentValue)}</p>
                     </div>
                     <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                        <p className="text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.stats.totalReturn')}</p>
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.stats.totalReturn')}</p>
                         <div className="flex items-baseline gap-2">
                             <span className={`text-xl font-bold ${portfolioSummary.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                                 {portfolioSummary.totalReturn >= 0 ? '+' : ''}{formatCurrency(portfolioSummary.totalReturn)}
@@ -445,8 +445,8 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
                 </div>
 
                 {/* 3. Allocation Treemap */}
-                <div className="bg-white dark:bg-brand-secondary p-4 rounded-xl shadow-md h-64 flex flex-col overflow-hidden">
-                    <p className="text-sm font-semibold text-gray-500 dark:text-brand-muted mb-2 flex-shrink-0">Asset Allocation</p>
+                <div className="bg-white dark:bg-brand-secondary p-4 rounded-xl shadow-md h-64 flex flex-col overflow-hidden min-w-0">
+                    <p className="text-xs sm:text-sm font-semibold text-gray-500 dark:text-brand-muted mb-2 flex-shrink-0 break-words">Asset Allocation</p>
                     <div className="flex-grow w-full overflow-hidden min-h-[200px]" style={{ minHeight: '200px' }}>
                         <ResponsiveContainer width="100%" height="100%">
                             {treemapData.length > 0 ? (
@@ -549,9 +549,9 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
                         [1, 2, 3].map(i => <div key={i} className="h-40 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>)
                     ) : (
                         (recommendations ?? []).map((rec, idx) => (
-                            <div key={idx} className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md border-t-4 border-brand-accent flex flex-col hover:-translate-y-1 transition-transform">
+                            <div key={idx} className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md border-t-4 border-brand-accent flex flex-col hover:-translate-y-1 transition-transform min-w-0">
                                 <div className="flex justify-between items-start mb-2">
-                                    <h3 className="font-bold text-gray-800 dark:text-white">{rec.sector}</h3>
+                                    <h3 className="font-bold text-gray-800 dark:text-white truncate max-w-[10rem] sm:max-w-[14rem]">{rec.sector}</h3>
                                     <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${rec.sentiment === 'Bullish' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{rec.sentiment}</span>
                                 </div>
                                 <p className="text-sm text-gray-600 dark:text-gray-300 italic mb-4 flex-grow">&ldquo;{rec.reasoning}&rdquo;</p>
@@ -567,7 +567,7 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
                     <div className="bg-gray-50 dark:bg-brand-secondary/50 p-3 rounded-lg text-xs text-gray-500 dark:text-gray-400">
                         <span className="font-bold mr-2">Search Sources:</span>
                         {(recommendationSources ?? []).map((source, idx) => (
-                            <a key={idx} href={source.uri} target="_blank" rel="noopener noreferrer" className="mr-3 hover:text-brand-accent underline decoration-dotted">
+                            <a key={idx} href={source.uri} target="_blank" rel="noopener noreferrer" className="mr-3 hover:text-brand-accent underline decoration-dotted inline-block truncate max-w-[12rem]">
                                 {source.title}
                             </a>
                         ))}

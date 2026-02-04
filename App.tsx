@@ -160,11 +160,11 @@ const App: React.FC = () => {
     const [notification, setNotification] = useState<AppNotification | null>(null);
     
     // Client Editing State
-    const [editingClient, setEditingClient] = useState<Client | null>(null);
+    const [editingClient, _setEditingClient] = useState<Client | null>(null);
     const [isAddClientModalOpen, setIsAddClientModalOpen] = useState(false);
     
     // Budget Editing State
-    const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
+    const [editingBudget, _setEditingBudget] = useState<Budget | null>(null);
     const [isAddBudgetModalOpen, setIsAddBudgetModalOpen] = useState(false);
 
     // Audit State
@@ -640,11 +640,6 @@ const App: React.FC = () => {
         showNotification('success', 'Budget deleted.');
     }, [activeProfileId, budgets, setDataForProfile, showNotification]);
     
-    const handleOpenBudgetModal = useCallback((budget: Budget | null = null) => {
-        setEditingBudget(budget);
-        setIsAddBudgetModalOpen(true);
-    }, []);
-
     const handleAddProfile = useCallback((profileData: Omit<Profile, 'id'>) => {
         const newProfile = { ...profileData, id: 'prof-' + new Date().getTime(), settings: { allowEdit: true, showDeleted: false } };
         setProfiles(p => [...p, newProfile]);
@@ -668,11 +663,6 @@ const App: React.FC = () => {
     }, [profiles, activeProfileId, showNotification]);
 
     // Client Management Handlers
-    const handleOpenClientModal = useCallback((client: Client | null = null) => {
-        setEditingClient(client);
-        setIsAddClientModalOpen(true);
-    }, []);
-
     const handleAddClient = useCallback((clientData: Omit<Client, 'id' | 'createdAt'>) => {
         const newClient: Client = {
             ...clientData,
@@ -1162,7 +1152,7 @@ const App: React.FC = () => {
             default:
                 return <Dashboard transactions={transactions} invoices={invoices} recurringTransactions={recurringTransactions} budgets={budgets} categories={categories} summary={financialSummary} activeProfile={activeProfile} onAddTransactionClick={handleOpenAddTransaction} onAddFromReceiptClick={handleOpenScanner} onNavigateToInvoice={handleNavigateToInvoice} onNavigateToSettings={() => handleNavigate('settings')} onNavigate={handleNavigate} theme={theme} onOpenInstallModal={handleOpenInstallModal} />;
         }
-    }, [currentPage, transactions, invoices, financialSummary, activeProfile, handleOpenAddTransaction, handleOpenScanner, handleNavigateToInvoice, theme, handleDeleteTransactions, handleAddCategory, handleUpdateCategory, handleDeleteCategory, recurringTransactions, handleDeleteRecurringTransaction, handleOpenRecurringModal, profiles, activeProfileId, handleAddProfile, handleUpdateProfile, handleDeleteProfile, handleExportData, handleResetProfileData, budgets, categories, handleOpenBudgetModal, handleUpdateBudget, handleDeleteBudget, handleDeleteInvoice, handleSaveInvoice, editingInvoiceId, locale, goals, handleOpenGoalModal, handleDeleteGoal, handleOpenFundsModal, products, handleOpenProductModal, handleDeleteProduct, handleCharge, handleNavigateToInvoiceFromTransaction, handleNavigate, handleOpenClientSelectorForInvoice, handleOpenInstallModal, handleOpenImportModal, clients, handleOpenClientModal, handleUpdateClient, handleDeleteClient, investments, handleAddInvestment, handleDeleteInvestment, handleUpdateInvestmentPrices, handleBatchUpdateInvestments, handleOpenEditTransactionModal, handleDeleteInvoiceFromEditor, handleRestoreTransaction]);
+    }, [currentPage, transactions, invoices, financialSummary, activeProfile, handleOpenAddTransaction, handleOpenScanner, handleNavigateToInvoice, theme, handleDeleteTransactions, handleAddCategory, handleUpdateCategory, handleDeleteCategory, recurringTransactions, handleDeleteRecurringTransaction, handleOpenRecurringModal, profiles, activeProfileId, handleAddProfile, handleUpdateProfile, handleDeleteProfile, handleExportData, handleResetProfileData, budgets, categories, handleAddBudget, handleUpdateBudget, handleDeleteBudget, handleDeleteInvoice, handleSaveInvoice, editingInvoiceId, locale, goals, handleOpenGoalModal, handleDeleteGoal, handleOpenFundsModal, products, handleOpenProductModal, handleDeleteProduct, handleCharge, handleNavigateToInvoiceFromTransaction, handleNavigate, handleOpenClientSelectorForInvoice, handleOpenInstallModal, handleOpenImportModal, clients, handleAddClient, handleUpdateClient, handleDeleteClient, investments, handleAddInvestment, handleDeleteInvestment, handleUpdateInvestmentPrices, handleBatchUpdateInvestments, handleOpenEditTransactionModal, handleDeleteInvoiceFromEditor, handleRestoreTransaction]);
 
     if (isDataLoading) {
         return (

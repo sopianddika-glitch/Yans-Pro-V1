@@ -24,10 +24,10 @@ const GoalCard: React.FC<{ goal: Goal; currency: string; onEdit: () => void; onD
     if (percentage >= 100) progressBarColor = 'bg-brand-green';
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md dark:shadow-lg flex flex-col justify-between transform hover:-translate-y-1 transition-transform duration-300">
+        <div className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md dark:shadow-lg flex flex-col justify-between transform hover:-translate-y-1 transition-transform duration-300 min-w-0">
             <div>
                 <div className="flex justify-between items-start gap-2">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex-grow">{goal.name}</h3>
+                    <h3 className="text-base sm:text-lg font-bold text-gray-800 dark:text-white flex-grow break-words">{goal.name}</h3>
                     <div className="flex items-center flex-shrink-0">
                         <button onClick={(e) => { e.stopPropagation(); onEdit(); }} className="p-1 text-gray-500 dark:text-gray-400 hover:text-brand-accent transition-colors"><EditIcon className="w-4 h-4" /></button>
                         <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="p-1 text-gray-500 dark:text-gray-400 hover:text-brand-red transition-colors"><DeleteIcon className="w-4 h-4" /></button>
@@ -41,8 +41,8 @@ const GoalCard: React.FC<{ goal: Goal; currency: string; onEdit: () => void; onD
 
                 <div className="mt-4">
                     <div className="flex justify-between items-baseline mb-1">
-                        <span className="text-sm font-semibold text-gray-600 dark:text-gray-300">{formatCurrency(goal.currentAmount, currency)}</span>
-                        <span className="text-sm text-gray-500 dark:text-brand-muted">{formatCurrency(goal.targetAmount, currency)}</span>
+                    <span className="text-sm font-semibold text-gray-600 dark:text-gray-300 truncate max-w-[9rem]">{formatCurrency(goal.currentAmount, currency)}</span>
+                    <span className="text-sm text-gray-500 dark:text-brand-muted truncate max-w-[9rem]">{formatCurrency(goal.targetAmount, currency)}</span>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-brand-primary rounded-full h-3">
                         <div className={`${progressBarColor} h-3 rounded-full transition-width duration-500`} style={{ width: `${Math.min(percentage, 100)}%` }}></div>
