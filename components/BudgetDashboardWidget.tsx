@@ -64,7 +64,7 @@ const BudgetDashboardWidget: React.FC<BudgetDashboardWidgetProps> = ({ budgets, 
 
     if (budgets.length === 0) {
         return (
-            <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col justify-center items-center text-center min-h-[16rem]">
+            <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col justify-center items-center text-center min-h-[16rem] min-w-0">
                 <div className="p-3 bg-gray-100 dark:bg-brand-primary rounded-full mb-3">
                     <BudgetIcon className="w-6 h-6 text-gray-400" />
                 </div>
@@ -81,9 +81,9 @@ const BudgetDashboardWidget: React.FC<BudgetDashboardWidgetProps> = ({ budgets, 
     }
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col min-h-[16rem]">
+        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col min-h-[16rem] min-w-0">
             <div className="flex justify-between items-center mb-4 flex-shrink-0">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{t('budgetsPage.title')}</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 break-words">{t('budgetsPage.title')}</h3>
                 <button onClick={() => onNavigate('budgets')} className="p-1 text-gray-500 hover:text-brand-accent transition-colors">
                     <ChevronRightIcon className="w-5 h-5" />
                 </button>

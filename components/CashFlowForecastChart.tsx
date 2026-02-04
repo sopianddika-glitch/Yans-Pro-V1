@@ -127,10 +127,10 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
     };
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-96 flex flex-col">
+        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-96 flex flex-col min-w-0">
             <div className="flex justify-between items-start mb-4">
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2 break-words">
                         {t('dashboard.forecast.title')}
                         <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300 border border-purple-400">AI Beta</span>
                     </h3>

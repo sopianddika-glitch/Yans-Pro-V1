@@ -60,9 +60,9 @@ const UpcomingRecurring: React.FC<UpcomingRecurringProps> = ({ transactions, rec
 
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col">
+        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col min-w-0">
             <div className="flex justify-between items-center flex-shrink-0 mb-4">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{t('dashboard.upcomingRecurring.title')}</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 break-words">{t('dashboard.upcomingRecurring.title')}</h3>
                 <button onClick={onNavigateToSettings} className="p-1 text-gray-500 dark:text-brand-muted hover:text-black dark:hover:text-white" aria-label="Manage recurring transactions"><SettingsIcon className="h-5 w-5"/></button>
             </div>
             {upcomingPayments.length > 0 ? (
@@ -73,7 +73,7 @@ const UpcomingRecurring: React.FC<UpcomingRecurringProps> = ({ transactions, rec
                                 <RepeatIcon className="h-5 w-5 text-brand-accent"/>
                             </div>
                             <div className="flex-grow min-w-0">
-                                <p className="font-semibold text-gray-800 dark:text-gray-200 truncate">{payment.description}</p>
+                                <p className="font-semibold text-gray-800 dark:text-gray-200 truncate max-w-[12rem] sm:max-w-[16rem]">{payment.description}</p>
                                 <p className="text-sm text-gray-500 dark:text-brand-muted">{t('dashboard.upcomingRecurring.dueOn', { date: payment.nextDueDate.toLocaleDateString() })}</p>
                             </div>
                             <div className="flex-shrink-0 font-semibold text-red-600 dark:text-brand-red font-mono">

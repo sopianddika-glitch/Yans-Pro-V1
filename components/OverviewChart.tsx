@@ -2,6 +2,7 @@
 import React, { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Transaction, TransactionType, Theme } from '../types';
+import { useI18n } from '../hooks/useI18n';
 
 interface OverviewChartProps {
     transactions: Transaction[];
@@ -9,6 +10,7 @@ interface OverviewChartProps {
 }
 
 const OverviewChart: React.FC<OverviewChartProps> = ({ transactions, theme }) => {
+    const { t } = useI18n();
     const isDarkMode = useMemo(() => {
         if (theme === 'system') {
             return window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -41,8 +43,10 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ transactions, theme }) =>
     }, [transactions]);
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-96 flex flex-col">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex-shrink-0">Income vs Expenses Overview</h3>
+        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-96 flex flex-col min-w-0">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex-shrink-0 break-words">
+                {t('dashboard.overviewChart.title')}
+            </h3>
             <div className="flex-grow w-full overflow-hidden min-h-[300px]" style={{ minHeight: '300px' }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data} margin={{ top: 5, right: 20, left: 20, bottom: 40 }}>

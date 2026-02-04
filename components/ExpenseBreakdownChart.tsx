@@ -2,6 +2,7 @@
 import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { Transaction, TransactionType, Theme } from '../types';
+import { useI18n } from '../hooks/useI18n';
 
 interface ExpenseBreakdownChartProps {
     transactions: Transaction[];
@@ -11,6 +12,7 @@ interface ExpenseBreakdownChartProps {
 const COLORS = ['#2F81F7', '#2DA44E', '#E5534B', '#A371F7', '#DB6D28', '#087D9A'];
 
 const ExpenseBreakdownChart: React.FC<ExpenseBreakdownChartProps> = ({ transactions, theme }) => {
+    const { t } = useI18n();
     const isDarkMode = useMemo(() => {
         if (theme === 'system') {
             return window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -34,16 +36,16 @@ const ExpenseBreakdownChart: React.FC<ExpenseBreakdownChartProps> = ({ transacti
 
     if (data.length === 0) {
         return (
-            <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md dark:shadow-lg h-96 flex flex-col justify-center items-center">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Expense Breakdown</h3>
-                <p className="text-gray-500 dark:text-brand-muted">No expense data available.</p>
+            <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md dark:shadow-lg h-96 flex flex-col justify-center items-center min-w-0">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('dashboard.expenseChart.title')}</h3>
+                <p className="text-gray-500 dark:text-brand-muted">{t('dashboard.expenseChart.noData')}</p>
             </div>
         );
     }
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-96 flex flex-col">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex-shrink-0">Expense Breakdown</h3>
+        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-96 flex flex-col min-w-0">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex-shrink-0 break-words">{t('dashboard.expenseChart.title')}</h3>
             <div className="flex-grow w-full overflow-hidden min-h-[300px]" style={{ minHeight: '300px' }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 40 }}>

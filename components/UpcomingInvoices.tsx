@@ -48,8 +48,8 @@ const UpcomingInvoices: React.FC<UpcomingInvoicesProps> = ({ invoices, currency,
     };
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex-shrink-0">{t('dashboard.actionableInvoices.title')}</h3>
+        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col min-w-0">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex-shrink-0 break-words">{t('dashboard.actionableInvoices.title')}</h3>
             {relevantInvoices.length > 0 ? (
                 <ul className="space-y-4 overflow-y-auto flex-grow">
                     {relevantInvoices.map(invoice => {
@@ -61,7 +61,7 @@ const UpcomingInvoices: React.FC<UpcomingInvoicesProps> = ({ invoices, currency,
                             <li key={invoice.id} className="bg-gray-50 dark:bg-brand-primary p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                                 <div className="flex items-center justify-between gap-3">
                                     <div className="flex-grow truncate min-w-0">
-                                        <p className="font-semibold text-gray-800 dark:text-gray-200 truncate">{invoice.clientName}</p>
+                                        <p className="font-semibold text-gray-800 dark:text-gray-200 truncate max-w-[12rem] sm:max-w-[16rem]">{invoice.clientName}</p>
                                         <p className={`text-sm font-medium ${statusInfo.className}`}>{statusInfo.text} - <span className="font-mono">{new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(total)}</span></p>
                                     </div>
                                     <div className="flex items-center flex-shrink-0">

@@ -91,13 +91,13 @@ const FinancialInsight: React.FC<FinancialInsightProps> = ({ transactions, summa
   };
 
   return (
-    <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col border border-gray-100 dark:border-gray-800">
+    <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col border border-gray-100 dark:border-gray-800 min-w-0">
       <div className="flex items-center gap-3 mb-4 flex-shrink-0 border-b border-gray-100 dark:border-gray-700 pb-4">
         <div className="bg-brand-accent/10 p-2 rounded-lg">
             <SparklesIcon className="w-6 h-6 text-brand-accent" />
         </div>
         <div>
-            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">{t('ai.financialInsight')}</h3>
+            <h3 className="text-base sm:text-lg font-bold text-gray-800 dark:text-gray-100 break-words">{t('ai.financialInsight')}</h3>
             <p className="text-xs text-gray-500 dark:text-brand-muted">Powered by Gemini 2.5</p>
         </div>
       </div>

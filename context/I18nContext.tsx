@@ -35,7 +35,8 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children, locale }) 
         const fetchTranslations = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch(`/locales/${locale}.json`);
+                const baseUrl = import.meta.env.BASE_URL || '/';
+                const response = await fetch(`${baseUrl}locales/${locale}.json`);
                 if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
                 setTranslations(data);
@@ -43,7 +44,8 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children, locale }) 
                 console.error(`Could not load translations for ${locale}, falling back to 'en'`, error);
                 // Fallback to English if the desired locale fails
                 try {
-                    const response = await fetch(`/locales/en.json`);
+                    const baseUrl = import.meta.env.BASE_URL || '/';
+                    const response = await fetch(`${baseUrl}locales/en.json`);
                     if (!response.ok) throw new Error('Fallback translation failed');
                     const data = await response.json();
                     setTranslations(data);
