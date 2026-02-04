@@ -81,7 +81,7 @@ const PortfolioAdvisorModal: React.FC<PortfolioAdvisorModalProps> = ({ isOpen, o
                                         </div>
                                     </div>
                                     <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 leading-relaxed bg-gray-50 dark:bg-gray-800/50 p-3 rounded-md">
-                                        "{item.reasoning}"
+                                        &ldquo;{item.reasoning}&rdquo;
                                     </p>
                                 </div>
                             ))}

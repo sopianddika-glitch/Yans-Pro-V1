@@ -74,5 +74,5 @@ For local builds, set the `CSC_KEY_PASSWORD` environment variable before running
 - Timestamp server errors: try alternate servers (e.g., `http://timestamp.sectigo.com`).
 - If electron-builder cannot find cert: ensure `CSC_LINK` points to a valid file path or URL accessible in CI.
 
----
+----
 Generated: 2025-12-13

@@ -64,16 +64,16 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
     
     const isEditMode = !!recurringTransactionToEdit || !!transactionToEdit;
     
-    const getHierarchicalCategories = (type: TransactionType) => {
+    const getHierarchicalCategories = useCallback((type: TransactionType) => {
         const topLevel = categories.filter(c => c.type === type && !c.parentId);
         const grouped = categories.filter(c => c.type === type && c.parentId);
         return topLevel.map(parent => ({
             ...parent,
             children: grouped.filter(child => child.parentId === parent.id)
         }));
-    };
+    }, [categories]);
 
-    const availableCategories = useMemo(() => getHierarchicalCategories(type), [categories, type]);
+    const availableCategories = useMemo(() => getHierarchicalCategories(type), [getHierarchicalCategories, type]);
 
     const resetForm = useCallback(() => {
         const now = new Date();

@@ -1,13 +1,39 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF--8" />
-    <link rel="icon" href="./favicon.ico" sizes="any" />
-    <link rel="manifest" href="./manifest.json" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0D1117" />
-    <title>Yans Pro</title>
+    <meta name="description" content="A professional business finance tracker with AI-powered insights. Manage revenue, expenses, and profitability with ease." />
+    <meta name="keywords" content="finance, business, tracker, accounting, AI, insights, budgeting, invoicing" />
+    <meta name="author" content="Yans Pro Team" />
+    <meta name="theme-color" content="#2F81F7" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Yans Pro" />
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Yans Pro - AI-Powered Finance Tracker" />
+    <meta property="og:description" content="Professional business finance tracking with AI-powered insights" />
+    <meta property="og:url" content="https://sopianddika-glitch.github.io/Yans-Pro-V1/" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Yans Pro - Finance Tracker" />
+    <meta name="twitter:description" content="AI-powered business finance management" />
+
+    <!-- Preconnect to external resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="./favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./favicon.ico" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="./manifest.json" />
+
+    <title>Yans Pro - AI-Powered Finance Tracker</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -20,30 +46,18 @@
               'brand-accent': '#2F81F7',
               'brand-green': '#2DA44E',
               'brand-red': '#E5534B',
-              'brand-muted': '#8B949E',
-            },
+              'brand-muted': '#8B949E'
+            }
           }
         }
-      }
+      };
     </script>
-<script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.1.1/",
-    "recharts": "https://esm.sh/recharts@^3.1.0",
-    "react/": "https://esm.sh/react@^19.1.1/",
-    "react": "https://esm.sh/react@^19.1.1",
-    "@google/genai": "https://esm.sh/@google/genai@^1.12.0",
-    "html5-qrcode": "https://esm.sh/html5-qrcode@2.3.8",
-    "vite": "https://aistudiocdn.com/vite@^7.2.6",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
-    "webworker": "https://aistudiocdn.com/webworker@^0.8.4"
-  }
-}
-</script>
-</head>
+  </head>
   <body class="bg-white dark:bg-brand-primary transition-colors duration-300">
     <div id="root"></div>
+    <noscript>
+      <p>This application requires JavaScript to be enabled. Please enable JavaScript in your browser settings.</p>
+    </noscript>
     <script type="module" src="./index.tsx"></script>
   </body>
 </html>

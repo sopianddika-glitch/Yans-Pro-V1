@@ -17,7 +17,7 @@ export class CanvasRenderer {
         if ('OffscreenCanvas' in window && localStorage.getItem('FEATURE_ULTRA_SMOOTH') === 'true') {
             try {
                 // Transfer control to worker
-                const offscreen = this.canvas.transferControlToOffscreen();
+                this.canvas.transferControlToOffscreen();
                 // This would typically load a separate rendering worker
                 // For this simplified implementation, we just log success
                 console.log('Renderer: Initialized OffscreenCanvas mode');

@@ -12,7 +12,7 @@ interface AddInvestmentModalProps {
     currency: string;
 }
 
-const AddInvestmentModal: React.FC<AddInvestmentModalProps> = ({ isOpen, onClose, onAdd, currency }) => {
+const AddInvestmentModal: React.FC<AddInvestmentModalProps> = ({ isOpen, onClose, onAdd }) => {
     const { t } = useI18n();
     const [symbol, setSymbol] = useState('');
     const [name, setName] = useState('');

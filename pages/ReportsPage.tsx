@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { Transaction, FinancialSummary, TransactionType } from '../types';
-import { ReportsIcon, XIcon, PrintIcon } from '../components/Icons';
+import { XIcon, PrintIcon } from '../components/Icons';
 import { useI18n } from '../hooks/useI18n';
 
 // --- HELPER FUNCTIONS & SHARED COMPONENTS ---

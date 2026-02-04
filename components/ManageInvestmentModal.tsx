@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Investment } from '../types';
 import { XIcon } from './Icons';
 import { useI18n } from '../hooks/useI18n';

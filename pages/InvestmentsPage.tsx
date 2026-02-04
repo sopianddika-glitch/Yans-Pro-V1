@@ -1,7 +1,7 @@
 ﻿
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Investment, MarketTrendRecommendation, PortfolioSuggestion } from '../types';
-import { AddIcon, TrendingUpIcon, SparklesIcon, DeleteIcon, ProfitIcon, BalanceIcon, BriefcaseIcon, CheckIcon } from '../components/Icons';
+import { AddIcon, TrendingUpIcon, SparklesIcon, DeleteIcon, BriefcaseIcon } from '../components/Icons';
 import { useI18n } from '../hooks/useI18n';
 import AddInvestmentModal from '../components/AddInvestmentModal';
 import ManageInvestmentModal from '../components/ManageInvestmentModal';
@@ -159,13 +159,6 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
     // Manage Modal State
     const [managingAsset, setManagingAsset] = useState<Investment | null>(null);
 
-    // Initial load for recommendations
-    useEffect(() => {
-        if (recommendations.length === 0) {
-            handleRefreshRecommendations();
-        }
-    }, []);
-
     // Ensure Cash Wallet Exists
     const cashWallet = useMemo(() => {
         return investments.find(inv => inv.type === 'Cash') || {
@@ -182,15 +175,13 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
     // --- Derived Data ---
 
     const portfolioSummary = useMemo(() => {
-        let totalInvested = 0;
         let currentValue = 0;
 
         investments.forEach(inv => {
             if (inv.type === 'Cash') {
                 currentValue += inv.quantity; // Cash is 1:1
-                totalInvested += inv.quantity; 
+                // Cash is 1:1, no cost basis needed here
             } else {
-                totalInvested += inv.avgBuyPrice * inv.quantity;
                 currentValue += (inv.currentPrice || inv.avgBuyPrice) * inv.quantity;
             }
         });
@@ -224,13 +215,20 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
         setIsRefreshing(false);
     };
 
-    const handleRefreshRecommendations = async () => {
+    const handleRefreshRecommendations = useCallback(async () => {
         setIsLoadingRecs(true);
         const { recommendations: recs, sources } = await getMarketRecommendations();
         setRecommendations(recs);
         setRecommendationSources(sources);
         setIsLoadingRecs(false);
-    };
+    }, []);
+
+    // Initial load for recommendations
+    useEffect(() => {
+        if (recommendations.length === 0) {
+            handleRefreshRecommendations();
+        }
+    }, [handleRefreshRecommendations, recommendations.length]);
 
     const handleGetAiAdvice = async () => {
         setIsAdvisorOpen(true);
@@ -267,7 +265,7 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
         const cost = qty * price;
         
         // Update Cash
-        let updatedCash = { ...cashWallet };
+        const updatedCash = { ...cashWallet };
         updatedCash.quantity -= cost;
         if (updatedCash.id === 'virtual-cash') updatedCash.id = 'inv-cash-' + new Date().getTime();
 
@@ -292,7 +290,7 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
         const proceeds = qty * price;
 
         // Update Cash
-        let updatedCash = { ...cashWallet };
+        const updatedCash = { ...cashWallet };
         updatedCash.quantity += proceeds;
         if (updatedCash.id === 'virtual-cash') updatedCash.id = 'inv-cash-' + new Date().getTime();
 
@@ -325,8 +323,16 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
     const formatCurrency = (val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(val);
 
     // Custom Treemap Content
-    const CustomizedContent = (props: any) => {
-        const { root, depth, x, y, width, height, index, name, size } = props;
+    type TreemapContentProps = {
+        x?: number;
+        y?: number;
+        width?: number;
+        height?: number;
+        index?: number;
+        name?: string;
+    };
+
+    const CustomizedContent = ({ x = 0, y = 0, width = 0, height = 0, index = 0, name = '' }: TreemapContentProps) => {
         return (
             <g>
                 <rect x={x} y={y} width={width} height={height} style={{ fill: COLORS[index % COLORS.length], stroke: '#fff', strokeWidth: 2, opacity: 0.9 }} />
@@ -449,10 +455,10 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
                                     dataKey="size"
                                     aspectRatio={4 / 3}
                                     stroke="#fff"
-                                    content={<CustomizedContent />}
+                                    content={CustomizedContent}
                                 >
                                     <RechartsTooltip 
-                                        formatter={(value: any) => formatCurrency(value)} 
+                                        formatter={(value: number | string) => formatCurrency(Number(value))} 
                                         contentStyle={{backgroundColor: '#1F2937', color: 'white', borderRadius: '8px', border: 'none'}}
                                     />
                                 </Treemap>
@@ -542,13 +548,13 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
                     {isLoadingRecs ? (
                         [1, 2, 3].map(i => <div key={i} className="h-40 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>)
                     ) : (
-                        (recs ?? []).map((rec, idx) => (
+                        (recommendations ?? []).map((rec, idx) => (
                             <div key={idx} className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md border-t-4 border-brand-accent flex flex-col hover:-translate-y-1 transition-transform">
                                 <div className="flex justify-between items-start mb-2">
                                     <h3 className="font-bold text-gray-800 dark:text-white">{rec.sector}</h3>
                                     <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${rec.sentiment === 'Bullish' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{rec.sentiment}</span>
                                 </div>
-                                <p className="text-sm text-gray-600 dark:text-gray-300 italic mb-4 flex-grow">"{rec.reasoning}"</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300 italic mb-4 flex-grow">&ldquo;{rec.reasoning}&rdquo;</p>
                                 <div className="flex justify-between text-xs font-semibold pt-3 border-t border-gray-100 dark:border-gray-700">
                                     <span className={`${rec.riskLevel === 'High' ? 'text-red-500' : 'text-blue-500'}`}>{rec.riskLevel} Risk</span>
                                     <span className="text-gray-800 dark:text-white">{rec.suggestedAction}</span>
@@ -560,7 +566,7 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
                 {recommendationSources.length > 0 && !isLoadingRecs && (
                     <div className="bg-gray-50 dark:bg-brand-secondary/50 p-3 rounded-lg text-xs text-gray-500 dark:text-gray-400">
                         <span className="font-bold mr-2">Search Sources:</span>
-                        {(recs ?? []).map((source, idx) => (
+                        {(recommendationSources ?? []).map((source, idx) => (
                             <a key={idx} href={source.uri} target="_blank" rel="noopener noreferrer" className="mr-3 hover:text-brand-accent underline decoration-dotted">
                                 {source.title}
                             </a>

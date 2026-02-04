@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Product, Page } from '../types';
+import { Product } from '../types';
 import { AddIcon, TagIcon, EditIcon, DeleteIcon, CameraIcon } from '../components/Icons';
 import EmptyState from '../components/EmptyState';
 import { useI18n } from '../hooks/useI18n';
@@ -11,7 +11,6 @@ interface ProductsPageProps {
     currency: string;
     onOpenModal: (product: Product | null) => void;
     onDelete: (id: string) => void;
-    onNavigate: (page: Page) => void;
 }
 
 const formatCurrency = (value: number, currency: string) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(value);
@@ -45,7 +44,7 @@ const ProductCard: React.FC<{ product: Product; currency: string; onEdit: () => 
                     </span>
                     {product.trackStock && (
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${isLowStock ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'}`}>
-                            {t('productsPage.stock', {count: stockCount})}
+                            {t('productsPage.stock', {count: stockCount ?? 0})}
                         </span>
                     )}
                 </div>
@@ -59,7 +58,7 @@ const ProductCard: React.FC<{ product: Product; currency: string; onEdit: () => 
     );
 };
 
-const ProductsPage: React.FC<ProductsPageProps> = ({ products, currency, onOpenModal, onDelete, onNavigate }) => {
+const ProductsPage: React.FC<ProductsPageProps> = ({ products, currency, onOpenModal, onDelete }) => {
     const { t } = useI18n();
     const [searchTerm, setSearchTerm] = useState('');
     const [isScannerOpen, setIsScannerOpen] = useState(false);

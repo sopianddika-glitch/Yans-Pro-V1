@@ -18,7 +18,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onConfirm,
 
     const quickAmounts = useMemo(() => {
         // Generate smart quick cash suggestions
-        const suggestions = [];
+        const suggestions: number[] = [];
         // Exact
         suggestions.push(total);
         

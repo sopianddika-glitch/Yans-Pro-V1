@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Invoice, InvoiceItem, InvoiceStatus, Profile, Product } from '../types';
 import { AddIcon, DeleteIcon, PrintIcon, CheckIcon } from '../components/Icons';
 import InvoicePDFTemplate from '../components/InvoicePDFTemplate';
@@ -35,7 +35,7 @@ const InvoiceEditorPage: React.FC<InvoiceEditorPageProps> = ({ onSave, onBack, e
             setClientName(existingInvoice.clientName);
             setIssueDate(existingInvoice.issueDate);
             setDueDate(existingInvoice.dueDate);
-            setItems(existingInvoice.items.map(({id, ...rest}) => rest)); // remove id for editing
+            setItems(existingInvoice.items.map(({ id: _id, ...rest }) => rest)); // remove id for editing
             setNotes(existingInvoice.notes || '');
             setStatus(existingInvoice.status);
         } else {

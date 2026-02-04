@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Category, TransactionType, RecurringTransaction, Frequency, Profile, SupportedLocale, Language } from '../types';
+import { Category, TransactionType, RecurringTransaction, Profile, SupportedLocale, Language } from '../types';
 import { EditIcon, DeleteIcon, SaveIcon, AddIcon, XIcon, FolderIcon, RepeatIcon, BriefcaseIcon, ExportIcon, ImportIcon, AlertTriangleIcon, LanguageIcon, ChevronLeftIcon, SettingsIcon, DesktopComputerIcon } from '../components/Icons';
 import ProfileManagerModal from '../components/ProfileManagerModal';
 import { useI18n } from '../hooks/useI18n';
@@ -375,7 +375,7 @@ const CategoryManager: React.FC<{
                             <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-full text-red-600 dark:text-red-400">
                                 <DeleteIcon className="w-6 h-6" />
                             </div>
-                            <h3 className="text-lg font-bold text-gray-800 dark:text-white">{t('general.delete')} "{categoryToDelete.name}"?</h3>
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-white">{t('general.delete')} &ldquo;{categoryToDelete.name}&rdquo;?</h3>
                         </div>
                         <p className="text-gray-600 dark:text-gray-300 text-sm mb-6">
                             {t('settingsPage.categories.deleteConfirm')}
@@ -413,7 +413,7 @@ const RecurringTransactionManager: React.FC<{
 
     const formatFrequency = (rule: RecurringTransaction) => {
         const intervalText = rule.interval > 1 ? `${rule.interval} ` : '';
-        let frequencyText = t(`modals.addTransaction.${rule.frequency}`);
+        const frequencyText = t(`modals.addTransaction.${rule.frequency}`);
         return t('settingsPage.recurring.repeats', {
             interval: intervalText,
             frequency: frequencyText

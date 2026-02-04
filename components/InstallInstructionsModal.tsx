@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { XIcon, WindowsIcon, MacOSIcon, GooglePlayIcon, AppleIcon, InstallIcon, AddIcon } from './Icons';
 import { useI18n } from '../hooks/useI18n';
 

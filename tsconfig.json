@@ -21,6 +21,17 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "**/*.bak*",
+    "**/*.bom.bak",
+    "**/*.autobak.*",
+    "**/*.fixbak.*",
+    "**/*.forcebak.*",
+    "**/*.scriptsfix.*"
+  ]
 }

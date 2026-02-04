@@ -3,7 +3,7 @@ import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { Product, CartItem, ProductType, Page } from '../types';
 import { useI18n } from '../hooks/useI18n';
 import EmptyState from '../components/EmptyState';
-import { AddIcon, DeleteIcon, StorefrontIcon, TagIcon, CameraIcon, XIcon, ChevronDownIcon, CheckIcon } from '../components/Icons';
+import { DeleteIcon, StorefrontIcon, TagIcon, CameraIcon, ChevronDownIcon, CheckIcon } from '../components/Icons';
 import BarcodeScannerModal from '../components/BarcodeScannerModal';
 
 interface PosPageProps {
@@ -215,7 +215,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
                                         {product.name}
                                     </h3>
                                     {product.trackStock && (
-                                        <p className="text-[10px] sm:text-xs text-gray-500 dark:text-brand-muted mt-1 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{t('productsPage.stock', {count: product.stock})}</p>
+                                        <p className="text-[10px] sm:text-xs text-gray-500 dark:text-brand-muted mt-1 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{t('productsPage.stock', {count: product.stock ?? 0})}</p>
                                     )}
                                 </div>
                                 <div className="bg-gray-50 dark:bg-brand-primary/50 py-2 px-3 w-full border-t border-gray-100 dark:border-gray-700/50">
@@ -228,7 +228,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
                     })}
                     {filteredProducts.length === 0 && (
                         <div className="col-span-full py-10 text-center text-gray-500 dark:text-gray-400">
-                            <p>No products found matching "{searchTerm}"</p>
+                            <p>No products found matching &ldquo;{searchTerm}&rdquo;</p>
                         </div>
                     )}
                 </div>

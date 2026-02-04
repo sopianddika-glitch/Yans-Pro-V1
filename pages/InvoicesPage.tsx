@@ -33,7 +33,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
     const [sortConfig, setSortConfig] = useState<{ key: keyof Invoice | 'total'; direction: 'ascending' | 'descending' }>({ key: 'issueDate', direction: 'descending' });
 
     const filteredAndSortedInvoices = useMemo(() => {
-        let sortedInvoices = [...invoices].filter(inv =>
+        const sortedInvoices = [...invoices].filter(inv =>
             inv.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             inv.id.slice(-6).includes(searchTerm)
         );
@@ -49,13 +49,19 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
                 bValue = b[sortConfig.key as keyof Invoice];
             }
 
-            if (sortConfig.key === 'issueDate' || sortConfig.key === 'dueDate') {
-                aValue = new Date(aValue as string).getTime();
-                bValue = new Date(bValue as string).getTime();
-            }
+            const normalize = (value: Invoice[keyof Invoice] | number) => {
+                if (sortConfig.key === 'issueDate' || sortConfig.key === 'dueDate') {
+                    return new Date(String(value ?? '')).getTime();
+                }
+                if (typeof value === 'number') return value;
+                return String(value ?? '');
+            };
 
-            if (aValue < bValue) return sortConfig.direction === 'ascending' ? -1 : 1;
-            if (aValue > bValue) return sortConfig.direction === 'ascending' ? 1 : -1;
+            const aNorm = normalize(aValue as Invoice[keyof Invoice] | number);
+            const bNorm = normalize(bValue as Invoice[keyof Invoice] | number);
+
+            if (aNorm < bNorm) return sortConfig.direction === 'ascending' ? -1 : 1;
+            if (aNorm > bNorm) return sortConfig.direction === 'ascending' ? 1 : -1;
             return 0;
         });
 

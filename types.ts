@@ -44,8 +44,8 @@ export interface TransactionAudit {
     timestamp: string;
     changes?: {
         field: string;
-        oldValue: any;
-        newValue: any;
+        oldValue: unknown;
+        newValue: unknown;
     }[];
     description?: string;
 }
@@ -202,7 +202,7 @@ export interface AiActionResponse {
     responseText: string;
     action?: {
         type: 'add_transaction' | 'create_invoice' | 'add_product';
-        params: any;
+        params: Record<string, unknown>;
     };
 }
 

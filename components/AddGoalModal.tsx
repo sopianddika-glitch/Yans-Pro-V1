@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Goal, GoalSuggestion } from '../types';
 import { getGoalSuggestion } from '../services/geminiService';
-import { XIcon, LightbulbIcon, SparklesIcon, DeleteIcon } from './Icons';
+import { XIcon, SparklesIcon, DeleteIcon } from './Icons';
 import { useI18n } from '../hooks/useI18n';
 
 interface AddGoalModalProps {

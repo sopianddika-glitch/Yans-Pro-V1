@@ -22,7 +22,6 @@ win:
   # private keys to the repository.
   # If the publisher name cannot be auto-extracted from the certificate,
   # specify it here as a fallback:
-  publisherName: "YansDev"
 
 nsis:
   oneClick: false

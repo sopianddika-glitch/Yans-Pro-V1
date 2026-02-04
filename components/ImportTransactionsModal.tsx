@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Transaction, TransactionType } from '../types';
 import { XIcon, ImportIcon } from './Icons';
 import { useI18n } from '../hooks/useI18n';
@@ -51,9 +51,9 @@ const ImportTransactionsModal: React.FC<ImportTransactionsModalProps> = ({ isOpe
         const transactions: Omit<Transaction, 'id'>[] = [];
         for (let i = 0; i < lines.length; i++) {
             const values = lines[i].split(',');
-            const row: any = {};
+            const row: Record<string, string> = {};
             headers.forEach((header, index) => {
-                row[header] = values[index];
+                row[header] = values[index] ?? '';
             });
             
             try {

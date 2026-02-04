@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Budget, Category, Transaction, TransactionType, Page } from '../types';
+import { Budget, Category, Transaction, TransactionType } from '../types';
 import { AddIcon, BudgetIcon, EditIcon, DeleteIcon, TrendingUpIcon, AlertTriangleIcon, CheckIcon } from '../components/Icons';
 import AddBudgetModal from '../components/AddBudgetModal';
 import EmptyState from '../components/EmptyState';
@@ -15,13 +15,12 @@ interface BudgetsPageProps {
     onAddBudget: (budget: Omit<Budget, 'id'>) => void;
     onUpdateBudget: (budget: Budget) => void;
     onDeleteBudget: (id: string) => void;
-    onNavigate: (page: Page) => void;
 }
 
 // Helper to format currency
 const formatCurrency = (value: number, currency: string) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(value);
 
-const BudgetsPage: React.FC<BudgetsPageProps> = ({ budgets, categories, transactions, currency, onAddBudget, onUpdateBudget, onDeleteBudget, onNavigate }) => {
+const BudgetsPage: React.FC<BudgetsPageProps> = ({ budgets, categories, transactions, currency, onAddBudget, onUpdateBudget, onDeleteBudget }) => {
     const { t } = useI18n();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingBudget, setEditingBudget] = useState<Budget | null>(null);

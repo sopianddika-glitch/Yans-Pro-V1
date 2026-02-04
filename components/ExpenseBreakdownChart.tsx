@@ -56,7 +56,7 @@ const ExpenseBreakdownChart: React.FC<ExpenseBreakdownChartProps> = ({ transacti
                             fill="#8884d8"
                             dataKey="value"
                             nameKey="name"
-                            label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+                            label={({ cx = 0, cy = 0, midAngle = 0, innerRadius = 0, outerRadius = 0, percent = 0 }) => {
                                 const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
                                 const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
                                 const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
@@ -67,7 +67,7 @@ const ExpenseBreakdownChart: React.FC<ExpenseBreakdownChartProps> = ({ transacti
                                 );
                             }}
                         >
-                            {(data ?? []).map((entry, index) => (
+                            {(data ?? []).map((_, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>

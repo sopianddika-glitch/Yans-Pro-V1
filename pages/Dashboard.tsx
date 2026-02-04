@@ -99,10 +99,10 @@ const Dashboard: React.FC<DashboardProps> = ({
 
             {/* Main Content Area */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 min-w-0 overflow-hidden">
+                <div className="lg:col-span-2">
                     <OverviewChart transactions={transactions} theme={theme}/>
                 </div>
-                <div className="lg:col-span-1 min-w-0 overflow-hidden">
+                <div className="lg:col-span-1">
                     <CashFlowForecastChart transactions={transactions} theme={theme} currency={activeProfile.currency} />
                 </div>
                 
@@ -122,7 +122,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 <div className="lg:col-span-1">
                      <FinancialInsight transactions={transactions} summary={summary} />
                 </div>
-                <div className="lg:col-span-3 min-w-0 overflow-hidden">
+                <div className="lg:col-span-3">
                      <ExpenseBreakdownChart transactions={transactions} theme={theme} />
                 </div>
                  <div className="lg:col-span-3">

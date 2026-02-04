@@ -39,7 +39,7 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
         transactions.forEach(t => {
             const date = new Date(t.date);
             const key = date.toLocaleString('default', { month: 'short', year: '2-digit' });
-            if (monthlyData.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(monthlyData, key)) {
                 if (t.type === TransactionType.INCOME) {
                     monthlyData[key] += t.amount;
                 } else {
@@ -80,12 +80,15 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
         try {
             const forecastArray = Array.isArray(forecastData) ? forecastData : [];
             const inputForAi = forecastArray.map(d => ({ month: d.month, netFlow: d.historicalAmount || 0 }));
-            const result = await generateCashFlowForecast(inputForAi);
+            const result: unknown = await generateCashFlowForecast(inputForAi);
             // Normalise the response: accept either an array or an object with a `data` array
-            let parsed: any[] = [];
-            if (Array.isArray(result)) parsed = result;
-            else if (result && Array.isArray(result.data)) parsed = result.data;
-            else if (result && result.ok === false) parsed = [];
+            let parsed: CashFlowPoint[] = [];
+            if (Array.isArray(result)) parsed = result as CashFlowPoint[];
+            else if (result && typeof result === 'object' && Array.isArray((result as { data?: CashFlowPoint[] }).data)) {
+                parsed = (result as { data: CashFlowPoint[] }).data;
+            } else if (result && typeof result === 'object' && (result as { ok?: boolean }).ok === false) {
+                parsed = [];
+            }
 
             setForecastData(parsed as CashFlowPoint[]);
             if (parsed.length === 0) {
@@ -98,9 +101,10 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
         }
     };
 
-    const CustomTooltip = ({ active, payload, label }: any) => {
+    const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ payload: CashFlowPoint }>; label?: string }) => {
         if (active && payload && payload.length) {
-            const dataPoint = payload[0].payload as CashFlowPoint;
+            const dataPoint = payload[0]?.payload ?? null;
+            if (!dataPoint) return null;
             const isForecast = dataPoint.isForecast;
             const value = isForecast ? dataPoint.forecastAmount : dataPoint.historicalAmount;
             

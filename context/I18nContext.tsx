@@ -17,12 +17,18 @@ interface I18nProviderProps {
     locale: SupportedLocale;
 }
 
-const getNestedValue = (obj: any, path: string): string | undefined => {
-    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+const getNestedValue = (obj: Record<string, unknown>, path: string): string | undefined => {
+    const result = path.split('.').reduce<unknown>((acc, part) => {
+        if (acc && typeof acc === 'object' && part in acc) {
+            return (acc as Record<string, unknown>)[part];
+        }
+        return undefined;
+    }, obj);
+    return typeof result === 'string' ? result : undefined;
 };
 
 export const I18nProvider: React.FC<I18nProviderProps> = ({ children, locale }) => {
-    const [translations, setTranslations] = useState<Record<string, any>>({});
+    const [translations, setTranslations] = useState<Record<string, unknown>>({});
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {

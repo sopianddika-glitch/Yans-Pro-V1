@@ -10,7 +10,6 @@ import { generateExecutiveSummary } from '../services/geminiService';
 import { useI18n } from '../hooks/useI18n';
 
 import { BriefcaseIcon, TrendingUpIcon, AlertTriangleIcon, SparklesIcon, CheckIcon } from '../components/Icons';
-import { ensureString } from '../utils/ensureString';
 
 interface EnterprisePageProps {
     transactions: Transaction[];

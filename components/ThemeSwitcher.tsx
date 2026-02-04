@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Theme } from '../types';
-import { SunIcon, MoonIcon, DesktopComputerIcon as SystemIcon, ChevronDownIcon } from './Icons';
+import { SunIcon, MoonIcon, DesktopComputerIcon as SystemIcon } from './Icons';
 
 interface ThemeSwitcherProps {
     theme: Theme;

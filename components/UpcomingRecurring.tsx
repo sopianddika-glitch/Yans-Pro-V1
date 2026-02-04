@@ -1,7 +1,7 @@
 
 
 import React, { useMemo } from 'react';
-import { RecurringTransaction, Frequency, Page, Transaction } from '../types';
+import { RecurringTransaction, Frequency, Transaction } from '../types';
 import { RepeatIcon, SettingsIcon } from './Icons';
 import { useI18n } from '../hooks/useI18n';
 

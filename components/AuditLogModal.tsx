@@ -2,7 +2,6 @@
 import React from 'react';
 import { TransactionAudit } from '../types';
 import { XIcon } from './Icons';
-import { useI18n } from '../hooks/useI18n';
 
 interface AuditLogModalProps {
     isOpen: boolean;
@@ -12,8 +11,6 @@ interface AuditLogModalProps {
 }
 
 const AuditLogModal: React.FC<AuditLogModalProps> = ({ isOpen, onClose, transactionId, auditLog }) => {
-    const { t } = useI18n();
-
     if (!isOpen || !transactionId) return null;
 
     const filteredLog = auditLog

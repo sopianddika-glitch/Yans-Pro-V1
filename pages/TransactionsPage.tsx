@@ -58,13 +58,16 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
         
         // Sorting
         sortedTransactions.sort((a, b) => {
-            let aValue = a[sortConfig.key];
-            let bValue = b[sortConfig.key];
+            const normalize = (value: Transaction[keyof Transaction]) => {
+                if (sortConfig.key === 'date') {
+                    return new Date(String(value ?? '')).getTime();
+                }
+                if (typeof value === 'number') return value;
+                return String(value ?? '');
+            };
 
-            if (sortConfig.key === 'date') {
-                aValue = new Date(aValue as string).getTime();
-                bValue = new Date(bValue as string).getTime();
-            }
+            const aValue = normalize(a[sortConfig.key]);
+            const bValue = normalize(b[sortConfig.key]);
 
             if (aValue < bValue) {
                 return sortConfig.direction === 'ascending' ? -1 : 1;

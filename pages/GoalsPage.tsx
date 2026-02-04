@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Goal, Page } from '../types';
+import { Goal } from '../types';
 import { AddIcon, FlagIcon, EditIcon, DeleteIcon } from '../components/Icons';
 import EmptyState from '../components/EmptyState';
 import { useI18n } from '../hooks/useI18n';
@@ -11,7 +11,6 @@ interface GoalsPageProps {
     onOpenGoalModal: (goal: Goal | null) => void;
     onDeleteGoal: (id: string) => void;
     onOpenFundsModal: (goal: Goal) => void;
-    onNavigate: (page: Page) => void;
 }
 
 const formatCurrency = (value: number, currency: string) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(value);
@@ -65,7 +64,7 @@ const GoalCard: React.FC<{ goal: Goal; currency: string; onEdit: () => void; onD
 };
 
 
-const GoalsPage: React.FC<GoalsPageProps> = ({ goals, currency, onOpenGoalModal, onDeleteGoal, onOpenFundsModal, onNavigate }) => {
+const GoalsPage: React.FC<GoalsPageProps> = ({ goals, currency, onOpenGoalModal, onDeleteGoal, onOpenFundsModal }) => {
     const { t } = useI18n();
     
     const handleDelete = (id: string, name: string) => {

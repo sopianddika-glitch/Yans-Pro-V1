@@ -1,6 +1,8 @@
 node_modules
-dist
-build
-public
-.cache
+/dist
+/build
+/public
+/coverage
+/src/renderer
 *.min.js
+*.cjs
