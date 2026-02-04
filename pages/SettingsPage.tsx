@@ -39,14 +39,14 @@ const FeatureFlagManager: React.FC = () => {
         <div className="space-y-6">
             <p className="text-gray-600 dark:text-gray-300 text-sm">Experimental features for advanced users.</p>
             
-            <div className="bg-gray-50 dark:bg-brand-primary p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between mb-4">
-                    <div>
-                        <h4 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+            <div className="bg-gray-50 dark:bg-brand-primary p-4 rounded-xl border border-gray-200 dark:border-gray-700 min-w-0">
+                <div className="flex items-center justify-between gap-3 mb-4 min-w-0">
+                    <div className="min-w-0">
+                        <h4 className="font-bold text-gray-800 dark:text-white flex items-center gap-2 break-words">
                             <DesktopComputerIcon className="w-4 h-4 text-purple-500" /> 
                             ULTRA_SMOOTH_UI
                         </h4>
-                        <p className="text-xs text-gray-500 mt-1">Enables 500Hz logic loop & interpolated rendering.</p>
+                        <p className="text-xs text-gray-500 mt-1 break-words">Enables 500Hz logic loop & interpolated rendering.</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                         <input 
@@ -500,22 +500,22 @@ const DataManagement: React.FC<{
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button onClick={() => onExportData(activeProfileId)} className="flex items-center justify-center gap-3 bg-gray-100 dark:bg-brand-primary border border-gray-200 dark:border-gray-700 hover:border-brand-accent dark:hover:border-brand-accent p-6 rounded-xl transition-all group">
+                <button onClick={() => onExportData(activeProfileId)} className="flex items-center justify-center gap-3 bg-gray-100 dark:bg-brand-primary border border-gray-200 dark:border-gray-700 hover:border-brand-accent dark:hover:border-brand-accent p-6 rounded-xl transition-all group min-w-0">
                     <div className="p-3 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                         <ExportIcon className="w-6 h-6"/>
                     </div>
-                    <div className="text-left">
-                        <span className="block font-bold text-gray-800 dark:text-white">{t('settingsPage.data.export')}</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">Save as JSON</span>
+                    <div className="text-left min-w-0">
+                        <span className="block font-bold text-gray-800 dark:text-white break-words">{t('settingsPage.data.export')}</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 break-words">Save as JSON</span>
                     </div>
                 </button>
-                 <button onClick={onOpenImportModal} className="flex items-center justify-center gap-3 bg-gray-100 dark:bg-brand-primary border border-gray-200 dark:border-gray-700 hover:border-brand-accent dark:hover:border-brand-accent p-6 rounded-xl transition-all group">
+                 <button onClick={onOpenImportModal} className="flex items-center justify-center gap-3 bg-gray-100 dark:bg-brand-primary border border-gray-200 dark:border-gray-700 hover:border-brand-accent dark:hover:border-brand-accent p-6 rounded-xl transition-all group min-w-0">
                     <div className="p-3 rounded-full bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400 group-hover:bg-green-600 group-hover:text-white transition-colors">
                         <ImportIcon className="w-6 h-6"/>
                     </div>
-                    <div className="text-left">
-                        <span className="block font-bold text-gray-800 dark:text-white">{t('settingsPage.data.import')}</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">From CSV</span>
+                    <div className="text-left min-w-0">
+                        <span className="block font-bold text-gray-800 dark:text-white break-words">{t('settingsPage.data.import')}</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 break-words">From CSV</span>
                     </div>
                 </button>
             </div>
@@ -668,8 +668,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             <div className="max-w-6xl mx-auto">
                 {activeSection ? (
                     // Detail View
-                    <div className="bg-white dark:bg-brand-secondary rounded-2xl shadow-xl overflow-hidden animate-fade-in-scale">
-                        <div className="bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 p-4 sm:p-6 flex items-center gap-4">
+                    <div className="bg-white dark:bg-brand-secondary rounded-2xl shadow-xl overflow-hidden animate-fade-in-scale min-w-0">
+                        <div className="bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 p-4 sm:p-6 flex items-center gap-4 min-w-0">
                             <button 
                                 onClick={() => setActiveSection(null)}
                                 className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors"
@@ -680,8 +680,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                             <div className={`p-2 rounded-lg ${activeApp?.colorClass}`}>
                                 {activeApp?.icon}
                             </div>
-                            <div>
-                                <h2 className="text-xl font-bold text-gray-800 dark:text-white">{activeApp?.title}</h2>
+                            <div className="min-w-0">
+                                <h2 className="text-xl font-bold text-gray-800 dark:text-white break-words">{activeApp?.title}</h2>
                             </div>
                         </div>
                         <div className="p-4 sm:p-6">
@@ -695,15 +695,15 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                             <button
                                 key={app.id}
                                 onClick={() => setActiveSection(app.id)}
-                                className="group bg-white dark:bg-brand-secondary p-6 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-left border border-transparent hover:border-gray-200 dark:hover:border-gray-700 flex flex-col h-full"
+                                className="group bg-white dark:bg-brand-secondary p-6 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-left border border-transparent hover:border-gray-200 dark:hover:border-gray-700 flex flex-col h-full min-w-0"
                             >
                                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${app.colorClass}`}>
                                     {app.icon}
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-1 group-hover:text-brand-accent transition-colors">
+                                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-1 group-hover:text-brand-accent transition-colors break-words">
                                     {app.title}
                                 </h3>
-                                <p className="text-sm text-gray-500 dark:text-brand-muted leading-relaxed">
+                                <p className="text-sm text-gray-500 dark:text-brand-muted leading-relaxed break-words">
                                     {app.description}
                                 </p>
                             </button>

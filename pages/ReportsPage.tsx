@@ -11,9 +11,9 @@ const formatCurrency = (value: number, currency: string) => new Intl.NumberForma
 const ReportCard: React.FC<{ title: string; description: string; onClick: () => void }> = ({ title, description, onClick }) => {
     const { t } = useI18n();
     return (
-        <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md dark:shadow-lg transform hover:-translate-y-1 transition-transform duration-300 flex flex-col">
-            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">{title}</h3>
-            <p className="text-gray-600 dark:text-brand-muted text-sm mb-4 flex-grow">{description}</p>
+        <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md dark:shadow-lg transform hover:-translate-y-1 transition-transform duration-300 flex flex-col min-w-0">
+            <h3 className="text-base sm:text-lg font-bold text-gray-800 dark:text-white mb-2 break-words">{title}</h3>
+            <p className="text-gray-600 dark:text-brand-muted text-sm mb-4 flex-grow break-words">{description}</p>
             <button onClick={onClick} className="w-full mt-auto bg-brand-accent hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300">
                 {t('reportsPage.generate')}
             </button>
@@ -61,9 +61,9 @@ const ReportContainer: React.FC<{ title: string; onClose: () => void; children: 
         }
     };
     return (
-        <div className="bg-white/50 dark:bg-brand-secondary/50 p-4 sm:p-6 rounded-xl border border-gray-200 dark:border-gray-700 report-print-container">
-            <div className="flex justify-between items-center mb-4 border-b border-gray-300 dark:border-gray-600 pb-3">
-                <h2 className="text-xl font-bold text-gray-800 dark:text-white">{title}</h2>
+        <div className="bg-white/50 dark:bg-brand-secondary/50 p-4 sm:p-6 rounded-xl border border-gray-200 dark:border-gray-700 report-print-container min-w-0">
+            <div className="flex flex-wrap justify-between items-start sm:items-center gap-3 mb-4 border-b border-gray-300 dark:border-gray-600 pb-3 min-w-0">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white break-words min-w-0">{title}</h2>
                 <div className="flex items-center gap-2">
                     <button onClick={handlePrint} className="p-2 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg" aria-label={t('reportsPage.print')}>
                         <PrintIcon className="w-5 h-5"/>

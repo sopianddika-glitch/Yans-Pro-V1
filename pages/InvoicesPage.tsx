@@ -78,7 +78,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
 
     const getSortIndicator = (key: keyof Invoice | 'total') => {
         if (sortConfig.key !== key) return ' ';
-        return sortConfig.direction === 'ascending' ? 'â–²' : 'â–¼';
+        return sortConfig.direction === 'ascending' ? '▲' : '▼';
     };
     
     const handleDelete = (id: string, clientName: string) => {
@@ -90,7 +90,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
     return (
         <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-brand-primary min-h-full">
             <div className="flex flex-col gap-4 sm:flex-row justify-between sm:items-center mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">{t('invoicesPage.title')}</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 break-words">{t('invoicesPage.title')}</h1>
                 <button
                     onClick={() => onNavigateToInvoice()}
                     className="flex items-center justify-center gap-2 bg-brand-accent hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300"
@@ -113,7 +113,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
             )}
            
             {filteredAndSortedInvoices.length > 0 ? (
-                <div className="bg-white dark:bg-brand-secondary rounded-xl shadow-md dark:shadow-lg">
+                <div className="bg-white dark:bg-brand-secondary rounded-xl shadow-md dark:shadow-lg min-w-0">
                     {/* Desktop Table View */}
                     <div className="overflow-x-auto hidden md:block">
                         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -162,10 +162,10 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
                         {(invoices ?? []).map((invoice) => {
                             const total = invoice.items.reduce((sum, i) => sum + i.quantity * i.price, 0);
                             return (
-                                <div key={invoice.id} className="p-4 rounded-lg shadow-sm border bg-gray-50 dark:bg-brand-primary border-gray-200 dark:border-gray-700">
+                                <div key={invoice.id} className="p-4 rounded-lg shadow-sm border bg-gray-50 dark:bg-brand-primary border-gray-200 dark:border-gray-700 min-w-0">
                                     <div className="flex justify-between items-center">
                                         <div>
-                                            <p className="font-semibold text-gray-900 dark:text-gray-100">{invoice.clientName}</p>
+                                            <p className="font-semibold text-gray-900 dark:text-gray-100 break-words">{invoice.clientName}</p>
                                             <p className="text-sm text-brand-accent">#{invoice.id.slice(-6)}</p>
                                         </div>
                                         <div className="flex items-center gap-1">
