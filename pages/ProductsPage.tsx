@@ -45,7 +45,7 @@ const ProductCard: React.FC<{ product: Product; currency: string; onEdit: () => 
                     </span>
                     {product.trackStock && (
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${isLowStock ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'}`}>
-                            {t('productsPage.stock', {count: stockCount})}
+                            {t('productsPage.stock', {count: stockCount ?? 0})}
                         </span>
                     )}
                 </div>

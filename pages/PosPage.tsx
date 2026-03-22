@@ -215,7 +215,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
                                         {product.name}
                                     </h3>
                                     {product.trackStock && (
-                                        <p className="text-[10px] sm:text-xs text-gray-500 dark:text-brand-muted mt-1 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{t('productsPage.stock', {count: product.stock})}</p>
+                                        <p className="text-[10px] sm:text-xs text-gray-500 dark:text-brand-muted mt-1 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{t('productsPage.stock', {count: product.stock ?? 0})}</p>
                                     )}
                                 </div>
                                 <div className="bg-gray-50 dark:bg-brand-primary/50 py-2 px-3 w-full border-t border-gray-100 dark:border-gray-700/50">

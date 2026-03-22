@@ -3,7 +3,14 @@ import React, { useState } from 'react';
 import { Investment, AssetType } from '../types';
 import { XIcon, SparklesIcon } from './Icons';
 import { useI18n } from '../hooks/useI18n';
-import { searchAssets, AssetSearchResult } from '../services/geminiService';
+import { searchAssets } from '../services/geminiService';
+
+type AssetSearchResult = {
+    symbol: string;
+    name: string;
+    type: AssetType;
+    currentPrice: number;
+};
 
 interface AddInvestmentModalProps {
     isOpen: boolean;

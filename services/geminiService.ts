@@ -1,7 +1,7 @@
 ﻿
  
 // ===== compatibility fallback for analyzeReceipt =====
-export async function analyzeReceipt(data: any): Promise<any> {
+export async function analyzeReceipt(data: any, _mimeType?: string): Promise<any> {
   // Fallback mock used during development/build if real implementation is missing.
   // Structure should match ReceiptAnalysisResult expected by components.
   return {

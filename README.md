@@ -1,63 +1,86 @@
-
 # Yans Pro - AI-Powered Finance Tracker
 
-Yans Pro is a modern, responsive Progressive Web App (PWA) for professional business finance tracking. It leverages AI-powered insights to help you manage your revenue, expenses, and profitability with ease.
+Yans Pro is a modern Progressive Web App (PWA) for professional finance tracking. It combines transaction management, invoicing, budgeting, product management, and AI-assisted insights in one business-ready interface.
 
-Built with React, TypeScript, and Tailwind CSS, it offers a clean, intuitive interface and powerful features.
+Built with React, TypeScript, Vite, and Tailwind's CDN runtime configuration, the project is designed to run locally, build cleanly, and deploy reliably to GitHub Pages.
 
 ## Features
 
--   **Dashboard:** Get a comprehensive overview of your financial health at a glance.
--   **Transaction Management:** Easily add, track, and categorize income and expenses.
--   **AI-Powered Insights:** Use Gemini to analyze your financial data and get actionable advice.
--   **AI Receipt Scanning:** Automatically extract transaction details by uploading a receipt image.
--   **Budgeting:** Set and track budgets for different expense categories.
--   **Invoicing:** Create and manage client invoices.
--   **Multi-Profile Support:** Manage finances for multiple businesses seamlessly.
--   **Desktop Application:** Packaged with Electron for a native desktop experience.
+- **Dashboard:** Get a quick operational snapshot of revenue, expenses, forecasts, budgets, and recurring activity.
+- **Transaction Management:** Add, edit, filter, export, restore, and review audit history for transactions.
+- **AI-Powered Insights:** Use Gemini-driven analysis for financial summaries, reminders, and market suggestions.
+- **AI Receipt Scanning:** Extract transaction details from receipt uploads.
+- **Budgeting:** Plan and monitor spending by category with clear status indicators.
+- **Invoicing:** Create, edit, and manage invoices and invoice items.
+- **Products and POS:** Track products, pricing, stock, and point-of-sale flows.
+- **Multi-Profile Support:** Manage multiple business profiles with separate settings and data.
+- **Desktop Packaging:** Ship the app as an Electron desktop application when needed.
 
 ## Prerequisites
 
-To run this project, you will need [Node.js](https://nodejs.org/) installed on your machine. This gives you access to `npm`.
+Install [Node.js](https://nodejs.org/) 20 or newer so `npm` is available.
 
-## Running the Application
+## Local Development
 
-### 1. Install Dependencies
-
-First, open a terminal in the project's root directory and install the necessary dependencies:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-### 2. Run in Development Mode
-
-To start the application in a development window, run:
+Start the development server:
 
 ```bash
 npm start
 ```
 
-This will launch the app in a new window with developer tools accessible.
-
----
-
-## Building a Desktop Application (.exe)
-
-You can build a distributable installer for Windows (`.exe`).
-
-### 1. Run the Build Script
-
-From the project's root directory, execute the following command:
+Run a full type-check:
 
 ```bash
-npm run dist
+npm run typecheck
 ```
 
-This command uses `electron-builder` to package your application into an installer.
+Create a normal production build:
 
-### 2. Locate the Installer
+```bash
+npm run build
+```
 
-Once the process is complete, you will find a `dist` folder in your project directory. Inside, there will be a file named `Yans Pro Setup X.Y.Z.exe` (where X.Y.Z is the version number).
+## GitHub Pages Deployment
 
-This `.exe` file is the installer for your application. You can run it on any Windows computer to install Yans Pro.
+This repository now supports two deployment paths so the site can still render even if the repository is currently using GitHub Pages' older branch-based mode:
+
+1. **Primary deployment:** [deploy-pages.yml](./.github/workflows/deploy-pages.yml) builds and deploys the production app for GitHub Pages using GitHub Actions.
+2. **Compatibility fallback:** the committed `docs/` directory contains a static Pages build, and the source [index.html](./index.html) automatically redirects GitHub Pages legacy branch traffic to that fallback.
+
+Build the GitHub Pages artifact locally:
+
+```bash
+npm run build:pages
+```
+
+Build and refresh the fallback `docs/` site:
+
+```bash
+npm run build:docs
+```
+
+## Recent Deployment Fixes
+
+- Restored a valid GitHub Pages workflow and simplified the build pipeline.
+- Added a `docs/` fallback build so the published site is not blank when GitHub Pages still serves repository files directly.
+- Corrected the app entry HTML, deployment metadata, and service worker registration for repository subpaths.
+- Fixed TypeScript project discovery so editor and CI type-checking cover the real source files.
+- Cleaned project documentation and deployment instructions so the repository is easier to maintain.
+
+## Desktop Packaging
+
+You can also package the project as a Windows desktop application.
+
+Build the Electron installer:
+
+```bash
+npm run electron:dist
+```
+
+After packaging completes, Electron build output will be available in the generated distribution artifacts from `electron-builder`.

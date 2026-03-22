@@ -1070,7 +1070,7 @@ const App: React.FC = () => {
             case 'settings':
                 return <SettingsPage categories={categories} onAddCategory={handleAddCategory} onUpdateCategory={handleUpdateCategory} onDeleteCategory={handleDeleteCategory} recurringTransactions={recurringTransactions} onDeleteRecurringTransaction={handleDeleteRecurringTransaction} onOpenRecurringModal={handleOpenRecurringModal} profiles={profiles} activeProfileId={activeProfileId} onAddProfile={handleAddProfile} onUpdateProfile={handleUpdateProfile} onDeleteProfile={handleDeleteProfile} onExportData={handleExportData} onResetProfileData={handleResetProfileData} onOpenImportModal={handleOpenImportModal} locale={locale} onSetLocale={setLocale} />;
             case 'budgets':
-                return <BudgetsPage budgets={budgets} categories={categories} transactions={transactions} currency={activeProfile.currency} onAddBudget={handleOpenBudgetModal} onUpdateBudget={handleUpdateBudget} onDeleteBudget={handleDeleteBudget} onNavigate={handleNavigate}/>;
+                return <BudgetsPage budgets={budgets} categories={categories} transactions={transactions} currency={activeProfile.currency} onAddBudget={handleAddBudget} onUpdateBudget={handleUpdateBudget} onDeleteBudget={handleDeleteBudget} onNavigate={handleNavigate}/>;
             case 'invoices':
                 return <InvoicesPage invoices={invoices} currency={activeProfile.currency} onNavigateToInvoice={handleNavigateToInvoice} onDeleteInvoice={handleDeleteInvoice} />;
             case 'invoice-editor':
@@ -1086,7 +1086,7 @@ const App: React.FC = () => {
             case 'products':
                 return <ProductsPage products={products} currency={activeProfile.currency} onOpenModal={handleOpenProductModal} onDelete={handleDeleteProduct} onNavigate={handleNavigate}/>;
             case 'clients':
-                return <ClientsPage clients={clients} transactions={transactions} currency={activeProfile.currency} onAddClient={handleOpenClientModal} onUpdateClient={handleUpdateClient} onDeleteClient={handleDeleteClient}/>;
+                return <ClientsPage clients={clients} transactions={transactions} currency={activeProfile.currency} onAddClient={handleAddClient} onUpdateClient={handleUpdateClient} onDeleteClient={handleDeleteClient}/>;
             case 'pos':
                 return <PosPage products={products} currency={activeProfile.currency} onCharge={handleCharge} onNavigate={handleNavigate} />;
             case 'investments':

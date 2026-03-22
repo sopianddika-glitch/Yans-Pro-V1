@@ -1,0 +1,1 @@
+(function(){"use strict";self.onmessage=()=>{};const s=500;let t=0;function n(){const a=performance.now();t+=.005;const o={x:Math.sin(t)*100,y:Math.cos(t*1.5)*50,rotation:Math.sin(t*.5)*180,scale:1+Math.sin(t*2)*.1,opacity:.8+Math.sin(t*5)*.2,tick:Date.now()};postMessage({t:a,state:o})}setInterval(n,Math.max(1,Math.floor(1e3/s)))})();
