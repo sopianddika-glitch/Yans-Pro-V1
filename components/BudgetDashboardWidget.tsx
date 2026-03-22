@@ -17,9 +17,9 @@ const BudgetDashboardWidget: React.FC<BudgetDashboardWidgetProps> = ({ budgets, 
 
     const budgetStatus = useMemo(() => {
         const now = new Date();
-        const categoryMap = new Map<string, Category>((\ ?? []).map(c => [c.id, c]));
+        const categoryMap = new Map<string, Category>(categories.map(c => [c.id, c]));
 
-        return (\ ?? []).map(budget => {
+        return budgets.map(budget => {
             const category = categoryMap.get(budget.categoryId);
             if (!category) return null;
 
@@ -90,7 +90,7 @@ const BudgetDashboardWidget: React.FC<BudgetDashboardWidgetProps> = ({ budgets, 
             </div>
             
             <div className="space-y-5 flex-grow overflow-y-auto pr-1 custom-scrollbar">
-                {(\ ?? []).map(item => {
+                {budgetStatus.map(item => {
                     if(!item) return null;
                     const isOver = item.percent > 100;
                     const color = isOver ? 'bg-brand-red' : item.percent > 85 ? 'bg-yellow-500' : 'bg-brand-green';

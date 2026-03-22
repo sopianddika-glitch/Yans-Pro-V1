@@ -1,5 +1,3 @@
-<div style={{ width: '100%', height: 400 }}>
-
 import React, { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Transaction, TransactionType, Theme } from '../types';
@@ -69,5 +67,3 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ transactions, theme }) =>
 };
 
 export default OverviewChart;
-
-</div>

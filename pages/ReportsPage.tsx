@@ -113,7 +113,7 @@ const PeriodSelector: React.FC<{ onPeriodChange: (p: { start: Date; end: Date } 
 
     return (
         <div className="flex flex-wrap gap-2 mb-4">
-            {(\ ?? []).map(p => (
+            {periods.map(p => (
                 <button
                     key={p.value}
                     onClick={() => handlePeriodClick(p.value)}
@@ -179,7 +179,7 @@ const ExpenseByCategoryReport: React.FC<{ transactions: Transaction[]; currency:
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead className="bg-gray-100 dark:bg-gray-800/50"><tr><th className="py-3 px-4 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">{t('general.category')}</th><th className="py-3 px-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">{t('reportsPage.expenseByCategory.amount')}</th><th className="py-3 px-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">{t('reportsPage.expenseByCategory.percentage')}</th></tr></thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">{(\ ?? []).map(item => <tr key={item.name}><td className="py-3 px-4 text-gray-700 dark:text-gray-200">{item.name}</td><td className="py-3 px-4 text-right text-red-600 dark:text-brand-red font-mono">{formatCurrency(item.amount, currency)}</td><td className="py-3 px-4 text-right text-gray-500 dark:text-brand-muted font-mono">{item.percentage.toFixed(2)}%</td></tr>)}</tbody>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">{data.map(item => <tr key={item.name}><td className="py-3 px-4 text-gray-700 dark:text-gray-200">{item.name}</td><td className="py-3 px-4 text-right text-red-600 dark:text-brand-red font-mono">{formatCurrency(item.amount, currency)}</td><td className="py-3 px-4 text-right text-gray-500 dark:text-brand-muted font-mono">{item.percentage.toFixed(2)}%</td></tr>)}</tbody>
                     </table>
                 </div>
             ) : <p className="text-center text-gray-500 dark:text-brand-muted py-4">{t('reportsPage.expenseByCategory.noData')}</p>}
@@ -214,7 +214,7 @@ const IncomeBySourceReport: React.FC<{ transactions: Transaction[]; currency: st
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead className="bg-gray-100 dark:bg-gray-800/50"><tr><th className="py-3 px-4 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">{t('reportsPage.incomeBySource.source')}</th><th className="py-3 px-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">{t('general.amount')}</th><th className="py-3 px-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">{t('reportsPage.expenseByCategory.percentage')}</th></tr></thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">{(\ ?? []).map(item => <tr key={item.name}><td className="py-3 px-4 text-gray-700 dark:text-gray-200">{item.name}</td><td className="py-3 px-4 text-right text-green-600 dark:text-brand-green font-mono">{formatCurrency(item.amount, currency)}</td><td className="py-3 px-4 text-right text-gray-500 dark:text-brand-muted font-mono">{item.percentage.toFixed(2)}%</td></tr>)}</tbody>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">{data.map(item => <tr key={item.name}><td className="py-3 px-4 text-gray-700 dark:text-gray-200">{item.name}</td><td className="py-3 px-4 text-right text-green-600 dark:text-brand-green font-mono">{formatCurrency(item.amount, currency)}</td><td className="py-3 px-4 text-right text-gray-500 dark:text-brand-muted font-mono">{item.percentage.toFixed(2)}%</td></tr>)}</tbody>
                     </table>
                 </div>
             ) : <p className="text-center text-gray-500 dark:text-brand-muted py-4">{t('reportsPage.incomeBySource.noData')}</p>}
@@ -254,7 +254,7 @@ const CashFlowReport: React.FC<{ transactions: Transaction[]; currency: string }
 const TaxSummaryReport: React.FC<{ transactions: Transaction[]; currency: string }> = ({ transactions, currency }) => {
     const { t } = useI18n();
     const [year, setYear] = useState(new Date().getFullYear());
-    const availableYears = useMemo(() => [...new Set((\ ?? []).map(t => new Date(t.date).getFullYear()))].sort((a: number, b: number) => b - a), [transactions]);
+    const availableYears = useMemo(() => [...new Set(transactions.map(t => new Date(t.date).getFullYear()))].sort((a: number, b: number) => b - a), [transactions]);
 
     const data = useMemo(() => {
         const filtered = transactions.filter(t => new Date(t.date).getFullYear() === year);
@@ -268,7 +268,7 @@ const TaxSummaryReport: React.FC<{ transactions: Transaction[]; currency: string
             <div className="mb-4">
                 <label htmlFor="tax-year" className="block text-sm font-medium text-gray-500 dark:text-brand-muted mb-1">{t('reportsPage.taxSummary.selectYear')}</label>
                 <select id="tax-year" value={year} onChange={e => setYear(Number(e.target.value))} className="w-full sm:w-auto bg-gray-50 dark:bg-brand-primary border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-brand-accent focus:outline-none transition">
-                    {(\ ?? []).map(y => <option key={y} value={y}>{y}</option>)}
+                    {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
             </div>
             <div className="space-y-3">
@@ -356,7 +356,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ transactions, summary, curren
 
             {activeReport ? renderActiveReport() : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {(\ ?? []).map(report => (
+                    {reportList.map(report => (
                         <ReportCard
                             key={report.title}
                             title={report.title}

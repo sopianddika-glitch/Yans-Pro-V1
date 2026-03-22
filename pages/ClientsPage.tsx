@@ -22,7 +22,7 @@ const ClientsPage: React.FC<ClientsPageProps> = ({ clients, transactions, curren
     const [editingClient, setEditingClient] = useState<Client | null>(null);
 
     const clientData = useMemo(() => {
-        return (\ ?? []).map(client => {
+        return clients.map(client => {
             const clientTransactions = transactions.filter(t => t.clientId === client.id && t.type === TransactionType.INCOME);
             const totalSpent = clientTransactions.reduce((sum, t) => sum + t.amount, 0);
             const lastTransactionDate = clientTransactions.length > 0 
@@ -86,7 +86,7 @@ const ClientsPage: React.FC<ClientsPageProps> = ({ clients, transactions, curren
 
             {filteredClients.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {(\ ?? []).map(client => (
+                    {filteredClients.map(client => (
                         <div key={client.id} className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md dark:shadow-lg flex flex-col justify-between">
                             <div>
                                 <div className="flex justify-between items-start">

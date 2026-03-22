@@ -1,7 +1,11 @@
 ﻿import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
+const basePath = process.env.VITE_BASE_PATH?.trim() || "/";
+
 export default defineConfig({
+  // Allow production builds to target a GitHub Pages project path.
+  base: basePath,
   plugins: [react()],
   server: {
     host: 'localhost',   // paksa host

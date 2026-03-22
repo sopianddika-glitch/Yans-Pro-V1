@@ -148,7 +148,7 @@ const EnterprisePage: React.FC<EnterprisePageProps> = ({ transactions, summary, 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {(\ ?? []).map(anom => (
+                                    {anomalies.map(anom => (
                                         <tr key={anom.id} className="bg-white dark:bg-brand-secondary border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/30">
                                             <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                                 {anom.type === 'high_value' ? 'High Value' : 'Duplicate?'}

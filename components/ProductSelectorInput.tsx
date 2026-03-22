@@ -55,7 +55,7 @@ const ProductSelectorInput: React.FC<ProductSelectorInputProps> = ({ products, v
             />
             {showSuggestions && !disabled && suggestions.length > 0 && (
                 <ul className="absolute z-10 w-full mt-1 bg-white dark:bg-brand-secondary border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto">
-                    {(\ ?? []).map(product => (
+                    {suggestions.map(product => (
                         <li key={product.id}>
                             <button
                                 type="button"

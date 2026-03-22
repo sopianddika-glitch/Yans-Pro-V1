@@ -59,7 +59,7 @@ const PortfolioAdvisorModal: React.FC<PortfolioAdvisorModalProps> = ({ isOpen, o
                         <div className="space-y-4">
                             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{t('portfolioAdvisor.subtitle')}</p>
                             
-                            {(\ ?? []).map((item, idx) => (
+                            {suggestions.map((item, idx) => (
                                 <div key={idx} className="bg-white dark:bg-brand-primary/50 border border-gray-100 dark:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
                                     <div className="flex justify-between items-start mb-2">
                                         <div className="flex items-center gap-3">
@@ -94,7 +94,7 @@ const PortfolioAdvisorModal: React.FC<PortfolioAdvisorModalProps> = ({ isOpen, o
                     {sources && sources.length > 0 && (
                         <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700 flex flex-wrap justify-center gap-2">
                             <span className="font-semibold">Sources:</span>
-                            {(\ ?? []).map((s, i) => (
+                            {sources.map((s, i) => (
                                 <a key={i} href={s.uri} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
                                     {s.title}
                                 </a>

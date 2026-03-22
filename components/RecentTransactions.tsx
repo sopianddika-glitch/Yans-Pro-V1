@@ -29,7 +29,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions, c
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                        {(\ ?? []).map((transaction) => (
+                        {sortedTransactions.map((transaction) => (
                             <tr key={transaction.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/40">
                                 <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                                     <div className="flex items-center">
@@ -57,7 +57,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions, c
 
             {/* Mobile Card View */}
             <div className="md:hidden space-y-3">
-                {(\ ?? []).map((transaction) => (
+                {sortedTransactions.map((transaction) => (
                     <div key={transaction.id} className="p-3 rounded-lg bg-gray-50 dark:bg-brand-primary border border-gray-200 dark:border-gray-700">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center gap-3">

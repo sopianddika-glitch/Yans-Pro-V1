@@ -113,7 +113,7 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
         if (selectedIds.size === filteredAndSortedTransactions.length) {
             setSelectedIds(new Set());
         } else {
-            setSelectedIds(new Set((\ ?? []).map(t => t.id)));
+            setSelectedIds(new Set(filteredAndSortedTransactions.map(t => t.id)));
         }
     };
 
@@ -167,7 +167,7 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
             return stringField;
         };
 
-        const rows = (\ ?? []).map(t => 
+        const rows = filteredAndSortedTransactions.map(t =>
             [
                 escapeCsvField(t.id),
                 escapeCsvField(new Date(t.date).toISOString()),
@@ -388,7 +388,7 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                            {(\ ?? []).map((transaction) => (
+                            {filteredAndSortedTransactions.map((transaction) => (
                                 <tr key={transaction.id} className={`hover:bg-gray-50 dark:hover:bg-gray-800/40 ${selectedIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20' : ''} ${transaction.deletedAt ? 'opacity-60' : ''}`}>
                                     <td className="py-4 pl-4 pr-3 sm:pl-6">
                                         <input type="checkbox"
@@ -457,7 +457,7 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
 
                 {/* Mobile Card View */}
                 <div className="md:hidden p-4 space-y-4">
-                     {(\ ?? []).map((transaction) => (
+                     {filteredAndSortedTransactions.map((transaction) => (
                         <div key={transaction.id} className={`p-4 rounded-lg shadow-sm border ${selectedIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20 border-brand-accent' : 'bg-gray-50 dark:bg-brand-primary border-gray-200 dark:border-gray-700'} relative ${transaction.deletedAt ? 'opacity-70 border-red-200' : ''}`}>
                             <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-3 flex-1 min-w-0">
