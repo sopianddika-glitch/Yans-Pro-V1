@@ -1,4 +1,4 @@
-﻿export function ensureString(value: any): string {
+export function ensureString(value: unknown): string {
   if (value == null) return "";
   if (typeof value === "string") return value;
   try {

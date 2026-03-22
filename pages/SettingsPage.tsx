@@ -1,10 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Category, TransactionType, RecurringTransaction, Frequency, Profile, SupportedLocale, Language } from '../types';
-import { EditIcon, DeleteIcon, SaveIcon, AddIcon, XIcon, FolderIcon, RepeatIcon, BriefcaseIcon, ExportIcon, ImportIcon, AlertTriangleIcon, LanguageIcon, ChevronLeftIcon, SettingsIcon, DesktopComputerIcon } from '../components/Icons';
+import { Category, TransactionType, RecurringTransaction, Profile, SupportedLocale, Language } from '../types';
+import { EditIcon, DeleteIcon, SaveIcon, AddIcon, XIcon, FolderIcon, RepeatIcon, BriefcaseIcon, ExportIcon, ImportIcon, AlertTriangleIcon, LanguageIcon, ChevronLeftIcon, SettingsIcon, DesktopComputerIcon, TrendingUpIcon } from '../components/Icons';
 import ProfileManagerModal from '../components/ProfileManagerModal';
 import { useI18n } from '../hooks/useI18n';
 import { smoothEngine } from '../ui/smoothEngine';
 import { SmoothCard } from '../components/SmoothCard';
+
+type ProfileSettingsUpdate = { allowEdit?: boolean; showDeleted?: boolean; investmentsEnabled?: boolean };
 
 interface SettingsPageProps {
     categories: Category[];
@@ -26,7 +28,10 @@ interface SettingsPageProps {
     onSetLocale: (locale: SupportedLocale) => void;
 }
 
-const FeatureFlagManager: React.FC = () => {
+const FeatureFlagManager: React.FC<{
+    investmentsEnabled: boolean;
+    onToggleInvestments: (enabled: boolean) => void;
+}> = ({ investmentsEnabled, onToggleInvestments }) => {
     const [isUltraSmooth, setIsUltraSmooth] = useState(smoothEngine.status);
 
     const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,15 +43,37 @@ const FeatureFlagManager: React.FC = () => {
     return (
         <div className="space-y-6">
             <p className="text-gray-600 dark:text-gray-300 text-sm">Experimental features for advanced users.</p>
+
+            <div className="bg-gray-50 dark:bg-brand-primary p-4 rounded-xl border border-gray-200 dark:border-gray-700 min-w-0">
+                <div className="flex items-center justify-between gap-3 mb-2 min-w-0">
+                    <div className="min-w-0">
+                        <h4 className="font-bold text-gray-800 dark:text-white flex items-center gap-2 break-words">
+                            <TrendingUpIcon className="w-4 h-4 text-green-500" />
+                            Investments Page Visibility
+                        </h4>
+                        <p className="text-xs text-gray-500 mt-1 break-words">Hide or show the Investments page and sidebar entry.</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={investmentsEnabled}
+                            onChange={(e) => onToggleInvestments(e.target.checked)}
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                    </label>
+                </div>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">Disable to remove Investments from navigation without deleting your data.</p>
+            </div>
             
-            <div className="bg-gray-50 dark:bg-brand-primary p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between mb-4">
-                    <div>
-                        <h4 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+            <div className="bg-gray-50 dark:bg-brand-primary p-4 rounded-xl border border-gray-200 dark:border-gray-700 min-w-0">
+                <div className="flex items-center justify-between gap-3 mb-4 min-w-0">
+                    <div className="min-w-0">
+                        <h4 className="font-bold text-gray-800 dark:text-white flex items-center gap-2 break-words">
                             <DesktopComputerIcon className="w-4 h-4 text-purple-500" /> 
                             ULTRA_SMOOTH_UI
                         </h4>
-                        <p className="text-xs text-gray-500 mt-1">Enables 500Hz logic loop & interpolated rendering.</p>
+                        <p className="text-xs text-gray-500 mt-1 break-words">Enables 500Hz logic loop & interpolated rendering.</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                         <input 
@@ -101,7 +128,7 @@ const LanguageManager: React.FC<{
                 <fieldset>
                     <legend className="sr-only">{t('settingsPage.language.select')}</legend>
                     <div className="space-y-2">
-                        {(\ ?? []).map((lang) => (
+                        {filteredLanguages.map((lang) => (
                              <label key={lang.code} htmlFor={`lang-${lang.code}`} className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${currentLocale === lang.code ? 'bg-brand-accent text-white' : 'bg-gray-50 dark:bg-brand-primary hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
                                 <input
                                     type="radio"
@@ -139,7 +166,7 @@ const ProfileManager: React.FC<{
                 </button>
             </div>
             <ul className="space-y-3">
-                {(\ ?? []).map(profile => (
+                {profiles.map(profile => (
                      <li key={profile.id} className={`bg-gray-50 dark:bg-brand-primary p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${profile.id === activeProfileId ? 'ring-2 ring-brand-accent shadow-md' : 'border border-gray-200 dark:border-gray-700'}`}>
                         <div className="flex items-center gap-4 min-w-0">
                              <div className={`flex-shrink-0 h-12 w-12 flex items-center justify-center rounded-full ${profile.id === activeProfileId ? 'bg-brand-accent text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}`}>
@@ -223,7 +250,7 @@ const AddCategoryForm: React.FC<{
                     <label htmlFor="cat-parent" className="block text-sm font-medium text-gray-600 dark:text-brand-muted mb-1">{t('settingsPage.categories.parent')}</label>
                     <select id="cat-parent" value={parentId || ''} onChange={e => setParentId(e.target.value || null)} className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-brand-accent focus:outline-none transition" disabled={parentCandidates.length === 0}>
                         <option value="">{t('settingsPage.categories.parentGroup')}</option>
-                        {(\ ?? []).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                        {parentCandidates.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                 </div>
             </div>
@@ -314,7 +341,7 @@ const CategoryManager: React.FC<{
                             className="w-full text-sm bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-500 rounded-md py-1 px-2 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-brand-accent focus:outline-none"
                         >
                             <option value="">{t('settingsPage.categories.parentGroup')}</option>
-                            {(\ ?? []).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                            {parentCandidates.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                         </select>
                     </div>
                  )}
@@ -323,7 +350,7 @@ const CategoryManager: React.FC<{
     }
 
     const renderCategories = (cats: Category[], level = 0) => {
-        const categoryMap = new Map((\ ?? []).map(c => [c.id, {...c, children: [] as Category[]}]));
+        const categoryMap = new Map(cats.map(c => [c.id, {...c, children: [] as Category[]}]));
         const roots: (Category & { children: Category[] })[] = [];
         for (const cat of cats) {
             const mappedCat = categoryMap.get(cat.id)!;
@@ -334,7 +361,7 @@ const CategoryManager: React.FC<{
             }
         }
 
-        return (\ ?? []).map(cat => (
+        return roots.map(cat => (
             <React.Fragment key={cat.id}>
                 <CategoryItem category={cat} level={level} />
                 {cat.children && cat.children.length > 0 && <ul className="space-y-2 mt-2">{renderCategories(cat.children, level + 1)}</ul>}
@@ -375,7 +402,7 @@ const CategoryManager: React.FC<{
                             <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-full text-red-600 dark:text-red-400">
                                 <DeleteIcon className="w-6 h-6" />
                             </div>
-                            <h3 className="text-lg font-bold text-gray-800 dark:text-white">{t('general.delete')} "{categoryToDelete.name}"?</h3>
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-white">{t('general.delete')} &ldquo;{categoryToDelete.name}&rdquo;?</h3>
                         </div>
                         <p className="text-gray-600 dark:text-gray-300 text-sm mb-6">
                             {t('settingsPage.categories.deleteConfirm')}
@@ -413,7 +440,7 @@ const RecurringTransactionManager: React.FC<{
 
     const formatFrequency = (rule: RecurringTransaction) => {
         const intervalText = rule.interval > 1 ? `${rule.interval} ` : '';
-        let frequencyText = t(`modals.addTransaction.${rule.frequency}`);
+        const frequencyText = t(`modals.addTransaction.${rule.frequency}`);
         return t('settingsPage.recurring.repeats', {
             interval: intervalText,
             frequency: frequencyText
@@ -435,7 +462,7 @@ const RecurringTransactionManager: React.FC<{
                 </button>
             </div>
             <ul className="space-y-3">
-                {(\ ?? []).map(rule => (
+                {recurringTransactions.map(rule => (
                     <li key={rule.id} className="bg-gray-50 dark:bg-brand-primary p-4 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border border-gray-200 dark:border-gray-700 shadow-sm hover:border-brand-accent/50 transition-colors">
                         <div className="flex items-center gap-4 min-w-0">
                             <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
@@ -464,8 +491,8 @@ const DataManagement: React.FC<{
     onExportData: (profileId: string) => void;
     onResetProfileData: (profileId: string) => void;
     onOpenImportModal: () => void;
-    onUpdateProfileSettings: (settings: { allowEdit?: boolean; showDeleted?: boolean }) => void;
-    currentSettings?: { allowEdit?: boolean; showDeleted?: boolean };
+    onUpdateProfileSettings: (settings: ProfileSettingsUpdate) => void;
+    currentSettings?: ProfileSettingsUpdate;
 }> = ({ activeProfileId, profileName, onExportData, onResetProfileData, onOpenImportModal, onUpdateProfileSettings, currentSettings }) => {
     const { t } = useI18n();
     const handleResetDataClick = () => {
@@ -500,22 +527,22 @@ const DataManagement: React.FC<{
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button onClick={() => onExportData(activeProfileId)} className="flex items-center justify-center gap-3 bg-gray-100 dark:bg-brand-primary border border-gray-200 dark:border-gray-700 hover:border-brand-accent dark:hover:border-brand-accent p-6 rounded-xl transition-all group">
+                <button onClick={() => onExportData(activeProfileId)} className="flex items-center justify-center gap-3 bg-gray-100 dark:bg-brand-primary border border-gray-200 dark:border-gray-700 hover:border-brand-accent dark:hover:border-brand-accent p-6 rounded-xl transition-all group min-w-0">
                     <div className="p-3 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                         <ExportIcon className="w-6 h-6"/>
                     </div>
-                    <div className="text-left">
-                        <span className="block font-bold text-gray-800 dark:text-white">{t('settingsPage.data.export')}</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">Save as JSON</span>
+                    <div className="text-left min-w-0">
+                        <span className="block font-bold text-gray-800 dark:text-white break-words">{t('settingsPage.data.export')}</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 break-words">Save as JSON</span>
                     </div>
                 </button>
-                 <button onClick={onOpenImportModal} className="flex items-center justify-center gap-3 bg-gray-100 dark:bg-brand-primary border border-gray-200 dark:border-gray-700 hover:border-brand-accent dark:hover:border-brand-accent p-6 rounded-xl transition-all group">
+                 <button onClick={onOpenImportModal} className="flex items-center justify-center gap-3 bg-gray-100 dark:bg-brand-primary border border-gray-200 dark:border-gray-700 hover:border-brand-accent dark:hover:border-brand-accent p-6 rounded-xl transition-all group min-w-0">
                     <div className="p-3 rounded-full bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400 group-hover:bg-green-600 group-hover:text-white transition-colors">
                         <ImportIcon className="w-6 h-6"/>
                     </div>
-                    <div className="text-left">
-                        <span className="block font-bold text-gray-800 dark:text-white">{t('settingsPage.data.import')}</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">From CSV</span>
+                    <div className="text-left min-w-0">
+                        <span className="block font-bold text-gray-800 dark:text-white break-words">{t('settingsPage.data.import')}</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 break-words">From CSV</span>
                     </div>
                 </button>
             </div>
@@ -556,6 +583,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     const [activeSection, setActiveSection] = useState<string | null>(null);
 
     const activeProfile = profiles.find(p => p.id === activeProfileId)!;
+    const investmentsEnabled = activeProfile.settings?.investmentsEnabled === true;
 
     const handleOpenProfileModal = (profile: Profile | null = null) => {
         setEditingProfile(profile);
@@ -580,7 +608,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
         }
     };
 
-    const handleUpdateProfileSettings = (settings: { allowEdit?: boolean; showDeleted?: boolean }) => {
+    const handleUpdateProfileSettings = (settings: ProfileSettingsUpdate) => {
         onUpdateProfile({
             ...activeProfile,
             settings: { ...activeProfile.settings, ...settings }
@@ -646,7 +674,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             case 'data':
                 return <DataManagement activeProfileId={activeProfileId} profileName={activeProfile.name} onExportData={onExportData} onResetProfileData={onResetProfileData} onOpenImportModal={onOpenImportModal} onUpdateProfileSettings={handleUpdateProfileSettings} currentSettings={activeProfile.settings} />;
             case 'features':
-                return <FeatureFlagManager />;
+                return <FeatureFlagManager investmentsEnabled={investmentsEnabled} onToggleInvestments={(enabled) => handleUpdateProfileSettings({ investmentsEnabled: enabled })} />;
             default:
                 return null;
         }
@@ -668,8 +696,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             <div className="max-w-6xl mx-auto">
                 {activeSection ? (
                     // Detail View
-                    <div className="bg-white dark:bg-brand-secondary rounded-2xl shadow-xl overflow-hidden animate-fade-in-scale">
-                        <div className="bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 p-4 sm:p-6 flex items-center gap-4">
+                    <div className="bg-white dark:bg-brand-secondary rounded-2xl shadow-xl overflow-hidden animate-fade-in-scale min-w-0">
+                        <div className="bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 p-4 sm:p-6 flex items-center gap-4 min-w-0">
                             <button 
                                 onClick={() => setActiveSection(null)}
                                 className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors"
@@ -680,8 +708,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                             <div className={`p-2 rounded-lg ${activeApp?.colorClass}`}>
                                 {activeApp?.icon}
                             </div>
-                            <div>
-                                <h2 className="text-xl font-bold text-gray-800 dark:text-white">{activeApp?.title}</h2>
+                            <div className="min-w-0">
+                                <h2 className="text-xl font-bold text-gray-800 dark:text-white break-words">{activeApp?.title}</h2>
                             </div>
                         </div>
                         <div className="p-4 sm:p-6">
@@ -691,19 +719,19 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 ) : (
                     // Grid View (App Drawer)
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {(\ ?? []).map(app => (
+                        {settingsApps.map(app => (
                             <button
                                 key={app.id}
                                 onClick={() => setActiveSection(app.id)}
-                                className="group bg-white dark:bg-brand-secondary p-6 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-left border border-transparent hover:border-gray-200 dark:hover:border-gray-700 flex flex-col h-full"
+                                className="group bg-white dark:bg-brand-secondary p-6 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-left border border-transparent hover:border-gray-200 dark:hover:border-gray-700 flex flex-col h-full min-w-0"
                             >
                                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${app.colorClass}`}>
                                     {app.icon}
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-1 group-hover:text-brand-accent transition-colors">
+                                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-1 group-hover:text-brand-accent transition-colors break-words">
                                     {app.title}
                                 </h3>
-                                <p className="text-sm text-gray-500 dark:text-brand-muted leading-relaxed">
+                                <p className="text-sm text-gray-500 dark:text-brand-muted leading-relaxed break-words">
                                     {app.description}
                                 </p>
                             </button>

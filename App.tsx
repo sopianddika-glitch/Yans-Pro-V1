@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import { Transaction, TransactionType, FinancialSummary, Page, Category, ReceiptAnalysisResult, RecurringTransaction, Frequency, Budget, BudgetPeriod, BudgetSuggestionResult, Profile, Invoice, InvoiceStatus, InvoiceItem, Theme, SupportedLocale, Goal, Product, CartItem, ChatMessage, AiActionResponse, ProductType, CashFlowPoint, Client, Investment, AppNotification, NotificationType, TransactionAudit, AuditAction } from './types';
+import { Transaction, TransactionType, FinancialSummary, Page, Category, ReceiptAnalysisResult, RecurringTransaction, Frequency, Budget, Profile, Invoice, InvoiceItem, InvoiceStatus, Theme, SupportedLocale, Goal, Product, CartItem, ChatMessage, AiActionResponse, ProductType, Client, Investment, AppNotification, NotificationType, TransactionAudit, AuditAction } from './types';
 import Header from './components/Header';
 import AddTransactionModal from './components/AddTransactionModal';
 import ReceiptScannerModal from './components/ReceiptScannerModal';
@@ -129,7 +129,7 @@ const App: React.FC = () => {
     });
     
     // --- DATA & UI STATE (with default values) ---
-    const [profiles, setProfiles] = useState<Profile[]>([{ id: 'default-profile', name: 'My First Business', currency: 'USD', settings: { allowEdit: true, showDeleted: false } }]);
+    const [profiles, setProfiles] = useState<Profile[]>([{ id: 'default-profile', name: 'My First Business', currency: 'USD', settings: { allowEdit: true, showDeleted: false, investmentsEnabled: false } }]);
     const [activeProfileId, setActiveProfileId] = useState<string>('default-profile');
     const [dataByProfile, setDataByProfile] = useState<{ [key: string]: ProfileData }>({ 'default-profile': JSON.parse(JSON.stringify(initialData)) });
 
@@ -145,7 +145,6 @@ const App: React.FC = () => {
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
     const [editingInvoiceId, setEditingInvoiceId] = useState<string | null>(null);
-    const [isNewInvoice, setIsNewInvoice] = useState<boolean>(false);
     const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
     const [isAddGoalModalOpen, setIsAddGoalModalOpen] = useState(false);
     const [isAddFundsModalOpen, setIsAddFundsModalOpen] = useState(false);
@@ -161,11 +160,11 @@ const App: React.FC = () => {
     const [notification, setNotification] = useState<AppNotification | null>(null);
     
     // Client Editing State
-    const [editingClient, setEditingClient] = useState<Client | null>(null);
+    const [editingClient, _setEditingClient] = useState<Client | null>(null);
     const [isAddClientModalOpen, setIsAddClientModalOpen] = useState(false);
     
     // Budget Editing State
-    const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
+    const [editingBudget, _setEditingBudget] = useState<Budget | null>(null);
     const [isAddBudgetModalOpen, setIsAddBudgetModalOpen] = useState(false);
 
     // Audit State
@@ -258,7 +257,7 @@ const App: React.FC = () => {
                     // Ensure new settings structure exists
                     const updatedProfiles = loadedProfiles.map(p => ({
                         ...p,
-                        settings: { allowEdit: true, showDeleted: false, ...p.settings }
+                        settings: { allowEdit: true, showDeleted: false, investmentsEnabled: false, ...p.settings }
                     }));
                     setProfiles(updatedProfiles);
                 }
@@ -338,6 +337,7 @@ const App: React.FC = () => {
 
     // --- DERIVED STATE & DATA HELPERS ---
     const activeProfile = useMemo(() => profiles.find(p => p.id === activeProfileId) || profiles[0], [profiles, activeProfileId]);
+    const investmentsEnabled = activeProfile?.settings?.investmentsEnabled === true;
 
     const activeProfileData = useMemo(() => {
         const data = dataByProfile[activeProfileId] || initialData;
@@ -367,9 +367,22 @@ const App: React.FC = () => {
     
     // --- NAVIGATION & MODAL HANDLERS ---
     const handleNavigate = useCallback((page: Page) => { 
+        if (page === 'investments' && !investmentsEnabled) {
+            showNotification('info', 'Halaman Investasi sedang disembunyikan. Aktifkan lagi di Pengaturan > Feature Flags.');
+            setCurrentPage('settings');
+            setIsSidebarOpen(false);
+            return;
+        }
         setCurrentPage(page); 
         setIsSidebarOpen(false);
-    }, []);
+    }, [investmentsEnabled, showNotification]);
+
+    useEffect(() => {
+        if (!investmentsEnabled && currentPage === 'investments') {
+            setCurrentPage('dashboard');
+            showNotification('info', 'Halaman Investasi dinonaktifkan. Aktifkan kembali di Pengaturan > Feature Flags.');
+        }
+    }, [investmentsEnabled, currentPage, showNotification]);
 
     const handleSwitchProfile = useCallback((id: string) => setActiveProfileId(id), []);
     const handleOpenAddTransaction = useCallback(() => { 
@@ -383,13 +396,11 @@ const App: React.FC = () => {
     
     const handleNavigateToInvoice = useCallback((invoiceId: string | null = null) => {
         setEditingInvoiceId(invoiceId);
-        setIsNewInvoice(!invoiceId);
         setCurrentPage('invoice-editor');
     }, []);
     
     const handleNavigateToInvoiceFromTransaction = useCallback((invoiceId: string) => {
         setEditingInvoiceId(invoiceId);
-        setIsNewInvoice(false);
         setCurrentPage('invoice-editor');
     }, []);
 
@@ -425,7 +436,7 @@ const App: React.FC = () => {
         }
     }, [invoices, activeProfileId, setDataForProfile, isDataLoading]);
 
-    const logAudit = useCallback((action: AuditAction, transactionId: string, description?: string, changes?: {field: string, oldValue: any, newValue: any}[]) => {
+    const logAudit = useCallback((action: AuditAction, transactionId: string, description?: string, changes?: {field: string, oldValue: unknown, newValue: unknown}[]) => {
         const auditEntry: TransactionAudit = {
             id: `audit-${Date.now()}`,
             transactionId,
@@ -446,7 +457,7 @@ const App: React.FC = () => {
 
         const newTransactions: Transaction[] = [];
         recurringTransactions.forEach(rule => {
-            let lastTransactionDate: Date | null = transactions.slice().reverse().find(t => t.recurringTransactionId === rule.id)?.date ? new Date(transactions.slice().reverse().find(t => t.recurringTransactionId === rule.id)!.date) : null;
+            const lastTransactionDate: Date | null = transactions.slice().reverse().find(t => t.recurringTransactionId === rule.id)?.date ? new Date(transactions.slice().reverse().find(t => t.recurringTransactionId === rule.id)!.date) : null;
             let cursorDate = lastTransactionDate || new Date(rule.startDate + 'T00:00:00');
             let nextDueDate = getNextDueDate(cursorDate, rule.frequency, rule.interval);
 
@@ -518,7 +529,7 @@ const App: React.FC = () => {
 
     const handleDeleteTransactions = useCallback((ids: string[], isHardDelete = false) => {
         let newTransactions = [...transactions];
-        let newAuditLog = [...activeProfileData.auditLog];
+        const newAuditLog = [...activeProfileData.auditLog];
 
         if (isHardDelete) {
             newTransactions = newTransactions.filter(t => !ids.includes(t.id));
@@ -643,13 +654,8 @@ const App: React.FC = () => {
         showNotification('success', 'Budget deleted.');
     }, [activeProfileId, budgets, setDataForProfile, showNotification]);
     
-    const handleOpenBudgetModal = useCallback((budget: Budget | null = null) => {
-        setEditingBudget(budget);
-        setIsAddBudgetModalOpen(true);
-    }, []);
-
     const handleAddProfile = useCallback((profileData: Omit<Profile, 'id'>) => {
-        const newProfile = { ...profileData, id: 'prof-' + new Date().getTime(), settings: { allowEdit: true, showDeleted: false } };
+        const newProfile = { ...profileData, id: 'prof-' + new Date().getTime(), settings: { allowEdit: true, showDeleted: false, investmentsEnabled: false } };
         setProfiles(p => [...p, newProfile]);
         setDataByProfile(d => ({ ...d, [newProfile.id]: JSON.parse(JSON.stringify(initialData)) }));
         setActiveProfileId(newProfile.id);
@@ -671,11 +677,6 @@ const App: React.FC = () => {
     }, [profiles, activeProfileId, showNotification]);
 
     // Client Management Handlers
-    const handleOpenClientModal = useCallback((client: Client | null = null) => {
-        setEditingClient(client);
-        setIsAddClientModalOpen(true);
-    }, []);
-
     const handleAddClient = useCallback((clientData: Omit<Client, 'id' | 'createdAt'>) => {
         const newClient: Client = {
             ...clientData,
@@ -744,7 +745,7 @@ const App: React.FC = () => {
     const handleSaveInvoice = useCallback((invoiceData: Omit<Invoice, 'id' | 'profileId'> | Invoice) => {
         let updatedInvoice: Invoice;
         let finalTransactions = transactions;
-        let newAuditLog = [...activeProfileData.auditLog];
+        const newAuditLog = [...activeProfileData.auditLog];
 
         if ('id' in invoiceData) { // update
             const existingInvoice = invoices.find(i => i.id === invoiceData.id);
@@ -899,7 +900,10 @@ const App: React.FC = () => {
         showNotification('success', 'Funds added to goal.');
     }, [activeProfileId, goals, transactions, setDataForProfile, showNotification, logAudit]);
 
-    const handleOpenFundsModal = (goal: Goal) => { setEditingGoal(goal); setIsAddFundsModalOpen(true); };
+    const handleOpenFundsModal = useCallback((goal: Goal) => {
+        setEditingGoal(goal);
+        setIsAddFundsModalOpen(true);
+    }, []);
 
     const handleOpenProductModal = useCallback((product: Product | null) => { setEditingProduct(product); setIsAddProductModalOpen(true); }, []);
     
@@ -971,35 +975,88 @@ const App: React.FC = () => {
         if (response.responseType !== 'ACTION' || !response.action) return;
 
         const { type, params } = response.action;
+        const paramsRecord = (params && typeof params === 'object') ? (params as Record<string, unknown>) : {};
+        const toNumber = (value: unknown, fallback = 0) => {
+            if (typeof value === 'number' && !Number.isNaN(value)) return value;
+            if (typeof value === 'string' && value.trim() !== '') {
+                const parsed = Number(value);
+                if (!Number.isNaN(parsed)) return parsed;
+            }
+            return fallback;
+        };
+        const toString = (value: unknown, fallback = '') => (typeof value === 'string' ? value : fallback);
+
         switch(type) {
             case 'add_transaction': {
-                const { transactionType, ...rest } = params;
-                handleAddTransaction({
-                    ...rest,
-                    date: params.date || new Date().toISOString(),
-                    type: transactionType as TransactionType,
-                });
+                const transactionType = paramsRecord.transactionType;
+                const safeType =
+                    transactionType === TransactionType.INCOME || transactionType === TransactionType.EXPENSE
+                        ? transactionType
+                        : TransactionType.EXPENSE;
+                const transaction: Omit<Transaction, 'id'> = {
+                    date: toString(paramsRecord.date, new Date().toISOString()),
+                    description: toString(paramsRecord.description, 'AI Transaction'),
+                    amount: toNumber(paramsRecord.amount, 0),
+                    type: safeType,
+                    category: toString(paramsRecord.category, 'Uncategorized'),
+                };
+                if (typeof paramsRecord.invoiceId === 'string') transaction.invoiceId = paramsRecord.invoiceId;
+                if (typeof paramsRecord.recurringTransactionId === 'string') transaction.recurringTransactionId = paramsRecord.recurringTransactionId;
+                if (typeof paramsRecord.productId === 'string') transaction.productId = paramsRecord.productId;
+                if (typeof paramsRecord.clientId === 'string') transaction.clientId = paramsRecord.clientId;
+                handleAddTransaction(transaction);
                 break;
             }
             case 'create_invoice': {
-                const invoiceParams = { ...params };
-                if (invoiceParams.dueDate) {
-                    invoiceParams.dueDate = new Date(invoiceParams.dueDate).toISOString().split('T')[0];
+                const rawItems = Array.isArray(paramsRecord.items) ? paramsRecord.items : [];
+                const items: InvoiceItem[] = rawItems
+                    .map((item, index) => {
+                        const itemRecord = item && typeof item === 'object' ? (item as Record<string, unknown>) : {};
+                        return {
+                            id: `item-${Date.now()}-${index}`,
+                            description: toString(itemRecord.description, 'Item'),
+                            quantity: Math.max(1, toNumber(itemRecord.quantity, 1)),
+                            price: toNumber(itemRecord.price, 0),
+                        };
+                    });
+
+                if (items.length === 0) {
+                    items.push({ id: `item-${Date.now()}`, description: 'Item', quantity: 1, price: 0 });
                 }
 
-                handleSaveInvoice({
-                    status: InvoiceStatus.DRAFT,
+                const dueDate =
+                    typeof paramsRecord.dueDate === 'string'
+                        ? new Date(paramsRecord.dueDate).toISOString().split('T')[0]
+                        : new Date().toISOString().split('T')[0];
+                const invoiceData: Omit<Invoice, 'id' | 'profileId'> = {
+                    clientName: toString(paramsRecord.clientName, 'Client'),
                     issueDate: new Date().toISOString().split('T')[0],
-                    ...invoiceParams
-                });
+                    dueDate,
+                    items,
+                    status: InvoiceStatus.DRAFT,
+                };
+                const notes = toString(paramsRecord.notes, '');
+                if (notes) invoiceData.notes = notes;
+                handleSaveInvoice(invoiceData);
                 break;
             }
             case 'add_product': {
-                const { productType, ...rest } = params;
-                handleSaveProduct({
-                    ...rest,
-                    type: productType as ProductType,
-                });
+                const productType = paramsRecord.productType;
+                const safeType: ProductType =
+                    productType === 'good' || productType === 'service' ? productType : 'service';
+                const productData: Omit<Product, 'id'> = {
+                    name: toString(paramsRecord.name, 'AI Product'),
+                    price: toNumber(paramsRecord.price, 0),
+                    type: safeType,
+                };
+                const description = toString(paramsRecord.description, '');
+                if (description) productData.description = description;
+                const sku = toString(paramsRecord.sku, '');
+                if (sku) productData.sku = sku;
+                if (typeof paramsRecord.trackStock === 'boolean') productData.trackStock = paramsRecord.trackStock;
+                if (typeof paramsRecord.stock === 'number') productData.stock = paramsRecord.stock;
+                if (typeof paramsRecord.minStock === 'number') productData.minStock = paramsRecord.minStock;
+                handleSaveProduct(productData);
                 break;
             }
             default:
@@ -1070,7 +1127,7 @@ const App: React.FC = () => {
             case 'settings':
                 return <SettingsPage categories={categories} onAddCategory={handleAddCategory} onUpdateCategory={handleUpdateCategory} onDeleteCategory={handleDeleteCategory} recurringTransactions={recurringTransactions} onDeleteRecurringTransaction={handleDeleteRecurringTransaction} onOpenRecurringModal={handleOpenRecurringModal} profiles={profiles} activeProfileId={activeProfileId} onAddProfile={handleAddProfile} onUpdateProfile={handleUpdateProfile} onDeleteProfile={handleDeleteProfile} onExportData={handleExportData} onResetProfileData={handleResetProfileData} onOpenImportModal={handleOpenImportModal} locale={locale} onSetLocale={setLocale} />;
             case 'budgets':
-                return <BudgetsPage budgets={budgets} categories={categories} transactions={transactions} currency={activeProfile.currency} onAddBudget={handleOpenBudgetModal} onUpdateBudget={handleUpdateBudget} onDeleteBudget={handleDeleteBudget} onNavigate={handleNavigate}/>;
+                return <BudgetsPage budgets={budgets} categories={categories} transactions={transactions} currency={activeProfile.currency} onAddBudget={handleAddBudget} onUpdateBudget={handleUpdateBudget} onDeleteBudget={handleDeleteBudget} />;
             case 'invoices':
                 return <InvoicesPage invoices={invoices} currency={activeProfile.currency} onNavigateToInvoice={handleNavigateToInvoice} onDeleteInvoice={handleDeleteInvoice} />;
             case 'invoice-editor':
@@ -1082,11 +1139,11 @@ const App: React.FC = () => {
                     onDelete={handleDeleteInvoiceFromEditor}
                 />;
             case 'goals':
-                return <GoalsPage goals={goals} currency={activeProfile.currency} onOpenGoalModal={handleOpenGoalModal} onDeleteGoal={handleDeleteGoal} onOpenFundsModal={handleOpenFundsModal} onNavigate={handleNavigate} />;
+                return <GoalsPage goals={goals} currency={activeProfile.currency} onOpenGoalModal={handleOpenGoalModal} onDeleteGoal={handleDeleteGoal} onOpenFundsModal={handleOpenFundsModal} />;
             case 'products':
-                return <ProductsPage products={products} currency={activeProfile.currency} onOpenModal={handleOpenProductModal} onDelete={handleDeleteProduct} onNavigate={handleNavigate}/>;
+                return <ProductsPage products={products} currency={activeProfile.currency} onOpenModal={handleOpenProductModal} onDelete={handleDeleteProduct} />;
             case 'clients':
-                return <ClientsPage clients={clients} transactions={transactions} currency={activeProfile.currency} onAddClient={handleOpenClientModal} onUpdateClient={handleUpdateClient} onDeleteClient={handleDeleteClient}/>;
+                return <ClientsPage clients={clients} transactions={transactions} currency={activeProfile.currency} onAddClient={handleAddClient} onUpdateClient={handleUpdateClient} onDeleteClient={handleDeleteClient}/>;
             case 'pos':
                 return <PosPage products={products} currency={activeProfile.currency} onCharge={handleCharge} onNavigate={handleNavigate} />;
             case 'investments':
@@ -1109,7 +1166,7 @@ const App: React.FC = () => {
             default:
                 return <Dashboard transactions={transactions} invoices={invoices} recurringTransactions={recurringTransactions} budgets={budgets} categories={categories} summary={financialSummary} activeProfile={activeProfile} onAddTransactionClick={handleOpenAddTransaction} onAddFromReceiptClick={handleOpenScanner} onNavigateToInvoice={handleNavigateToInvoice} onNavigateToSettings={() => handleNavigate('settings')} onNavigate={handleNavigate} theme={theme} onOpenInstallModal={handleOpenInstallModal} />;
         }
-    }, [currentPage, transactions, invoices, financialSummary, activeProfile, handleOpenAddTransaction, handleOpenScanner, handleNavigateToInvoice, theme, handleDeleteTransactions, handleAddCategory, handleUpdateCategory, handleDeleteCategory, recurringTransactions, handleDeleteRecurringTransaction, handleOpenRecurringModal, profiles, activeProfileId, handleAddProfile, handleUpdateProfile, handleDeleteProfile, handleExportData, handleResetProfileData, budgets, categories, handleOpenBudgetModal, handleUpdateBudget, handleDeleteBudget, handleDeleteInvoice, handleSaveInvoice, editingInvoiceId, locale, goals, handleOpenGoalModal, handleDeleteGoal, handleOpenFundsModal, products, handleOpenProductModal, handleDeleteProduct, handleCharge, handleNavigateToInvoiceFromTransaction, handleNavigate, handleOpenClientSelectorForInvoice, handleOpenInstallModal, handleOpenImportModal, clients, handleOpenClientModal, handleUpdateClient, handleDeleteClient, investments, handleAddInvestment, handleDeleteInvestment, handleUpdateInvestmentPrices, handleBatchUpdateInvestments, handleOpenEditTransactionModal, handleDeleteInvoiceFromEditor, handleRestoreTransaction]);
+    }, [currentPage, transactions, invoices, financialSummary, activeProfile, handleOpenAddTransaction, handleOpenScanner, handleNavigateToInvoice, theme, handleDeleteTransactions, handleAddCategory, handleUpdateCategory, handleDeleteCategory, recurringTransactions, handleDeleteRecurringTransaction, handleOpenRecurringModal, profiles, activeProfileId, handleAddProfile, handleUpdateProfile, handleDeleteProfile, handleExportData, handleResetProfileData, budgets, categories, handleAddBudget, handleUpdateBudget, handleDeleteBudget, handleDeleteInvoice, handleSaveInvoice, editingInvoiceId, locale, goals, handleOpenGoalModal, handleDeleteGoal, handleOpenFundsModal, products, handleOpenProductModal, handleDeleteProduct, handleCharge, handleNavigateToInvoiceFromTransaction, handleNavigate, handleOpenClientSelectorForInvoice, handleOpenInstallModal, handleOpenImportModal, clients, handleAddClient, handleUpdateClient, handleDeleteClient, investments, handleAddInvestment, handleDeleteInvestment, handleUpdateInvestmentPrices, handleBatchUpdateInvestments, handleOpenEditTransactionModal, handleDeleteInvoiceFromEditor, handleRestoreTransaction]);
 
     if (isDataLoading) {
         return (
@@ -1122,7 +1179,7 @@ const App: React.FC = () => {
     return (
         <I18nProvider locale={locale}>
             <div className="flex h-screen bg-gray-100 dark:bg-brand-primary font-sans">
-                <Sidebar isMobileOpen={isSidebarOpen} onMobileClose={() => setIsSidebarOpen(false)} isMini={isSidebarMini} setIsMini={setIsSidebarMini} currentPage={currentPage} onNavigate={handleNavigate} />
+                <Sidebar isMobileOpen={isSidebarOpen} onMobileClose={() => setIsSidebarOpen(false)} isMini={isSidebarMini} setIsMini={setIsSidebarMini} currentPage={currentPage} onNavigate={handleNavigate} showInvestments={investmentsEnabled} />
                 <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${isSidebarMini ? 'lg:ml-20' : 'lg:ml-64'}`}>
                     <Header onMenuClick={() => setIsSidebarOpen(true)} profiles={profiles} activeProfile={activeProfile} onSwitchProfile={handleSwitchProfile} onManageProfiles={() => handleNavigate('settings')} theme={theme} onSetTheme={handleSetTheme} />
                     <main className="flex-1 overflow-x-hidden overflow-y-auto">
@@ -1198,15 +1255,6 @@ const App: React.FC = () => {
     );
 };
 
-
-const AppWrapper = () => {
-    const [locale, setLocale] = useState<SupportedLocale>(() => (localStorage.getItem('yans-pro-locale') || 'en') as SupportedLocale);
-    return (
-        <I18nProvider locale={locale}>
-            <App />
-        </I18nProvider>
-    );
-}
 
 // We need a wrapper for App to use the I18n context within App.tsx itself for the AI chat logic
 const AppContainer = () => {

@@ -1,4 +1,3 @@
-<div style={{ width: '100%', height: 400 }}>
 
 import React, { useState, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
@@ -40,7 +39,7 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
         transactions.forEach(t => {
             const date = new Date(t.date);
             const key = date.toLocaleString('default', { month: 'short', year: '2-digit' });
-            if (monthlyData.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(monthlyData, key)) {
                 if (t.type === TransactionType.INCOME) {
                     monthlyData[key] += t.amount;
                 } else {
@@ -63,17 +62,10 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
     }, [transactions]);
 
     const chartData = useMemo(() => {
-        if (forecastData.length === 0) return historicalData;
-        
-        // Connect the last historical point to the first forecast point for visual continuity
-        const lastHistorical = historicalData[historicalData.length - 1];
-        const connectedForecast = (\ ?? []).map((point, index) => {
-             if (index === 0 && lastHistorical) {
-                 // No special handling needed for AreaChart if we structure data right, 
-                 // but for strict separation we just append.
-             }
-             return point;
-        });
+        const forecastArray = Array.isArray(forecastData) ? forecastData : [];
+        if (forecastArray.length === 0) return historicalData;
+
+        const connectedForecast = forecastArray.map((point) => point);
 
         return [...historicalData, ...connectedForecast];
     }, [historicalData, forecastData]);
@@ -86,9 +78,22 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
         setIsLoading(true);
         setError(null);
         try {
-            const inputForAi = (\ ?? []).map(d => ({ month: d.month, netFlow: d.historicalAmount || 0 }));
-            const result = await generateCashFlowForecast(inputForAi);
-            setForecastData(result);
+            const forecastArray = Array.isArray(forecastData) ? forecastData : [];
+            const inputForAi = forecastArray.map(d => ({ month: d.month, netFlow: d.historicalAmount || 0 }));
+            const result: unknown = await generateCashFlowForecast(inputForAi);
+            // Normalise the response: accept either an array or an object with a `data` array
+            let parsed: CashFlowPoint[] = [];
+            if (Array.isArray(result)) parsed = result as CashFlowPoint[];
+            else if (result && typeof result === 'object' && Array.isArray((result as { data?: CashFlowPoint[] }).data)) {
+                parsed = (result as { data: CashFlowPoint[] }).data;
+            } else if (result && typeof result === 'object' && (result as { ok?: boolean }).ok === false) {
+                parsed = [];
+            }
+
+            setForecastData(parsed as CashFlowPoint[]);
+            if (parsed.length === 0) {
+                setError(t('dashboard.forecast.noForecastProduced') || 'No forecast produced.');
+            }
         } catch (err) {
             setError(err instanceof Error ? err.message : t('general.error.unknown'));
         } finally {
@@ -96,9 +101,10 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
         }
     };
 
-    const CustomTooltip = ({ active, payload, label }: any) => {
+    const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ payload: CashFlowPoint }>; label?: string }) => {
         if (active && payload && payload.length) {
-            const dataPoint = payload[0].payload as CashFlowPoint;
+            const dataPoint = payload[0]?.payload ?? null;
+            if (!dataPoint) return null;
             const isForecast = dataPoint.isForecast;
             const value = isForecast ? dataPoint.forecastAmount : dataPoint.historicalAmount;
             
@@ -121,10 +127,10 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
     };
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-96 flex flex-col">
+        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-96 flex flex-col min-w-0">
             <div className="flex justify-between items-start mb-4">
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2 break-words">
                         {t('dashboard.forecast.title')}
                         <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300 border border-purple-400">AI Beta</span>
                     </h3>
@@ -190,7 +196,7 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
                             fillOpacity={1} 
                             fill="url(#colorForecast)" 
                             connectNulls
-                            data={(\ ?? []).map(d => d.isForecast || d.month === historicalData[historicalData.length-1].month ? d : { ...d, forecastAmount: null })}
+                            data={(Array.isArray(forecastData) ? forecastData : []).map(d => d.isForecast || d.month === historicalData[historicalData.length-1].month ? d : { ...d, forecastAmount: null })}
                         />
                     </AreaChart>
                 </ResponsiveContainer>
@@ -201,5 +207,3 @@ const CashFlowForecastChart: React.FC<CashFlowForecastChartProps> = ({ transacti
 
 export default CashFlowForecastChart;
 
-
-</div>

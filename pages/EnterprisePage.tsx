@@ -1,4 +1,4 @@
-
+﻿
 import React, { useMemo, useState } from 'react';
 
 import { Transaction, FinancialSummary, EnterpriseMetrics, Anomaly } from '../types';
@@ -10,7 +10,6 @@ import { generateExecutiveSummary } from '../services/geminiService';
 import { useI18n } from '../hooks/useI18n';
 
 import { BriefcaseIcon, TrendingUpIcon, AlertTriangleIcon, SparklesIcon, CheckIcon } from '../components/Icons';
-import { ensureString } from '../utils/ensureString';
 
 interface EnterprisePageProps {
     transactions: Transaction[];
@@ -74,7 +73,7 @@ const EnterprisePage: React.FC<EnterprisePageProps> = ({ transactions, summary, 
                     <div>
                         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('enterprise.metrics.runway')}</p>
                         <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
-                            {metrics.runwayMonths >= 99 ? '∞' : metrics.runwayMonths.toFixed(1)} <span className="text-lg font-medium text-gray-500">{t('enterprise.metrics.months')}</span>
+                            {metrics.runwayMonths >= 99 ? 'âˆž' : metrics.runwayMonths.toFixed(1)} <span className="text-lg font-medium text-gray-500">{t('enterprise.metrics.months')}</span>
                         </p>
                     </div>
                     <div className="mt-4">
@@ -148,7 +147,7 @@ const EnterprisePage: React.FC<EnterprisePageProps> = ({ transactions, summary, 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {(\ ?? []).map(anom => (
+                                    {anomalies.map(anom => (
                                         <tr key={anom.id} className="bg-white dark:bg-brand-secondary border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/30">
                                             <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                                 {anom.type === 'high_value' ? 'High Value' : 'Duplicate?'}
@@ -203,7 +202,6 @@ const EnterprisePage: React.FC<EnterprisePageProps> = ({ transactions, summary, 
 };
 
 export default EnterprisePage;
-
 
 
 

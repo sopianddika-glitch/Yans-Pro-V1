@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Product, Page } from '../types';
+import { Product } from '../types';
 import { AddIcon, TagIcon, EditIcon, DeleteIcon, CameraIcon } from '../components/Icons';
 import EmptyState from '../components/EmptyState';
 import { useI18n } from '../hooks/useI18n';
@@ -11,7 +11,6 @@ interface ProductsPageProps {
     currency: string;
     onOpenModal: (product: Product | null) => void;
     onDelete: (id: string) => void;
-    onNavigate: (page: Page) => void;
 }
 
 const formatCurrency = (value: number, currency: string) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(value);
@@ -25,7 +24,7 @@ const ProductCard: React.FC<{ product: Product; currency: string; onEdit: () => 
     const stockCount = product.trackStock ? product.stock : null;
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md dark:shadow-lg flex flex-col justify-between transform hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+        <div className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md dark:shadow-lg flex flex-col justify-between transform hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group min-w-0">
             {isLowStock && (
                 <div className="absolute top-0 right-0 bg-brand-red text-white text-xs font-bold px-2 py-1 rounded-bl-lg z-10">
                     {t('productsPage.lowStock')}
@@ -33,7 +32,7 @@ const ProductCard: React.FC<{ product: Product; currency: string; onEdit: () => 
             )}
             <div>
                 <div className="flex justify-between items-start gap-2">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex-grow line-clamp-1" title={product.name}>{product.name}</h3>
+                    <h3 className="text-base sm:text-lg font-bold text-gray-800 dark:text-white flex-grow line-clamp-1" title={product.name}>{product.name}</h3>
                     <div className="flex items-center flex-shrink-0 pt-1">
                         <button onClick={(e) => { e.stopPropagation(); onEdit(); }} className="p-1 text-gray-500 dark:text-gray-400 hover:text-brand-accent transition-colors"><EditIcon className="w-4 h-4" /></button>
                         <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="p-1 text-gray-500 dark:text-gray-400 hover:text-brand-red transition-colors"><DeleteIcon className="w-4 h-4" /></button>
@@ -45,21 +44,21 @@ const ProductCard: React.FC<{ product: Product; currency: string; onEdit: () => 
                     </span>
                     {product.trackStock && (
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${isLowStock ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'}`}>
-                            {t('productsPage.stock', {count: stockCount})}
+                            {t('productsPage.stock', {count: stockCount ?? 0})}
                         </span>
                     )}
                 </div>
                 {product.sku && <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 font-mono">SKU: {product.sku}</p>}
-                {product.description && <p className="text-sm text-gray-500 dark:text-brand-muted mt-2 line-clamp-2">{product.description}</p>}
+                {product.description && <p className="text-xs sm:text-sm text-gray-500 dark:text-brand-muted mt-2 line-clamp-2">{product.description}</p>}
             </div>
             <div className="mt-4 text-right">
-                <p className="text-2xl font-bold text-gray-800 dark:text-white">{formatCurrency(product.price, currency)}</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">{formatCurrency(product.price, currency)}</p>
             </div>
         </div>
     );
 };
 
-const ProductsPage: React.FC<ProductsPageProps> = ({ products, currency, onOpenModal, onDelete, onNavigate }) => {
+const ProductsPage: React.FC<ProductsPageProps> = ({ products, currency, onOpenModal, onDelete }) => {
     const { t } = useI18n();
     const [searchTerm, setSearchTerm] = useState('');
     const [isScannerOpen, setIsScannerOpen] = useState(false);
@@ -114,7 +113,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ products, currency, onOpenM
 
             {filteredProducts.length > 0 ? (
                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {(\ ?? []).map(product => (
+                    {filteredProducts.map(product => (
                         <ProductCard 
                             key={product.id} 
                             product={product} 
@@ -146,4 +145,3 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ products, currency, onOpenM
 };
 
 export default ProductsPage;
-

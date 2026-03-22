@@ -17,19 +17,26 @@ interface I18nProviderProps {
     locale: SupportedLocale;
 }
 
-const getNestedValue = (obj: any, path: string): string | undefined => {
-    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+const getNestedValue = (obj: Record<string, unknown>, path: string): string | undefined => {
+    const result = path.split('.').reduce<unknown>((acc, part) => {
+        if (acc && typeof acc === 'object' && part in acc) {
+            return (acc as Record<string, unknown>)[part];
+        }
+        return undefined;
+    }, obj);
+    return typeof result === 'string' ? result : undefined;
 };
 
 export const I18nProvider: React.FC<I18nProviderProps> = ({ children, locale }) => {
-    const [translations, setTranslations] = useState<Record<string, any>>({});
+    const [translations, setTranslations] = useState<Record<string, unknown>>({});
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchTranslations = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch(`/locales/${locale}.json`);
+                const baseUrl = import.meta.env.BASE_URL || '/';
+                const response = await fetch(`${baseUrl}locales/${locale}.json`);
                 if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
                 setTranslations(data);
@@ -37,7 +44,8 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children, locale }) 
                 console.error(`Could not load translations for ${locale}, falling back to 'en'`, error);
                 // Fallback to English if the desired locale fails
                 try {
-                    const response = await fetch(`/locales/en.json`);
+                    const baseUrl = import.meta.env.BASE_URL || '/';
+                    const response = await fetch(`${baseUrl}locales/en.json`);
                     if (!response.ok) throw new Error('Fallback translation failed');
                     const data = await response.json();
                     setTranslations(data);

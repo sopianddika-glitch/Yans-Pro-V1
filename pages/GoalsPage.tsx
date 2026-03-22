@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Goal, Page } from '../types';
+import { Goal } from '../types';
 import { AddIcon, FlagIcon, EditIcon, DeleteIcon } from '../components/Icons';
 import EmptyState from '../components/EmptyState';
 import { useI18n } from '../hooks/useI18n';
@@ -11,7 +11,6 @@ interface GoalsPageProps {
     onOpenGoalModal: (goal: Goal | null) => void;
     onDeleteGoal: (id: string) => void;
     onOpenFundsModal: (goal: Goal) => void;
-    onNavigate: (page: Page) => void;
 }
 
 const formatCurrency = (value: number, currency: string) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(value);
@@ -25,10 +24,10 @@ const GoalCard: React.FC<{ goal: Goal; currency: string; onEdit: () => void; onD
     if (percentage >= 100) progressBarColor = 'bg-brand-green';
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md dark:shadow-lg flex flex-col justify-between transform hover:-translate-y-1 transition-transform duration-300">
+        <div className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md dark:shadow-lg flex flex-col justify-between transform hover:-translate-y-1 transition-transform duration-300 min-w-0">
             <div>
                 <div className="flex justify-between items-start gap-2">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex-grow">{goal.name}</h3>
+                    <h3 className="text-base sm:text-lg font-bold text-gray-800 dark:text-white flex-grow break-words">{goal.name}</h3>
                     <div className="flex items-center flex-shrink-0">
                         <button onClick={(e) => { e.stopPropagation(); onEdit(); }} className="p-1 text-gray-500 dark:text-gray-400 hover:text-brand-accent transition-colors"><EditIcon className="w-4 h-4" /></button>
                         <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="p-1 text-gray-500 dark:text-gray-400 hover:text-brand-red transition-colors"><DeleteIcon className="w-4 h-4" /></button>
@@ -42,8 +41,8 @@ const GoalCard: React.FC<{ goal: Goal; currency: string; onEdit: () => void; onD
 
                 <div className="mt-4">
                     <div className="flex justify-between items-baseline mb-1">
-                        <span className="text-sm font-semibold text-gray-600 dark:text-gray-300">{formatCurrency(goal.currentAmount, currency)}</span>
-                        <span className="text-sm text-gray-500 dark:text-brand-muted">{formatCurrency(goal.targetAmount, currency)}</span>
+                    <span className="text-sm font-semibold text-gray-600 dark:text-gray-300 truncate max-w-[9rem]">{formatCurrency(goal.currentAmount, currency)}</span>
+                    <span className="text-sm text-gray-500 dark:text-brand-muted truncate max-w-[9rem]">{formatCurrency(goal.targetAmount, currency)}</span>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-brand-primary rounded-full h-3">
                         <div className={`${progressBarColor} h-3 rounded-full transition-width duration-500`} style={{ width: `${Math.min(percentage, 100)}%` }}></div>
@@ -65,7 +64,7 @@ const GoalCard: React.FC<{ goal: Goal; currency: string; onEdit: () => void; onD
 };
 
 
-const GoalsPage: React.FC<GoalsPageProps> = ({ goals, currency, onOpenGoalModal, onDeleteGoal, onOpenFundsModal, onNavigate }) => {
+const GoalsPage: React.FC<GoalsPageProps> = ({ goals, currency, onOpenGoalModal, onDeleteGoal, onOpenFundsModal }) => {
     const { t } = useI18n();
     
     const handleDelete = (id: string, name: string) => {
@@ -91,7 +90,7 @@ const GoalsPage: React.FC<GoalsPageProps> = ({ goals, currency, onOpenGoalModal,
 
             {sortedGoals.length > 0 ? (
                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {(\ ?? []).map(goal => (
+                    {sortedGoals.map(goal => (
                         <GoalCard 
                             key={goal.id} 
                             goal={goal} 
@@ -118,4 +117,3 @@ const GoalsPage: React.FC<GoalsPageProps> = ({ goals, currency, onOpenGoalModal,
 };
 
 export default GoalsPage;
-

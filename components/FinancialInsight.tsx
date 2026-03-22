@@ -50,7 +50,7 @@ const FinancialInsight: React.FC<FinancialInsightProps> = ({ transactions, summa
   // Helper to parse bold text within a string
   const parseBold = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*)/g);
-    return (\ ?? []).map((part, i) => {
+    return parts.map((part, i) => {
       if (part.startsWith('**') && part.endsWith('**')) {
         return <strong key={i} className="font-semibold text-gray-900 dark:text-white">{part.slice(2, -2)}</strong>;
       }
@@ -91,13 +91,13 @@ const FinancialInsight: React.FC<FinancialInsightProps> = ({ transactions, summa
   };
 
   return (
-    <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col border border-gray-100 dark:border-gray-800">
+    <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col border border-gray-100 dark:border-gray-800 min-w-0">
       <div className="flex items-center gap-3 mb-4 flex-shrink-0 border-b border-gray-100 dark:border-gray-700 pb-4">
         <div className="bg-brand-accent/10 p-2 rounded-lg">
             <SparklesIcon className="w-6 h-6 text-brand-accent" />
         </div>
         <div>
-            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">{t('ai.financialInsight')}</h3>
+            <h3 className="text-base sm:text-lg font-bold text-gray-800 dark:text-gray-100 break-words">{t('ai.financialInsight')}</h3>
             <p className="text-xs text-gray-500 dark:text-brand-muted">Powered by Gemini 2.5</p>
         </div>
       </div>
@@ -108,7 +108,7 @@ const FinancialInsight: React.FC<FinancialInsightProps> = ({ transactions, summa
                 {t('ai.askQuery')}
             </label>
             <div className="flex flex-wrap gap-2">
-              {(\ ?? []).map(sq => (
+              {suggestedQueries.map(sq => (
                  <button 
                     key={sq.key} 
                     onClick={() => handleSuggestedQueryClick(sq.text)} 
@@ -173,7 +173,7 @@ const FinancialInsight: React.FC<FinancialInsightProps> = ({ transactions, summa
                             <span>🔍</span> {t('ai.sources')}
                         </h4>
                         <ul className="space-y-1">
-                            {(\ ?? []).map((source, idx) => (
+                            {sources.map((source, idx) => (
                                 <li key={idx} className="truncate">
                                     <a 
                                         href={source.uri} 
@@ -203,4 +203,3 @@ const FinancialInsight: React.FC<FinancialInsightProps> = ({ transactions, summa
 };
 
 export default FinancialInsight;
-

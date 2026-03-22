@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Invoice, InvoiceItem, InvoiceStatus, Profile, Product } from '../types';
 import { AddIcon, DeleteIcon, PrintIcon, CheckIcon } from '../components/Icons';
 import InvoicePDFTemplate from '../components/InvoicePDFTemplate';
@@ -35,7 +35,7 @@ const InvoiceEditorPage: React.FC<InvoiceEditorPageProps> = ({ onSave, onBack, e
             setClientName(existingInvoice.clientName);
             setIssueDate(existingInvoice.issueDate);
             setDueDate(existingInvoice.dueDate);
-            setItems(existingInvoice.(\ ?? []).map(({id, ...rest}) => rest)); // remove id for editing
+            setItems(existingInvoice.items.map(({ id: _id, ...rest }) => rest)); // remove id for editing
             setNotes(existingInvoice.notes || '');
             setStatus(existingInvoice.status);
         } else {
@@ -105,7 +105,7 @@ const InvoiceEditorPage: React.FC<InvoiceEditorPageProps> = ({ onSave, onBack, e
             clientName,
             issueDate,
             dueDate,
-            items: (\ ?? []).map(item => ({ ...item, id: Math.random().toString() })), // Add temp id
+            items: items.map(item => ({ ...item, id: Math.random().toString() })), // Add temp id
             notes,
             status,
         };
@@ -121,7 +121,7 @@ const InvoiceEditorPage: React.FC<InvoiceEditorPageProps> = ({ onSave, onBack, e
         const invoiceDataForPdf = {
             id: existingInvoice?.id || 'DRAFT-ID',
             profileId: existingInvoice?.profileId || profile.id,
-            clientName, issueDate, dueDate, items: (\ ?? []).map(item => ({...item, id: Math.random().toString()})), notes, status
+            clientName, issueDate, dueDate, items: items.map(item => ({...item, id: Math.random().toString()})), notes, status
         };
         const markup = renderToStaticMarkup(<InvoicePDFTemplate invoice={invoiceDataForPdf} profile={profile} currency={currency} />);
         const printWindow = window.open('', '_blank');
@@ -206,7 +206,7 @@ const InvoiceEditorPage: React.FC<InvoiceEditorPageProps> = ({ onSave, onBack, e
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {(\ ?? []).map((item, index) => (
+                                    {items.map((item, index) => (
                                         <tr key={index} className="border-b border-gray-100 dark:border-gray-800">
                                             <td className="pr-2 py-1 align-top">
                                                  <ProductSelectorInput
@@ -228,7 +228,7 @@ const InvoiceEditorPage: React.FC<InvoiceEditorPageProps> = ({ onSave, onBack, e
                         </div>
                         {/* Mobile Card View */}
                         <div className="md:hidden space-y-4">
-                            {(\ ?? []).map((item, index) => (
+                            {items.map((item, index) => (
                                 <div key={index} className="p-4 rounded-lg border bg-gray-50 dark:bg-brand-primary border-gray-200 dark:border-gray-700 space-y-3">
                                     <div className="flex justify-between items-start">
                                         <div className="w-full">

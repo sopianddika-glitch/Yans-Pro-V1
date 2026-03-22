@@ -50,7 +50,7 @@ const InvoicePDFTemplate: React.FC<InvoicePDFTemplateProps> = ({ invoice, profil
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                    {invoice.(\ ?? []).map(item => (
+                    {invoice.items.map(item => (
                         <tr key={item.id}>
                             <td className="py-4 px-4 text-left font-medium">{item.description}</td>
                             <td className="py-4 px-4 text-right text-gray-600">{item.quantity}</td>

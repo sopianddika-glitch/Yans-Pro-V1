@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { Transaction, FinancialSummary, TransactionType } from '../types';
-import { ReportsIcon, XIcon, PrintIcon } from '../components/Icons';
+import { XIcon, PrintIcon } from '../components/Icons';
 import { useI18n } from '../hooks/useI18n';
 
 // --- HELPER FUNCTIONS & SHARED COMPONENTS ---
@@ -11,9 +11,9 @@ const formatCurrency = (value: number, currency: string) => new Intl.NumberForma
 const ReportCard: React.FC<{ title: string; description: string; onClick: () => void }> = ({ title, description, onClick }) => {
     const { t } = useI18n();
     return (
-        <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md dark:shadow-lg transform hover:-translate-y-1 transition-transform duration-300 flex flex-col">
-            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">{title}</h3>
-            <p className="text-gray-600 dark:text-brand-muted text-sm mb-4 flex-grow">{description}</p>
+        <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md dark:shadow-lg transform hover:-translate-y-1 transition-transform duration-300 flex flex-col min-w-0">
+            <h3 className="text-base sm:text-lg font-bold text-gray-800 dark:text-white mb-2 break-words">{title}</h3>
+            <p className="text-gray-600 dark:text-brand-muted text-sm mb-4 flex-grow break-words">{description}</p>
             <button onClick={onClick} className="w-full mt-auto bg-brand-accent hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300">
                 {t('reportsPage.generate')}
             </button>
@@ -61,9 +61,9 @@ const ReportContainer: React.FC<{ title: string; onClose: () => void; children: 
         }
     };
     return (
-        <div className="bg-white/50 dark:bg-brand-secondary/50 p-4 sm:p-6 rounded-xl border border-gray-200 dark:border-gray-700 report-print-container">
-            <div className="flex justify-between items-center mb-4 border-b border-gray-300 dark:border-gray-600 pb-3">
-                <h2 className="text-xl font-bold text-gray-800 dark:text-white">{title}</h2>
+        <div className="bg-white/50 dark:bg-brand-secondary/50 p-4 sm:p-6 rounded-xl border border-gray-200 dark:border-gray-700 report-print-container min-w-0">
+            <div className="flex flex-wrap justify-between items-start sm:items-center gap-3 mb-4 border-b border-gray-300 dark:border-gray-600 pb-3 min-w-0">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white break-words min-w-0">{title}</h2>
                 <div className="flex items-center gap-2">
                     <button onClick={handlePrint} className="p-2 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg" aria-label={t('reportsPage.print')}>
                         <PrintIcon className="w-5 h-5"/>
@@ -113,7 +113,7 @@ const PeriodSelector: React.FC<{ onPeriodChange: (p: { start: Date; end: Date } 
 
     return (
         <div className="flex flex-wrap gap-2 mb-4">
-            {(\ ?? []).map(p => (
+            {periods.map(p => (
                 <button
                     key={p.value}
                     onClick={() => handlePeriodClick(p.value)}
@@ -179,7 +179,7 @@ const ExpenseByCategoryReport: React.FC<{ transactions: Transaction[]; currency:
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead className="bg-gray-100 dark:bg-gray-800/50"><tr><th className="py-3 px-4 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">{t('general.category')}</th><th className="py-3 px-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">{t('reportsPage.expenseByCategory.amount')}</th><th className="py-3 px-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">{t('reportsPage.expenseByCategory.percentage')}</th></tr></thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">{(\ ?? []).map(item => <tr key={item.name}><td className="py-3 px-4 text-gray-700 dark:text-gray-200">{item.name}</td><td className="py-3 px-4 text-right text-red-600 dark:text-brand-red font-mono">{formatCurrency(item.amount, currency)}</td><td className="py-3 px-4 text-right text-gray-500 dark:text-brand-muted font-mono">{item.percentage.toFixed(2)}%</td></tr>)}</tbody>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">{data.map(item => <tr key={item.name}><td className="py-3 px-4 text-gray-700 dark:text-gray-200">{item.name}</td><td className="py-3 px-4 text-right text-red-600 dark:text-brand-red font-mono">{formatCurrency(item.amount, currency)}</td><td className="py-3 px-4 text-right text-gray-500 dark:text-brand-muted font-mono">{item.percentage.toFixed(2)}%</td></tr>)}</tbody>
                     </table>
                 </div>
             ) : <p className="text-center text-gray-500 dark:text-brand-muted py-4">{t('reportsPage.expenseByCategory.noData')}</p>}
@@ -214,7 +214,7 @@ const IncomeBySourceReport: React.FC<{ transactions: Transaction[]; currency: st
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead className="bg-gray-100 dark:bg-gray-800/50"><tr><th className="py-3 px-4 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">{t('reportsPage.incomeBySource.source')}</th><th className="py-3 px-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">{t('general.amount')}</th><th className="py-3 px-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">{t('reportsPage.expenseByCategory.percentage')}</th></tr></thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">{(\ ?? []).map(item => <tr key={item.name}><td className="py-3 px-4 text-gray-700 dark:text-gray-200">{item.name}</td><td className="py-3 px-4 text-right text-green-600 dark:text-brand-green font-mono">{formatCurrency(item.amount, currency)}</td><td className="py-3 px-4 text-right text-gray-500 dark:text-brand-muted font-mono">{item.percentage.toFixed(2)}%</td></tr>)}</tbody>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">{data.map(item => <tr key={item.name}><td className="py-3 px-4 text-gray-700 dark:text-gray-200">{item.name}</td><td className="py-3 px-4 text-right text-green-600 dark:text-brand-green font-mono">{formatCurrency(item.amount, currency)}</td><td className="py-3 px-4 text-right text-gray-500 dark:text-brand-muted font-mono">{item.percentage.toFixed(2)}%</td></tr>)}</tbody>
                     </table>
                 </div>
             ) : <p className="text-center text-gray-500 dark:text-brand-muted py-4">{t('reportsPage.incomeBySource.noData')}</p>}
@@ -254,7 +254,7 @@ const CashFlowReport: React.FC<{ transactions: Transaction[]; currency: string }
 const TaxSummaryReport: React.FC<{ transactions: Transaction[]; currency: string }> = ({ transactions, currency }) => {
     const { t } = useI18n();
     const [year, setYear] = useState(new Date().getFullYear());
-    const availableYears = useMemo(() => [...new Set((\ ?? []).map(t => new Date(t.date).getFullYear()))].sort((a: number, b: number) => b - a), [transactions]);
+    const availableYears = useMemo(() => [...new Set(transactions.map(t => new Date(t.date).getFullYear()))].sort((a: number, b: number) => b - a), [transactions]);
 
     const data = useMemo(() => {
         const filtered = transactions.filter(t => new Date(t.date).getFullYear() === year);
@@ -268,7 +268,7 @@ const TaxSummaryReport: React.FC<{ transactions: Transaction[]; currency: string
             <div className="mb-4">
                 <label htmlFor="tax-year" className="block text-sm font-medium text-gray-500 dark:text-brand-muted mb-1">{t('reportsPage.taxSummary.selectYear')}</label>
                 <select id="tax-year" value={year} onChange={e => setYear(Number(e.target.value))} className="w-full sm:w-auto bg-gray-50 dark:bg-brand-primary border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-brand-accent focus:outline-none transition">
-                    {(\ ?? []).map(y => <option key={y} value={y}>{y}</option>)}
+                    {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
             </div>
             <div className="space-y-3">
@@ -356,7 +356,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ transactions, summary, curren
 
             {activeReport ? renderActiveReport() : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {(\ ?? []).map(report => (
+                    {reportList.map(report => (
                         <ReportCard
                             key={report.title}
                             title={report.title}
@@ -371,4 +371,3 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ transactions, summary, curren
 };
 
 export default ReportsPage;
-

@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useMemo } from 'react';
 import { Invoice, InvoiceStatus } from '../types';
 import { AddIcon, EditIcon, DeleteIcon, InvoiceIcon } from '../components/Icons';
@@ -33,7 +33,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
     const [sortConfig, setSortConfig] = useState<{ key: keyof Invoice | 'total'; direction: 'ascending' | 'descending' }>({ key: 'issueDate', direction: 'descending' });
 
     const filteredAndSortedInvoices = useMemo(() => {
-        let sortedInvoices = [...invoices].filter(inv =>
+        const sortedInvoices = [...invoices].filter(inv =>
             inv.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             inv.id.slice(-6).includes(searchTerm)
         );
@@ -49,13 +49,19 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
                 bValue = b[sortConfig.key as keyof Invoice];
             }
 
-            if (sortConfig.key === 'issueDate' || sortConfig.key === 'dueDate') {
-                aValue = new Date(aValue as string).getTime();
-                bValue = new Date(bValue as string).getTime();
-            }
+            const normalize = (value: Invoice[keyof Invoice] | number) => {
+                if (sortConfig.key === 'issueDate' || sortConfig.key === 'dueDate') {
+                    return new Date(String(value ?? '')).getTime();
+                }
+                if (typeof value === 'number') return value;
+                return String(value ?? '');
+            };
 
-            if (aValue < bValue) return sortConfig.direction === 'ascending' ? -1 : 1;
-            if (aValue > bValue) return sortConfig.direction === 'ascending' ? 1 : -1;
+            const aNorm = normalize(aValue as Invoice[keyof Invoice] | number);
+            const bNorm = normalize(bValue as Invoice[keyof Invoice] | number);
+
+            if (aNorm < bNorm) return sortConfig.direction === 'ascending' ? -1 : 1;
+            if (aNorm > bNorm) return sortConfig.direction === 'ascending' ? 1 : -1;
             return 0;
         });
 
@@ -84,7 +90,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
     return (
         <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-brand-primary min-h-full">
             <div className="flex flex-col gap-4 sm:flex-row justify-between sm:items-center mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">{t('invoicesPage.title')}</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 break-words">{t('invoicesPage.title')}</h1>
                 <button
                     onClick={() => onNavigateToInvoice()}
                     className="flex items-center justify-center gap-2 bg-brand-accent hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300"
@@ -107,7 +113,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
             )}
            
             {filteredAndSortedInvoices.length > 0 ? (
-                <div className="bg-white dark:bg-brand-secondary rounded-xl shadow-md dark:shadow-lg">
+                <div className="bg-white dark:bg-brand-secondary rounded-xl shadow-md dark:shadow-lg min-w-0">
                     {/* Desktop Table View */}
                     <div className="overflow-x-auto hidden md:block">
                         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -132,7 +138,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                                {(\ ?? []).map((invoice) => {
+                                {(invoices ?? []).map((invoice) => {
                                     const total = invoice.items.reduce((sum, i) => sum + i.quantity * i.price, 0);
                                     return (
                                     <tr key={invoice.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
@@ -153,13 +159,13 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ invoices, currency, onNavig
 
                     {/* Mobile Card View */}
                     <div className="md:hidden p-4 space-y-4">
-                        {(\ ?? []).map((invoice) => {
+                        {(invoices ?? []).map((invoice) => {
                             const total = invoice.items.reduce((sum, i) => sum + i.quantity * i.price, 0);
                             return (
-                                <div key={invoice.id} className="p-4 rounded-lg shadow-sm border bg-gray-50 dark:bg-brand-primary border-gray-200 dark:border-gray-700">
+                                <div key={invoice.id} className="p-4 rounded-lg shadow-sm border bg-gray-50 dark:bg-brand-primary border-gray-200 dark:border-gray-700 min-w-0">
                                     <div className="flex justify-between items-center">
                                         <div>
-                                            <p className="font-semibold text-gray-900 dark:text-gray-100">{invoice.clientName}</p>
+                                            <p className="font-semibold text-gray-900 dark:text-gray-100 break-words">{invoice.clientName}</p>
                                             <p className="text-sm text-brand-accent">#{invoice.id.slice(-6)}</p>
                                         </div>
                                         <div className="flex items-center gap-1">

@@ -64,16 +64,16 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
     
     const isEditMode = !!recurringTransactionToEdit || !!transactionToEdit;
     
-    const getHierarchicalCategories = (type: TransactionType) => {
+    const getHierarchicalCategories = useCallback((type: TransactionType) => {
         const topLevel = categories.filter(c => c.type === type && !c.parentId);
         const grouped = categories.filter(c => c.type === type && c.parentId);
-        return (\ ?? []).map(parent => ({
+        return topLevel.map(parent => ({
             ...parent,
             children: grouped.filter(child => child.parentId === parent.id)
         }));
-    };
+    }, [categories]);
 
-    const availableCategories = useMemo(() => getHierarchicalCategories(type), [categories, type]);
+    const availableCategories = useMemo(() => getHierarchicalCategories(type), [getHierarchicalCategories, type]);
 
     const resetForm = useCallback(() => {
         const now = new Date();
@@ -287,9 +287,9 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                                 <label htmlFor="category" className="block text-sm font-medium text-gray-600 dark:text-brand-muted mb-1">{t('general.category')}</label>
                                 <select id="category" value={category} onChange={e => setCategory(e.target.value)} required className="w-full bg-white dark:bg-brand-primary border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-brand-accent focus:outline-none transition">
                                     <option value="" disabled>{t('modals.addTransaction.selectCategory')}</option>
-                                    {(\ ?? []).map(group => (
+                                    {availableCategories.map(group => (
                                         <optgroup key={group.id} label={group.name} className="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-                                            {group.children.length === 0 ? <option value={group.name} className="bg-white dark:bg-brand-primary text-gray-800 dark:text-gray-200">{group.name}</option> : group.(\ ?? []).map(child => <option key={child.id} value={child.name} className="bg-white dark:bg-brand-primary text-gray-800 dark:text-gray-200">{child.name}</option>)}
+                                            {group.children.length === 0 ? <option value={group.name} className="bg-white dark:bg-brand-primary text-gray-800 dark:text-gray-200">{group.name}</option> : group.children.map(child => <option key={child.id} value={child.name} className="bg-white dark:bg-brand-primary text-gray-800 dark:text-gray-200">{child.name}</option>)}
                                         </optgroup>
                                     ))}
                                 </select>
@@ -310,7 +310,7 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                                     className="w-full bg-white dark:bg-brand-primary border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-brand-accent focus:outline-none transition"
                                 >
                                     <option value="">{t('modals.addProduct.selectProduct')}</option>
-                                    {(\ ?? []).map(p => (
+                                    {products.map(p => (
                                         <option key={p.id} value={p.id}>{p.name} - {p.price}</option>
                                     ))}
                                 </select>
@@ -403,4 +403,3 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
 };
 
 export default AddTransactionModal;
-

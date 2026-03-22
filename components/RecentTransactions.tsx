@@ -14,8 +14,8 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions, c
     const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 10);
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('dashboard.recentTransactions.title')}</h3>
+        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg min-w-0">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 break-words">{t('dashboard.recentTransactions.title')}</h3>
             
             {/* Desktop Table View */}
             <div className="overflow-x-auto hidden md:block">
@@ -29,7 +29,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions, c
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                        {(\ ?? []).map((transaction) => (
+                        {sortedTransactions.map((transaction) => (
                             <tr key={transaction.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/40">
                                 <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                                     <div className="flex items-center">
@@ -37,7 +37,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions, c
                                             {transaction.type === TransactionType.INCOME ? <ArrowUpIcon className="h-5 w-5 text-brand-green" /> : <ArrowDownIcon className="h-5 w-5 text-brand-red" />}
                                         </div>
                                         <div className="ml-4">
-                                            <div className="font-medium text-gray-900 dark:text-gray-100">{transaction.description}</div>
+                                        <div className="font-medium text-gray-900 dark:text-gray-100 truncate max-w-[16rem] sm:max-w-[20rem]">{transaction.description}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -57,7 +57,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions, c
 
             {/* Mobile Card View */}
             <div className="md:hidden space-y-3">
-                {(\ ?? []).map((transaction) => (
+                {sortedTransactions.map((transaction) => (
                     <div key={transaction.id} className="p-3 rounded-lg bg-gray-50 dark:bg-brand-primary border border-gray-200 dark:border-gray-700">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center gap-3">
@@ -65,8 +65,8 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions, c
                                     {transaction.type === TransactionType.INCOME ? <ArrowUpIcon className="h-4 w-4 text-brand-green" /> : <ArrowDownIcon className="h-4 w-4 text-brand-red" />}
                                 </div>
                                 <div>
-                                    <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">{transaction.description}</p>
-                                    <p className="text-xs text-gray-500 dark:text-brand-muted">{transaction.category}</p>
+                                    <p className="font-semibold text-sm text-gray-900 dark:text-gray-100 truncate max-w-[12rem]">{transaction.description}</p>
+                                    <p className="text-xs text-gray-500 dark:text-brand-muted truncate max-w-[12rem]">{transaction.category}</p>
                                 </div>
                             </div>
                             <div className="text-right">
@@ -91,4 +91,3 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions, c
 };
 
 export default RecentTransactions;
-

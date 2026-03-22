@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { XIcon, CameraIcon } from './Icons';
 import { useI18n } from '../hooks/useI18n';
@@ -13,7 +13,6 @@ interface BarcodeScannerModalProps {
 const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClose, onScan }) => {
     const { t } = useI18n();
     const scannerRef = useRef<Html5QrcodeScanner | null>(null);
-    const [scanError, setScanError] = useState<string | null>(null);
 
     useEffect(() => {
         if (isOpen) {
@@ -34,7 +33,7 @@ const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ isOpen, onClo
                         onScan(decodedText);
                         onClose(); // Auto close on success
                     },
-                    (error) => {
+                    (_error) => {
                         // console.warn(error); // Scanning errors are common while moving camera
                     }
                 );

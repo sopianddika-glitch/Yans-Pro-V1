@@ -1,23 +1,14 @@
 // sw.js
 
 const CACHE_NAME = 'yans-pro-cache-v1';
+// Keep cached assets minimal. Do not cache source files (ts/tsx) to avoid
+// serving stale development bundles which break HMR. In production builds
+// the preview will include built assets under /assets/ which can be cached.
 const urlsToCache = [
   '/',
   '/index.html',
-  '/index.tsx',
-  '/App.tsx',
-  '/types.ts',
   '/manifest.json',
-  '/favicon.ico',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/locales/en.json',
-  '/locales/id.json',
-  '/services/cryptoService.ts',
-  '/services/geminiService.ts',
-  '/context/I18nContext.tsx',
-  '/hooks/useI18n.ts'
-  // Add other critical components/pages if necessary
+  '/favicon.ico'
 ];
 
 // Install a service worker
@@ -90,4 +81,13 @@ self.addEventListener('activate', event => {
       );
     })
   );
+  // Take control of all clients immediately after activation.
+  event.waitUntil(self.clients.claim());
+});
+
+// Allow the page to send a message to the SW to trigger skipWaiting (used by deploys)
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });

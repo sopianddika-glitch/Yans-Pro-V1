@@ -58,13 +58,16 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
         
         // Sorting
         sortedTransactions.sort((a, b) => {
-            let aValue = a[sortConfig.key];
-            let bValue = b[sortConfig.key];
+            const normalize = (value: Transaction[keyof Transaction]) => {
+                if (sortConfig.key === 'date') {
+                    return new Date(String(value ?? '')).getTime();
+                }
+                if (typeof value === 'number') return value;
+                return String(value ?? '');
+            };
 
-            if (sortConfig.key === 'date') {
-                aValue = new Date(aValue as string).getTime();
-                bValue = new Date(bValue as string).getTime();
-            }
+            const aValue = normalize(a[sortConfig.key]);
+            const bValue = normalize(b[sortConfig.key]);
 
             if (aValue < bValue) {
                 return sortConfig.direction === 'ascending' ? -1 : 1;
@@ -113,7 +116,7 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
         if (selectedIds.size === filteredAndSortedTransactions.length) {
             setSelectedIds(new Set());
         } else {
-            setSelectedIds(new Set((\ ?? []).map(t => t.id)));
+            setSelectedIds(new Set(filteredAndSortedTransactions.map(t => t.id)));
         }
     };
 
@@ -167,7 +170,7 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
             return stringField;
         };
 
-        const rows = (\ ?? []).map(t => 
+        const rows = filteredAndSortedTransactions.map(t => 
             [
                 escapeCsvField(t.id),
                 escapeCsvField(new Date(t.date).toISOString()),
@@ -196,8 +199,8 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
     return (
         <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-brand-primary min-h-full">
             <div className="flex flex-col gap-4 sm:flex-row justify-between sm:items-center mb-6">
-                <div className="flex items-center gap-3">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">{t('transactionsPage.title')}</h1>
+                <div className="flex items-center gap-3 min-w-0">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 break-words">{t('transactionsPage.title')}</h1>
                     {/* Toggle Deleted View */}
                     <button 
                         onClick={() => { setShowDeleted(!showDeleted); setSelectedIds(new Set()); }}
@@ -388,7 +391,7 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                            {(\ ?? []).map((transaction) => (
+                            {filteredAndSortedTransactions.map((transaction) => (
                                 <tr key={transaction.id} className={`hover:bg-gray-50 dark:hover:bg-gray-800/40 ${selectedIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20' : ''} ${transaction.deletedAt ? 'opacity-60' : ''}`}>
                                     <td className="py-4 pl-4 pr-3 sm:pl-6">
                                         <input type="checkbox"
@@ -399,13 +402,13 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
                                         />
                                     </td>
                                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm">
-                                        <div className="flex items-center">
+                                        <div className="flex items-center min-w-0">
                                             <div className="h-10 w-10 flex-shrink-0 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
                                                 {transaction.type === TransactionType.INCOME ? <ArrowUpIcon className="h-5 w-5 text-brand-green" /> : <ArrowDownIcon className="h-5 w-5 text-brand-red" />}
                                             </div>
-                                            <div className="ml-4">
-                                                <div className={`font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2 ${transaction.deletedAt ? 'line-through decoration-red-500' : ''}`}>
-                                                    <span>{transaction.description}</span>
+                                            <div className="ml-4 min-w-0">
+                                                <div className={`font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2 min-w-0 ${transaction.deletedAt ? 'line-through decoration-red-500' : ''}`}>
+                                                    <span className="truncate">{transaction.description}</span>
                                                     {transaction.invoiceId && (
                                                         <button onClick={() => onNavigateToInvoice(transaction.invoiceId!)} className="text-brand-accent hover:text-blue-400" title={t('transactionsPage.viewInvoice')}>
                                                             <InvoiceIcon className="h-4 w-4" />
@@ -457,8 +460,8 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
 
                 {/* Mobile Card View */}
                 <div className="md:hidden p-4 space-y-4">
-                     {(\ ?? []).map((transaction) => (
-                        <div key={transaction.id} className={`p-4 rounded-lg shadow-sm border ${selectedIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20 border-brand-accent' : 'bg-gray-50 dark:bg-brand-primary border-gray-200 dark:border-gray-700'} relative ${transaction.deletedAt ? 'opacity-70 border-red-200' : ''}`}>
+                     {filteredAndSortedTransactions.map((transaction) => (
+                        <div key={transaction.id} className={`p-4 rounded-lg shadow-sm border min-w-0 ${selectedIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20 border-brand-accent' : 'bg-gray-50 dark:bg-brand-primary border-gray-200 dark:border-gray-700'} relative ${transaction.deletedAt ? 'opacity-70 border-red-200' : ''}`}>
                             <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-3 flex-1 min-w-0">
                                     <input type="checkbox"
@@ -468,7 +471,7 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
                                         aria-label={`Select transaction ${transaction.description}`}
                                     />
                                     <div className="flex-grow min-w-0">
-                                        <div className={`font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2 ${transaction.deletedAt ? 'line-through decoration-red-500' : ''}`}>
+                                        <div className={`font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2 min-w-0 ${transaction.deletedAt ? 'line-through decoration-red-500' : ''}`}>
                                             <span className="truncate">{transaction.description}</span>
                                             {transaction.invoiceId && (
                                                 <button onClick={() => onNavigateToInvoice(transaction.invoiceId!)} className="text-brand-accent hover:text-blue-400 flex-shrink-0" title={t('transactionsPage.viewInvoice')}>
@@ -530,4 +533,3 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({
 };
 
 export default TransactionsPage;
-

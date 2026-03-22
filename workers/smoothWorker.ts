@@ -8,7 +8,7 @@ let lastTick = 0;
 let isRunning = false;
 
 // Simple physics state
-let state = {
+const state = {
     x: 0,
     y: 0,
     opacity: 1,

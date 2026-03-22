@@ -12,7 +12,7 @@ interface AddInvestmentModalProps {
     currency: string;
 }
 
-const AddInvestmentModal: React.FC<AddInvestmentModalProps> = ({ isOpen, onClose, onAdd, currency }) => {
+const AddInvestmentModal: React.FC<AddInvestmentModalProps> = ({ isOpen, onClose, onAdd }) => {
     const { t } = useI18n();
     const [symbol, setSymbol] = useState('');
     const [name, setName] = useState('');
@@ -111,7 +111,7 @@ const AddInvestmentModal: React.FC<AddInvestmentModalProps> = ({ isOpen, onClose
                         
                         {searchResults.length > 0 && (
                             <ul className="mt-3 space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
-                                {(\ ?? []).map((result, idx) => (
+                                {searchResults.map((result, idx) => (
                                     <li key={idx}>
                                         <button 
                                             type="button"
@@ -175,4 +175,3 @@ const AddInvestmentModal: React.FC<AddInvestmentModalProps> = ({ isOpen, onClose
 };
 
 export default AddInvestmentModal;
-

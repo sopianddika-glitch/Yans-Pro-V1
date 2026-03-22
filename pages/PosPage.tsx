@@ -3,7 +3,7 @@ import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { Product, CartItem, ProductType, Page } from '../types';
 import { useI18n } from '../hooks/useI18n';
 import EmptyState from '../components/EmptyState';
-import { AddIcon, DeleteIcon, StorefrontIcon, TagIcon, CameraIcon, XIcon, ChevronDownIcon, CheckIcon } from '../components/Icons';
+import { DeleteIcon, StorefrontIcon, TagIcon, CameraIcon, ChevronDownIcon, CheckIcon } from '../components/Icons';
 import BarcodeScannerModal from '../components/BarcodeScannerModal';
 
 interface PosPageProps {
@@ -66,7 +66,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
             }
 
             if (existingItem) {
-                return (\ ?? []).map(item =>
+                return prevCart.map(item =>
                     item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
                 );
             }
@@ -87,7 +87,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
             if (newQuantity <= 0) {
                 return prevCart.filter(item => item.id !== productId);
             }
-            return (\ ?? []).map(item =>
+            return prevCart.map(item =>
                 item.id === productId ? { ...item, quantity: newQuantity } : item
             );
         });
@@ -194,8 +194,8 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
                 </div>
 
                 {/* Product Grid */}
-                <div className="flex-grow p-4 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 content-start pb-24 md:pb-4">
-                    {(\ ?? []).map(product => {
+                <div className="flex-grow p-4 overflow-y-auto grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3 content-start pb-24 md:pb-4">
+                    {filteredProducts.map(product => {
                         const isOutOfStock = product.trackStock && (product.stock || 0) <= 0;
                         return (
                             <button 
@@ -215,7 +215,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
                                         {product.name}
                                     </h3>
                                     {product.trackStock && (
-                                        <p className="text-[10px] sm:text-xs text-gray-500 dark:text-brand-muted mt-1 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{t('productsPage.stock', {count: product.stock})}</p>
+                                        <p className="text-[10px] sm:text-xs text-gray-500 dark:text-brand-muted mt-1 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{t('productsPage.stock', {count: product.stock ?? 0})}</p>
                                     )}
                                 </div>
                                 <div className="bg-gray-50 dark:bg-brand-primary/50 py-2 px-3 w-full border-t border-gray-100 dark:border-gray-700/50">
@@ -228,7 +228,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
                     })}
                     {filteredProducts.length === 0 && (
                         <div className="col-span-full py-10 text-center text-gray-500 dark:text-gray-400">
-                            <p>No products found matching "{searchTerm}"</p>
+                            <p>No products found matching &ldquo;{searchTerm}&rdquo;</p>
                         </div>
                     )}
                 </div>
@@ -275,7 +275,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
                             <p className="text-center">{t('posPage.noItems')}</p>
                         </div>
                     ) : (
-                        (\ ?? []).map(item => (
+                        cart.map(item => (
                             <div key={item.id} className="flex flex-col bg-gray-50 dark:bg-brand-primary p-3 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm transition-all animate-fade-in-scale">
                                 <div className="flex justify-between items-start mb-2">
                                     <div className="flex-grow min-w-0 pr-2">
@@ -358,4 +358,3 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
 };
 
 export default PosPage;
-

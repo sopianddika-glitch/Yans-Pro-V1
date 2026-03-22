@@ -2,7 +2,6 @@
 import React from 'react';
 import { TransactionAudit } from '../types';
 import { XIcon } from './Icons';
-import { useI18n } from '../hooks/useI18n';
 
 interface AuditLogModalProps {
     isOpen: boolean;
@@ -12,8 +11,6 @@ interface AuditLogModalProps {
 }
 
 const AuditLogModal: React.FC<AuditLogModalProps> = ({ isOpen, onClose, transactionId, auditLog }) => {
-    const { t } = useI18n();
-
     if (!isOpen || !transactionId) return null;
 
     const filteredLog = auditLog
@@ -43,7 +40,7 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({ isOpen, onClose, transact
                         <p className="text-center text-gray-500 dark:text-brand-muted">No history found for this transaction.</p>
                     ) : (
                         <ul className="space-y-6 relative border-l-2 border-gray-200 dark:border-gray-700 ml-3">
-                            {(\ ?? []).map((entry) => (
+                            {filteredLog.map((entry) => (
                                 <li key={entry.id} className="ml-6 relative">
                                     <span className="absolute -left-[31px] top-0 flex items-center justify-center w-6 h-6 bg-white dark:bg-brand-secondary rounded-full ring-4 ring-white dark:ring-brand-secondary">
                                         <span className={`w-3 h-3 rounded-full ${getActionColor(entry.action).split(' ')[0].replace('bg-', 'bg-').replace('100', '500')}`}></span>
@@ -61,7 +58,7 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({ isOpen, onClose, transact
                                         
                                         {entry.changes && entry.changes.length > 0 && (
                                             <div className="mt-2 bg-gray-50 dark:bg-brand-primary p-3 rounded-md text-xs border border-gray-200 dark:border-gray-700">
-                                                {entry.(\ ?? []).map((change, idx) => (
+                                                {entry.changes.map((change, idx) => (
                                                     <div key={idx} className="grid grid-cols-3 gap-2 mb-1 last:mb-0">
                                                         <span className="font-semibold text-gray-600 dark:text-gray-400 capitalize">{change.field}:</span>
                                                         <span className="text-red-500 line-through truncate" title={String(change.oldValue)}>{String(change.oldValue)}</span>
@@ -82,4 +79,3 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({ isOpen, onClose, transact
 };
 
 export default AuditLogModal;
-

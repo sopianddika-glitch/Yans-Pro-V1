@@ -31,13 +31,15 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, currency, isExp
     }
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md dark:shadow-lg flex items-center space-x-4 transition-transform transform hover:scale-105">
-            <div className="flex-shrink-0 h-12 w-12 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg">
+        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-5 rounded-xl shadow-md dark:shadow-lg flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 min-w-0 transition-transform transform sm:hover:scale-[1.02]">
+            <div className="flex-shrink-0 h-10 w-10 sm:h-12 sm:w-12 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg">
                 {icon}
             </div>
-            <div>
-                <p className="text-sm font-medium text-gray-500 dark:text-brand-muted">{title}</p>
-                <p className={`text-2xl font-bold ${valueColorClass}`}>{formattedValue}</p>
+            <div className="min-w-0">
+                <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-brand-muted leading-snug break-words">{title}</p>
+                <p className={`text-base sm:text-2xl font-bold ${valueColorClass} leading-tight break-words whitespace-normal`}>
+                    {formattedValue}
+                </p>
             </div>
         </div>
     );
