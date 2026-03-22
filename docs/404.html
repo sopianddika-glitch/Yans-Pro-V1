@@ -2,8 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/Yans-Pro-V1/docs/assets/favicon-SPNtmkd8.ico" sizes="any" />
-    <link rel="manifest" href="/Yans-Pro-V1/docs/manifest.webmanifest" />
+    <script>
+      (() => {
+        const buildKind = 'docs';
+        const rawBuildMarker = '%VITE_BUILD' + '_KIND%';
+        const isRawSourcePage = buildKind === rawBuildMarker;
+        const isGitHubPages = window.location.hostname.endsWith('.github.io');
+        const isDocsPath = /\/docs(?:\/|$)/.test(window.location.pathname);
+
+        if (isGitHubPages && isRawSourcePage && !isDocsPath) {
+          const fallbackUrl = new URL('./docs/', window.location.href);
+          fallbackUrl.search = window.location.search;
+          fallbackUrl.hash = window.location.hash;
+          window.location.replace(fallbackUrl.toString());
+          return;
+        }
+
+        const manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = './manifest.webmanifest';
+        document.head.appendChild(manifestLink);
+      })();
+    </script>
+    <link rel="icon" href="./assets/favicon-SPNtmkd8.ico" sizes="any" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0D1117" />
     <meta
@@ -11,45 +32,11 @@
       content="Yans Pro is a professional finance tracker for transactions, invoices, budgets, products, and AI-assisted insights."
     />
     <title>Yans Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              'brand-primary': '#0D1117',
-              'brand-secondary': '#161B22',
-              'brand-accent': '#2F81F7',
-              'brand-green': '#2DA44E',
-              'brand-red': '#E5534B',
-              'brand-muted': '#8B949E',
-            },
-          },
-        },
-      };
-    </script>
-    <script type="module" crossorigin src="/Yans-Pro-V1/docs/assets/index-Bst5drjf.js"></script>
-    <link rel="stylesheet" crossorigin href="/Yans-Pro-V1/docs/assets/index-CZEk_CK_.css">
+    <script type="module" crossorigin src="./assets/index-DInLcul0.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CL14icNV.css">
   </head>
   <body class="bg-white dark:bg-brand-primary transition-colors duration-300">
     <div id="root"></div>
     <noscript>Yans Pro requires JavaScript to render the application.</noscript>
-    <script>
-      (() => {
-        const entryScript = document.getElementById('app-entry');
-        const entrySource = entryScript?.getAttribute('src') || '';
-        const isGitHubPages = window.location.hostname.endsWith('.github.io');
-        const isLegacySourcePage = /\.tsx(?:\?|$)/.test(entrySource);
-        const isDocsPath = /\/docs\/?$/.test(window.location.pathname);
-
-        if (isGitHubPages && isLegacySourcePage && !isDocsPath) {
-          const fallbackUrl = new URL('./docs/', window.location.href);
-          fallbackUrl.search = window.location.search;
-          fallbackUrl.hash = window.location.hash;
-          window.location.replace(fallbackUrl.toString());
-        }
-      })();
-    </script>
   </body>
 </html>

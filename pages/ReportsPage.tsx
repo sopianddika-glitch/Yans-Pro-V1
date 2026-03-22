@@ -3,6 +3,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { Transaction, FinancialSummary, TransactionType } from '../types';
 import { ReportsIcon, XIcon, PrintIcon } from '../components/Icons';
 import { useI18n } from '../hooks/useI18n';
+import { PRINT_DOCUMENT_STYLES } from '../utils/printStyles';
 
 // --- HELPER FUNCTIONS & SHARED COMPONENTS ---
 
@@ -31,27 +32,16 @@ const ReportContainer: React.FC<{ title: string; onClose: () => void; children: 
                 <html>
                     <head>
                         <title>Yans Pro - ${title}</title>
-                        <script src="https://cdn.tailwindcss.com"></script>
-                        <style>
-                            body { 
-                                background-color: white !important; 
-                                color: black !important;
-                                padding: 2rem;
-                                -webkit-print-color-adjust: exact;
-                            }
-                            .report-header {
-                                border-bottom: 2px solid #ccc;
-                                padding-bottom: 1rem;
-                                margin-bottom: 2rem;
-                            }
-                        </style>
+                        <style>${PRINT_DOCUMENT_STYLES}</style>
                     </head>
-                    <body class="bg-white">
-                        <div class="report-header">
+                    <body>
+                        <div class="print-shell">
+                        <div class="print-header">
                             <h1 class="text-3xl font-bold">${title}</h1>
                             <p class="text-gray-500">Generated on ${new Date().toLocaleDateString()}</p>
                         </div>
-                        ${printContents}
+                        <div class="print-document">${printContents}</div>
+                        </div>
                     </body>
                 </html>
             `);

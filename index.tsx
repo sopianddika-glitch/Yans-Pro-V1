@@ -20,16 +20,29 @@ const AppContainer = () => {
   useEffect(() => {
     if (import.meta.env.PROD && 'serviceWorker' in navigator) {
       const serviceWorkerUrl = `${import.meta.env.BASE_URL}sw.js`;
+      const desiredScope = new URL(import.meta.env.BASE_URL, window.location.href).href;
 
       window.addEventListener('load', () => {
-        navigator.serviceWorker
-          .register(serviceWorkerUrl)
-          .then((registration) => {
+        void (async () => {
+          try {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            const broaderRegistrations = registrations.filter(
+              (registration) => desiredScope.startsWith(registration.scope) && registration.scope !== desiredScope
+            );
+
+            await Promise.all(
+              broaderRegistrations.map((registration) => registration.unregister())
+            );
+
+            const registration = await navigator.serviceWorker.register(serviceWorkerUrl, {
+              scope: import.meta.env.BASE_URL,
+            });
+
             console.log('SW registered:', registration);
-          })
-          .catch((registrationError) => {
+          } catch (registrationError) {
             console.log('SW registration failed:', registrationError);
-          });
+          }
+        })();
       });
     }
   }, []);

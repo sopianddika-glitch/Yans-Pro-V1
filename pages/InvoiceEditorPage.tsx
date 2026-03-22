@@ -7,6 +7,7 @@ import InvoicePDFTemplate from '../components/InvoicePDFTemplate';
 import ProductSelectorInput from '../components/ProductSelectorInput';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { useI18n } from '../hooks/useI18n';
+import { PRINT_DOCUMENT_STYLES } from '../utils/printStyles';
 
 interface InvoiceEditorPageProps {
     onSave: (invoice: Omit<Invoice, 'id' | 'profileId'> | Invoice) => void;
@@ -129,9 +130,11 @@ const InvoiceEditorPage: React.FC<InvoiceEditorPageProps> = ({ onSave, onBack, e
             <html>
                 <head>
                     <title>Invoice #${invoiceDataForPdf.id.slice(-6)}</title>
-                    <script src="https://cdn.tailwindcss.com"></script>
+                    <style>${PRINT_DOCUMENT_STYLES}</style>
                 </head>
-                <body class="bg-white">${markup}</body>
+                <body>
+                    <div class="print-shell">${markup}</div>
+                </body>
             </html>
         `);
         printWindow?.document.close();

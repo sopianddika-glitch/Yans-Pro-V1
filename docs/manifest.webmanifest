@@ -1,12 +1,12 @@
 {
-  "name": "Yans Pro",
-  "short_name": "Yans Pro",
+  "name": "Yans Pro V1",
+  "short_name": "YansPro",
   "description": "A professional business finance tracker with AI-powered insights to help manage revenue, expenses, budgets, and invoices.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0D1117",
-  "theme_color": "#2F81F7",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "icons": [
     {
       "src": "icon-192.png",

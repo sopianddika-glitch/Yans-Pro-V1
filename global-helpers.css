@@ -1,11 +1,53 @@
-﻿/* global-helpers.css (auto-created) */
-html, body, #root {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
   height: 100%;
   margin: 0;
   padding: 0;
 }
-.chart-container, .recharts-wrapper, .chart-wrapper {
+
+body {
+  font-family: "Segoe UI", Inter, system-ui, sans-serif;
+  background-color: #ffffff;
+  color: #111827;
+}
+
+html.dark body {
+  background-color: #0d1117;
+  color: #f3f4f6;
+}
+
+.chart-container,
+.recharts-wrapper,
+.chart-wrapper {
   width: 100%;
   min-height: 320px;
   display: block;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #8b949e transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(139, 148, 158, 0.55);
+  border-radius: 999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 148, 158, 0.8);
 }

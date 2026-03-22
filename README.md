@@ -2,7 +2,7 @@
 
 Yans Pro is a modern Progressive Web App (PWA) for professional finance tracking. It combines transaction management, invoicing, budgeting, product management, and AI-assisted insights in one business-ready interface.
 
-Built with React, TypeScript, Vite, and Tailwind's CDN runtime configuration, the project is designed to run locally, build cleanly, and deploy reliably to GitHub Pages.
+Built with React, TypeScript, Vite, and a local Tailwind/PostCSS pipeline, the project is designed to run locally, build cleanly, and deploy reliably to GitHub Pages.
 
 ## Features
 
@@ -51,7 +51,7 @@ npm run build
 This repository now supports two deployment paths so the site can still render even if the repository is currently using GitHub Pages' older branch-based mode:
 
 1. **Primary deployment:** [deploy-pages.yml](./.github/workflows/deploy-pages.yml) builds and deploys the production app for GitHub Pages using GitHub Actions.
-2. **Compatibility fallback:** the committed `docs/` directory contains a static Pages build, and the source [index.html](./index.html) automatically redirects GitHub Pages legacy branch traffic to that fallback.
+2. **Compatibility fallback:** the committed `docs/` directory contains a static Pages build, and the source [index.html](./index.html) automatically redirects GitHub Pages legacy branch traffic to that fallback before the raw `index.tsx` entry can be requested.
 
 Build the GitHub Pages artifact locally:
 
@@ -69,7 +69,9 @@ npm run build:docs
 
 - Restored a valid GitHub Pages workflow and simplified the build pipeline.
 - Added a `docs/` fallback build so the published site is not blank when GitHub Pages still serves repository files directly.
-- Corrected the app entry HTML, deployment metadata, and service worker registration for repository subpaths.
+- Migrated production styling away from the Tailwind CDN to a local Tailwind/PostCSS build.
+- Corrected the app entry HTML, deployment metadata, manifest loading, and service worker registration for repository subpaths.
+- Replaced the legacy root service worker with a cleanup worker so stale caches stop serving raw source files.
 - Fixed TypeScript project discovery so editor and CI type-checking cover the real source files.
 - Cleaned project documentation and deployment instructions so the repository is easier to maintain.
 

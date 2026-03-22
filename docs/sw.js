@@ -1,11 +1,12 @@
-const CACHE_NAME = 'yans-pro-app-shell-v2';
+const CACHE_NAME = 'yans-pro-app-shell-v3';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
   './favicon.ico',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './workers/smoothWorker.js'
 ];
 
 self.addEventListener('install', (event) => {
