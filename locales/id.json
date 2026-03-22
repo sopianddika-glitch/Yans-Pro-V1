@@ -3,6 +3,7 @@
   "appName": "Yans Pro",
   "general": {
     "save": "Simpan",
+    "saveChanges": "Simpan Perubahan",
     "cancel": "Batal",
     "delete": "Hapus",
     "edit": "Ubah",
@@ -39,32 +40,57 @@
     "budgets": "Anggaran",
     "goals": "Target",
     "reports": "Laporan",
-    "settings": "Pengaturan"
+    "settings": "Pengaturan",
+    "navigation": "Navigasi utama",
+    "expand": "Perluas sidebar",
+    "collapse": "Ciutkan sidebar"
   },
   "header": {
-    "manageProfiles": "Kelola Profil"
+    "manageProfiles": "Kelola Profil",
+    "switchProfile": "Ganti profil bisnis",
+    "workspaceLabel": "Profil bisnis",
+    "ownerLabel": "Pemilik workspace",
+    "overview": "Ikhtisar keuangan",
+    "openSidebar": "Buka menu navigasi"
   },
   "dashboard": {
     "title": "Dasbor",
+    "subtitle": "Pantau arus kas, tagihan terbuka, dan komitmen mendatang untuk {businessName}.",
+    "quickActions": "Aksi cepat",
     "addFromReceipt": "Tambah dari Struk",
     "addTransaction": "Tambah Transaksi",
     "stats": {
-      "totalRevenue": "Total Pendapatan",
+      "totalRevenue": "Total Pemasukan",
       "totalExpenses": "Total Pengeluaran",
       "netProfit": "Laba Bersih",
       "outstanding": "Belum Dibayar",
       "overdue": "Jatuh Tempo",
-      "balance": "Saldo"
+      "balance": "Saldo Saat Ini",
+      "totalRevenueHint": "Pemasukan tercatat dari semua kanal",
+      "totalExpensesHint": "Biaya operasional dan variabel",
+      "netProfitHint": "Sisa pemasukan setelah pengeluaran",
+      "outstandingHint": "Faktur yang masih menunggu pembayaran",
+      "overdueHint": "Piutang yang melewati jatuh tempo",
+      "balanceHint": "Posisi kas bersih dari aktivitas"
     },
     "overviewChart": {
-      "title": "Gambaran Pendapatan vs Pengeluaran"
+      "title": "Gambaran Pemasukan vs Pengeluaran",
+      "subtitle": "Bandingkan pemasukan dan pengeluaran bulanan secara ringkas.",
+      "incomeLegend": "Pemasukan",
+      "expensesLegend": "Pengeluaran",
+      "emptyTitle": "Belum ada data grafik",
+      "emptyDescription": "Tambahkan transaksi pemasukan dan pengeluaran untuk mengisi ringkasan ini."
     },
     "forecast": {
       "title": "Prediksi Arus Kas",
-      "subtitle": "Prediksi bertenaga AI untuk 3 bulan ke depan",
-      "generate": "Mulai Prediksi",
-      "refresh": "Perbarui",
-      "notEnoughData": "Data historis tidak cukup untuk membuat prediksi. Tambahkan setidaknya 2 bulan transaksi."
+      "subtitle": "Proyeksi arus kas berdasarkan tren terbaru",
+      "generate": "Buat Proyeksi",
+      "refresh": "Segarkan Proyeksi",
+      "notEnoughData": "Data historis tidak cukup untuk membuat prediksi. Tambahkan setidaknya 2 bulan transaksi.",
+      "historyLabel": "Arus kas bersih historis",
+      "projectedLabel": "Arus kas bersih proyeksi",
+      "aiBadge": "Proyeksi AI",
+      "aiReasoning": "Alasan proyeksi"
     },
     "expenseChart": {
       "title": "Rincian Pengeluaran",
@@ -74,15 +100,25 @@
       "title": "Transaksi Terkini"
     },
     "actionableInvoices": {
-      "title": "Faktur Mendesak",
+      "title": "Actionable Invoices",
+      "subtitle": "Faktur yang perlu ditindaklanjuti segera",
+      "openCount": "{count} faktur perlu perhatian",
+      "amountDue": "Jumlah tagihan",
+      "dueDateLabel": "Jatuh tempo {date}",
+      "remindAction": "Buat pengingat",
       "allCaughtUp": "Semua sudah beres!",
       "noOutstanding": "Tidak ada faktur yang belum dibayar atau jatuh tempo."
     },
     "upcomingRecurring": {
-      "title": "Pembayaran Berulang Berikutnya",
-      "noUpcoming": "Tidak ada pembayaran mendatang.",
+      "title": "Pembayaran Berulang Mendatang",
+      "subtitle": "Pembayaran terjadwal yang akan jatuh tempo",
+      "noUpcoming": "Tidak ada pembayaran berulang mendatang.",
       "viewAll": "Lihat Semua",
-      "dueOn": "Jatuh tempo pada {date}"
+      "dueOn": "Tagihan berikutnya {date}",
+      "manage": "Kelola pembayaran berulang",
+      "statusUpcoming": "Mendatang",
+      "statusDue": "Segera Jatuh Tempo",
+      "statusOverdue": "Terlambat"
     },
     "platformDownload": {
       "title": "Dapatkan Yans Pro di Mana Saja",
@@ -200,12 +236,15 @@
     }
   },
   "budgetsPage": {
-    "title": "Anggaran",
+    "title": "Anggaran Operasional",
     "create": "Buat Anggaran",
     "spentOf": "terpakai dari",
     "noBudgets": "Belum Ada Anggaran yang Dibuat",
     "getStarted": "Mulailah dengan membuat anggaran baru.",
-    "deleteConfirm": "Anda yakin ingin menghapus anggaran ini?"
+    "deleteConfirm": "Anda yakin ingin menghapus anggaran ini?",
+    "remaining": "Sisa",
+    "overBy": "Melebihi",
+    "usage": "Penggunaan anggaran"
   },
   "goalsPage": {
     "title": "Target Keuangan",
@@ -231,6 +270,16 @@
     "noInvoices": "Tidak Ada Faktur Ditemukan",
     "createFirst": "Buat faktur pertama Anda untuk memulai.",
     "deleteConfirm": "Anda yakin ingin menghapus faktur untuk {clientName}? Tindakan ini tidak dapat dibatalkan dan juga akan menghapus transaksi pembayaran terkait."
+  },
+  "clientsPage": {
+    "title": "Klien",
+    "addClient": "Tambah Klien",
+    "searchPlaceholder": "Cari klien berdasarkan nama...",
+    "noClients": "Belum ada klien",
+    "getStarted": "Tambahkan klien pertama Anda untuk merapikan relasi pelanggan.",
+    "deleteConfirm": "Anda yakin ingin menghapus klien ini?",
+    "ltv": "Nilai seumur hidup",
+    "lastTransaction": "Transaksi terakhir"
   },
   "invoiceEditor": {
     "createTitle": "Buat Faktur Baru",
@@ -322,11 +371,13 @@
       "editTitle": "Ubah Anggaran",
       "category": "Kategori Anggaran",
       "selectCategory": "Pilih kategori",
+      "categoryInfo": "Pilih kategori pengeluaran utama untuk memantau seluruh pengeluaran terkait dalam satu anggaran.",
       "entireGroup": "(Seluruh Grup)",
       "period": "Periode",
       "monthly": "Bulanan",
       "yearly": "Tahunan",
       "aiSuggestion": "Dapatkan Saran AI",
+      "getSuggestion": "Dapatkan saran anggaran",
       "suggest": "Sarankan",
       "gettingSuggestion": "Mendapatkan Saran...",
       "selectCategoryFirst": "Harap pilih kategori terlebih dahulu untuk mendapatkan saran.",
@@ -372,6 +423,14 @@
       "trackStock": "Lacak Stok Inventaris",
       "currentStock": "Stok Saat Ini",
       "minStock": "Peringatan Stok Rendah Pada"
+    },
+    "addClient": {
+      "createTitle": "Tambah Klien",
+      "editTitle": "Ubah Klien",
+      "name": "Nama Klien",
+      "email": "Email",
+      "phone": "Nomor Telepon",
+      "address": "Alamat"
     },
     "profileManager": {
       "addTitle": "Tambah Profil Baru",
@@ -468,6 +527,26 @@
       "onTrack": "Sesuai Target",
       "saveTarget": "Simpan Target %"
     }
+  },
+  "manageInvestment": {
+    "title": "Kelola {symbol}",
+    "buy": "Beli",
+    "sell": "Jual",
+    "rebalance": "Seimbangkan",
+    "targetAllocation": "Target Alokasi",
+    "availableCash": "Daya Beli",
+    "currentPrice": "Harga Saat Ini",
+    "estCost": "Estimasi Biaya",
+    "proceeds": "Estimasi Hasil",
+    "insufficientFunds": "Dana tidak mencukupi di dompet.",
+    "insufficientQty": "Jumlah tidak mencukupi untuk dijual.",
+    "currentAlloc": "Alokasi Saat Ini",
+    "deviation": "Deviasi",
+    "actionRequired": "Tindakan Diperlukan",
+    "buyMore": "Beli {qty} {symbol}",
+    "sellSome": "Jual {qty} {symbol}",
+    "onTrack": "Sesuai Target",
+    "saveTarget": "Simpan Target %"
   },
   "enterprise": {
     "menu": "Command Center",

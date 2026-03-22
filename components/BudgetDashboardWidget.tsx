@@ -1,8 +1,8 @@
-
 import React, { useMemo } from 'react';
-import { Budget, Category, Transaction, TransactionType, Page } from '../types';
-import { BudgetIcon, ChevronRightIcon, AlertTriangleIcon } from './Icons';
+import { Budget, Category, Page, Transaction, TransactionType } from '../types';
+import { AlertTriangleIcon, BudgetIcon, ChevronRightIcon } from './Icons';
 import { useI18n } from '../hooks/useI18n';
+import { formatCurrency } from '../utils/intl';
 
 interface BudgetDashboardWidgetProps {
     budgets: Budget[];
@@ -13,120 +13,163 @@ interface BudgetDashboardWidgetProps {
 }
 
 const BudgetDashboardWidget: React.FC<BudgetDashboardWidgetProps> = ({ budgets, categories, transactions, currency, onNavigate }) => {
-    const { t } = useI18n();
+    const { t, locale } = useI18n();
 
     const budgetStatus = useMemo(() => {
         const now = new Date();
-        const categoryMap = new Map<string, Category>(categories.map(c => [c.id, c]));
+        const categoryMap = new Map<string, Category>(categories.map(category => [category.id, category]));
 
-        return budgets.map(budget => {
-            const category = categoryMap.get(budget.categoryId);
-            if (!category) return null;
+        return budgets
+            .map(budget => {
+                const category = categoryMap.get(budget.categoryId);
+                if (!category) {
+                    return null;
+                }
 
-            // Find child categories if this is a group
-            const relevantCategoryIds = new Set([budget.categoryId]);
-            if (!category.parentId) {
-                categories.filter(c => c.parentId === budget.categoryId).forEach(c => relevantCategoryIds.add(c.id));
-            }
-            
-            // Re-map to names for transaction matching
-            const relevantCategoryNames = new Set<string>();
-            relevantCategoryIds.forEach(id => {
-                const cat = categoryMap.get(id);
-                if (cat) relevantCategoryNames.add(cat.name);
-            });
+                const relevantCategoryIds = new Set([budget.categoryId]);
+                if (!category.parentId) {
+                    categories.filter(item => item.parentId === budget.categoryId).forEach(item => relevantCategoryIds.add(item.id));
+                }
 
-            const spent = transactions
-                .filter(t => {
-                    if (t.type !== TransactionType.EXPENSE || !relevantCategoryNames.has(t.category)) return false;
-                    const tDate = new Date(t.date);
-                    if (budget.period === 'monthly') {
-                        return tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear();
-                    } else {
-                        return tDate.getFullYear() === now.getFullYear();
+                const relevantCategoryNames = new Set<string>();
+                relevantCategoryIds.forEach(id => {
+                    const item = categoryMap.get(id);
+                    if (item) {
+                        relevantCategoryNames.add(item.name);
                     }
-                })
-                .reduce((sum, t) => sum + t.amount, 0);
+                });
 
-            const percent = budget.amount > 0 ? (spent / budget.amount) * 100 : 0;
-            return {
-                ...budget,
-                categoryName: category.name,
-                spent,
-                percent,
-                remaining: budget.amount - spent
-            };
-        })
-        .filter(b => b !== null)
-        .sort((a, b) => (b!.percent - a!.percent)) // Sort by highest usage (risk) first
-        .slice(0, 4); // Show top 4
+                const spent = transactions
+                    .filter(transaction => {
+                        if (transaction.type !== TransactionType.EXPENSE || !relevantCategoryNames.has(transaction.category)) {
+                            return false;
+                        }
+
+                        const transactionDate = new Date(transaction.date);
+                        if (budget.period === 'monthly') {
+                            return transactionDate.getMonth() === now.getMonth() && transactionDate.getFullYear() === now.getFullYear();
+                        }
+
+                        return transactionDate.getFullYear() === now.getFullYear();
+                    })
+                    .reduce((sum, transaction) => sum + transaction.amount, 0);
+
+                const percent = budget.amount > 0 ? (spent / budget.amount) * 100 : 0;
+
+                return {
+                    ...budget,
+                    categoryName: category.name,
+                    spent,
+                    percent,
+                    remaining: budget.amount - spent,
+                };
+            })
+            .filter(item => item !== null)
+            .sort((a, b) => b!.percent - a!.percent)
+            .slice(0, 4);
     }, [budgets, categories, transactions]);
 
     if (budgets.length === 0) {
         return (
-            <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col justify-center items-center text-center min-h-[16rem]">
-                <div className="p-3 bg-gray-100 dark:bg-brand-primary rounded-full mb-3">
-                    <BudgetIcon className="w-6 h-6 text-gray-400" />
+            <section className="flex h-full min-h-[18rem] flex-col items-center justify-center rounded-3xl border border-gray-200 bg-white p-6 text-center shadow-sm dark:border-gray-700 dark:bg-brand-secondary">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-400 dark:bg-brand-primary dark:text-gray-500">
+                    <BudgetIcon className="h-7 w-7" />
                 </div>
-                <h3 className="text-gray-900 dark:text-white font-medium">{t('budgetsPage.noBudgets')}</h3>
-                <p className="text-sm text-gray-500 dark:text-brand-muted mt-1 mb-4">{t('budgetsPage.getStarted')}</p>
-                <button 
+                <h3 className="mt-4 text-base font-semibold text-gray-900 dark:text-white">{t('budgetsPage.noBudgets')}</h3>
+                <p className="mt-2 max-w-xs text-sm text-gray-500 dark:text-brand-muted">{t('budgetsPage.getStarted')}</p>
+                <button
                     onClick={() => onNavigate('budgets')}
-                    className="text-sm bg-brand-accent text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                    className="mt-5 inline-flex items-center justify-center rounded-2xl bg-brand-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-600"
                 >
                     {t('budgetsPage.create')}
                 </button>
-            </div>
+            </section>
         );
     }
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-4 sm:p-6 rounded-xl shadow-md dark:shadow-lg h-full flex flex-col min-h-[16rem]">
-            <div className="flex justify-between items-center mb-4 flex-shrink-0">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{t('budgetsPage.title')}</h3>
-                <button onClick={() => onNavigate('budgets')} className="p-1 text-gray-500 hover:text-brand-accent transition-colors">
-                    <ChevronRightIcon className="w-5 h-5" />
+        <section className="flex h-full flex-col rounded-3xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-brand-secondary sm:p-6">
+            <header className="flex items-start justify-between gap-3">
+                <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('budgetsPage.title')}</h3>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-brand-muted">{t('budgetsPage.usage')}</p>
+                </div>
+                <button
+                    onClick={() => onNavigate('budgets')}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gray-200 text-gray-700 transition hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                    aria-label={t('sidebar.budgets')}
+                >
+                    <ChevronRightIcon className="h-5 w-5" />
                 </button>
-            </div>
-            
-            <div className="space-y-5 flex-grow overflow-y-auto pr-1 custom-scrollbar">
+            </header>
+
+            <div className="mt-6 flex flex-1 flex-col gap-4 overflow-y-auto pr-1">
                 {budgetStatus.map(item => {
-                    if(!item) return null;
+                    if (!item) {
+                        return null;
+                    }
+
                     const isOver = item.percent > 100;
-                    const color = isOver ? 'bg-brand-red' : item.percent > 85 ? 'bg-yellow-500' : 'bg-brand-green';
-                    
+                    const isWarning = !isOver && item.percent >= 85;
+                    const progressTone = isOver ? 'bg-red-500' : isWarning ? 'bg-amber-500' : 'bg-green-500';
+
                     return (
-                        <div key={item.id} className="group">
-                            <div className="flex justify-between items-end mb-1">
-                                <div>
-                                    <div className="flex items-center gap-1.5">
-                                        <span className="font-bold text-sm text-gray-700 dark:text-gray-200 truncate max-w-[120px]">{item.categoryName}</span>
-                                        {isOver && <AlertTriangleIcon className="w-3.5 h-3.5 text-brand-red" />}
+                        <article key={item.id} className="rounded-2xl border border-gray-200 bg-gray-50/70 p-4 dark:border-gray-700 dark:bg-brand-primary/50">
+                            <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                    <div className="flex items-center gap-2">
+                                        <p className="truncate text-base font-semibold text-gray-900 dark:text-white">{item.categoryName}</p>
+                                        {isOver && <AlertTriangleIcon className="h-4 w-4 text-red-500" />}
                                     </div>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                                        {isOver ? 'Over by ' : 'Left: '} 
-                                        <span className={isOver ? 'text-red-500 font-medium' : 'text-green-600 dark:text-green-400'}>
-                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(Math.abs(item.remaining))}
-                                        </span>
+                                    <p className="mt-1 text-sm text-gray-500 dark:text-brand-muted">
+                                        {formatCurrency(item.spent, currency, locale, {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                        })}
+                                        {' / '}
+                                        {formatCurrency(item.amount, currency, locale, {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                        })}
                                     </p>
                                 </div>
-                                <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
+                                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                                    isOver
+                                        ? 'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300'
+                                        : isWarning
+                                            ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300'
+                                            : 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300'
+                                }`}>
                                     {item.percent.toFixed(0)}%
                                 </span>
                             </div>
-                            <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
-                                <div 
-                                    className={`h-2.5 rounded-full transition-all duration-1000 ease-out ${color}`} 
+
+                            <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
+                                <div
+                                    className={`h-full rounded-full ${progressTone}`}
                                     style={{ width: `${Math.min(item.percent, 100)}%` }}
-                                ></div>
+                                />
                             </div>
-                        </div>
+
+                            <div className="mt-4 flex items-center justify-between gap-3 text-sm">
+                                <p className="text-gray-500 dark:text-brand-muted">
+                                    {isOver ? t('budgetsPage.overBy') : t('budgetsPage.remaining')}
+                                </p>
+                                <p className={`font-semibold ${
+                                    isOver ? 'text-red-600 dark:text-red-300' : 'text-green-600 dark:text-green-300'
+                                }`}>
+                                    {formatCurrency(Math.abs(item.remaining), currency, locale, {
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0,
+                                    })}
+                                </p>
+                            </div>
+                        </article>
                     );
                 })}
             </div>
-        </div>
+        </section>
     );
 };
 
 export default BudgetDashboardWidget;
-

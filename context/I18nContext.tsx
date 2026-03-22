@@ -1,9 +1,16 @@
 
-import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { createContext, ReactNode, useCallback, useMemo } from 'react';
+import enTranslations from '../locales/en.json';
+import idTranslations from '../locales/id.json';
 import { SupportedLocale } from '../types';
 
+interface TranslationParams {
+    [key: string]: string | number | undefined;
+    defaultValue?: string;
+}
+
 interface I18nContextType {
-    t: (key: string, params?: { [key: string]: string | number }) => string;
+    t: (key: string, params?: TranslationParams) => string;
     locale: SupportedLocale;
 }
 
@@ -17,61 +24,50 @@ interface I18nProviderProps {
     locale: SupportedLocale;
 }
 
-const getNestedValue = (obj: any, path: string): string | undefined => {
-    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+interface TranslationTree {
+    [key: string]: string | TranslationTree;
+}
+
+const translationCatalog: Record<SupportedLocale, TranslationTree> = {
+    en: enTranslations as TranslationTree,
+    id: idTranslations as TranslationTree,
+};
+
+const getNestedValue = (obj: TranslationTree, path: string): string | undefined => {
+    const value = path.split('.').reduce<unknown>((acc, part) => {
+        if (typeof acc === 'object' && acc !== null) {
+            return (acc as Record<string, unknown>)[part];
+        }
+
+        return undefined;
+    }, obj);
+
+    return typeof value === 'string' ? value : undefined;
 };
 
 export const I18nProvider: React.FC<I18nProviderProps> = ({ children, locale }) => {
-    const [translations, setTranslations] = useState<Record<string, any>>({});
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchTranslations = async () => {
-            setIsLoading(true);
-            try {
-                const response = await fetch(`/locales/${locale}.json`);
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                setTranslations(data);
-            } catch (error) {
-                console.error(`Could not load translations for ${locale}, falling back to 'en'`, error);
-                // Fallback to English if the desired locale fails
-                try {
-                    const response = await fetch(`/locales/en.json`);
-                    if (!response.ok) throw new Error('Fallback translation failed');
-                    const data = await response.json();
-                    setTranslations(data);
-                } catch (fallbackError) {
-                    console.error("Could not load fallback English translations.", fallbackError);
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchTranslations();
+    const translations = useMemo(() => {
+        return translationCatalog[locale] ?? translationCatalog.en;
     }, [locale]);
 
-    const t = useCallback((key: string, params: { [key: string]: string | number } = {}): string => {
-        if (isLoading || !translations) {
-            return ''; // Or a loading indicator string
-        }
-        
+    const t = useCallback((key: string, params: TranslationParams = {}): string => {
         const translatedText = getNestedValue(translations, key);
 
         if (translatedText === undefined) {
-            // console.warn(`Translation key "${key}" not found.`);
-            return key;
+            return params.defaultValue ?? key;
         }
-        
+
         return Object.entries(params).reduce((acc, [paramKey, paramValue]) => {
+            if (paramKey === 'defaultValue' || paramValue === undefined) {
+                return acc;
+            }
             return acc.replace(`{${paramKey}}`, String(paramValue));
         }, translatedText);
-    }, [translations, isLoading]);
+    }, [translations]);
 
     return (
         <I18nContext.Provider value={{ t, locale }}>
-            {!isLoading ? children : null /* Or a global loading spinner */}
+            {children}
         </I18nContext.Provider>
     );
 };
