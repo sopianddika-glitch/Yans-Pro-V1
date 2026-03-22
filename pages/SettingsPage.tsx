@@ -1,10 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Category, TransactionType, RecurringTransaction, Profile, SupportedLocale, Language } from '../types';
-import { EditIcon, DeleteIcon, SaveIcon, AddIcon, XIcon, FolderIcon, RepeatIcon, BriefcaseIcon, ExportIcon, ImportIcon, AlertTriangleIcon, LanguageIcon, ChevronLeftIcon, SettingsIcon, DesktopComputerIcon } from '../components/Icons';
+import { EditIcon, DeleteIcon, SaveIcon, AddIcon, XIcon, FolderIcon, RepeatIcon, BriefcaseIcon, ExportIcon, ImportIcon, AlertTriangleIcon, LanguageIcon, ChevronLeftIcon, SettingsIcon, DesktopComputerIcon, TrendingUpIcon } from '../components/Icons';
 import ProfileManagerModal from '../components/ProfileManagerModal';
 import { useI18n } from '../hooks/useI18n';
 import { smoothEngine } from '../ui/smoothEngine';
 import { SmoothCard } from '../components/SmoothCard';
+
+type ProfileSettingsUpdate = { allowEdit?: boolean; showDeleted?: boolean; investmentsEnabled?: boolean };
 
 interface SettingsPageProps {
     categories: Category[];
@@ -26,7 +28,10 @@ interface SettingsPageProps {
     onSetLocale: (locale: SupportedLocale) => void;
 }
 
-const FeatureFlagManager: React.FC = () => {
+const FeatureFlagManager: React.FC<{
+    investmentsEnabled: boolean;
+    onToggleInvestments: (enabled: boolean) => void;
+}> = ({ investmentsEnabled, onToggleInvestments }) => {
     const [isUltraSmooth, setIsUltraSmooth] = useState(smoothEngine.status);
 
     const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,6 +43,28 @@ const FeatureFlagManager: React.FC = () => {
     return (
         <div className="space-y-6">
             <p className="text-gray-600 dark:text-gray-300 text-sm">Experimental features for advanced users.</p>
+
+            <div className="bg-gray-50 dark:bg-brand-primary p-4 rounded-xl border border-gray-200 dark:border-gray-700 min-w-0">
+                <div className="flex items-center justify-between gap-3 mb-2 min-w-0">
+                    <div className="min-w-0">
+                        <h4 className="font-bold text-gray-800 dark:text-white flex items-center gap-2 break-words">
+                            <TrendingUpIcon className="w-4 h-4 text-green-500" />
+                            Investments Page Visibility
+                        </h4>
+                        <p className="text-xs text-gray-500 mt-1 break-words">Hide or show the Investments page and sidebar entry.</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={investmentsEnabled}
+                            onChange={(e) => onToggleInvestments(e.target.checked)}
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                    </label>
+                </div>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">Disable to remove Investments from navigation without deleting your data.</p>
+            </div>
             
             <div className="bg-gray-50 dark:bg-brand-primary p-4 rounded-xl border border-gray-200 dark:border-gray-700 min-w-0">
                 <div className="flex items-center justify-between gap-3 mb-4 min-w-0">
@@ -464,8 +491,8 @@ const DataManagement: React.FC<{
     onExportData: (profileId: string) => void;
     onResetProfileData: (profileId: string) => void;
     onOpenImportModal: () => void;
-    onUpdateProfileSettings: (settings: { allowEdit?: boolean; showDeleted?: boolean }) => void;
-    currentSettings?: { allowEdit?: boolean; showDeleted?: boolean };
+    onUpdateProfileSettings: (settings: ProfileSettingsUpdate) => void;
+    currentSettings?: ProfileSettingsUpdate;
 }> = ({ activeProfileId, profileName, onExportData, onResetProfileData, onOpenImportModal, onUpdateProfileSettings, currentSettings }) => {
     const { t } = useI18n();
     const handleResetDataClick = () => {
@@ -556,6 +583,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     const [activeSection, setActiveSection] = useState<string | null>(null);
 
     const activeProfile = profiles.find(p => p.id === activeProfileId)!;
+    const investmentsEnabled = activeProfile.settings?.investmentsEnabled === true;
 
     const handleOpenProfileModal = (profile: Profile | null = null) => {
         setEditingProfile(profile);
@@ -580,7 +608,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
         }
     };
 
-    const handleUpdateProfileSettings = (settings: { allowEdit?: boolean; showDeleted?: boolean }) => {
+    const handleUpdateProfileSettings = (settings: ProfileSettingsUpdate) => {
         onUpdateProfile({
             ...activeProfile,
             settings: { ...activeProfile.settings, ...settings }
@@ -646,7 +674,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             case 'data':
                 return <DataManagement activeProfileId={activeProfileId} profileName={activeProfile.name} onExportData={onExportData} onResetProfileData={onResetProfileData} onOpenImportModal={onOpenImportModal} onUpdateProfileSettings={handleUpdateProfileSettings} currentSettings={activeProfile.settings} />;
             case 'features':
-                return <FeatureFlagManager />;
+                return <FeatureFlagManager investmentsEnabled={investmentsEnabled} onToggleInvestments={(enabled) => handleUpdateProfileSettings({ investmentsEnabled: enabled })} />;
             default:
                 return null;
         }

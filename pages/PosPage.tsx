@@ -194,7 +194,7 @@ const PosPage: React.FC<PosPageProps> = ({ products, currency, onCharge, onNavig
                 </div>
 
                 {/* Product Grid */}
-                <div className="flex-grow p-4 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 content-start pb-24 md:pb-4">
+                <div className="flex-grow p-4 overflow-y-auto grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3 content-start pb-24 md:pb-4">
                     {filteredProducts.map(product => {
                         const isOutOfStock = product.trackStock && (product.stock || 0) <= 0;
                         return (

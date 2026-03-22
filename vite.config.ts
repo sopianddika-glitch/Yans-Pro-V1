@@ -1,9 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
+// Allow overriding base path for GitHub Pages via env (e.g., repository name or custom domain)
+const basePath = process.env.VITE_BASE_PATH || '/Yans-Pro-V1/';
+
 export default defineConfig({
   plugins: [react()],
-  base: '/Yans-Pro-V1/',
+  base: basePath,
   build: {
     outDir: 'dist',
     sourcemap: false,

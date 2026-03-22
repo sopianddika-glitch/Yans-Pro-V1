@@ -135,6 +135,7 @@ export interface Profile {
   settings?: {
       allowEdit?: boolean;
       showDeleted?: boolean;
+      investmentsEnabled?: boolean;
   };
 }
 

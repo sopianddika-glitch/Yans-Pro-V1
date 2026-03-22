@@ -11,6 +11,7 @@ interface SidebarProps {
     setIsMini: (isMini: boolean | ((prev: boolean) => boolean)) => void;
     currentPage: Page;
     onNavigate: (page: Page) => void;
+    showInvestments: boolean;
 }
 
 const NavLink: React.FC<{
@@ -51,7 +52,7 @@ const NavLink: React.FC<{
     </li>
 );
 
-const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onMobileClose, isMini, setIsMini, currentPage, onNavigate }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onMobileClose, isMini, setIsMini, currentPage, onNavigate, showInvestments }) => {
     const { t } = useI18n();
 
     const navItems = [
@@ -66,6 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onMobileClose, isMini, 
         { page: 'goals' as Page, label: t('sidebar.goals'), icon: FlagIcon },
         { page: 'reports' as Page, label: t('sidebar.reports'), icon: ReportsIcon },
     ];
+    const visibleNavItems = showInvestments ? navItems : navItems.filter(item => item.page !== 'investments');
 
     return (
         <>
@@ -91,7 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onMobileClose, isMini, 
                 </div>
                 <nav className="flex-1 px-4 py-6 overflow-y-auto">
                     <ul className="space-y-2">
-                        {navItems.map(item => (
+                        {visibleNavItems.map(item => (
                              <NavLink
                                 key={item.page}
                                 page={item.page}

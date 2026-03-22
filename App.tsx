@@ -129,7 +129,7 @@ const App: React.FC = () => {
     });
     
     // --- DATA & UI STATE (with default values) ---
-    const [profiles, setProfiles] = useState<Profile[]>([{ id: 'default-profile', name: 'My First Business', currency: 'USD', settings: { allowEdit: true, showDeleted: false } }]);
+    const [profiles, setProfiles] = useState<Profile[]>([{ id: 'default-profile', name: 'My First Business', currency: 'USD', settings: { allowEdit: true, showDeleted: false, investmentsEnabled: false } }]);
     const [activeProfileId, setActiveProfileId] = useState<string>('default-profile');
     const [dataByProfile, setDataByProfile] = useState<{ [key: string]: ProfileData }>({ 'default-profile': JSON.parse(JSON.stringify(initialData)) });
 
@@ -257,7 +257,7 @@ const App: React.FC = () => {
                     // Ensure new settings structure exists
                     const updatedProfiles = loadedProfiles.map(p => ({
                         ...p,
-                        settings: { allowEdit: true, showDeleted: false, ...p.settings }
+                        settings: { allowEdit: true, showDeleted: false, investmentsEnabled: false, ...p.settings }
                     }));
                     setProfiles(updatedProfiles);
                 }
@@ -337,6 +337,7 @@ const App: React.FC = () => {
 
     // --- DERIVED STATE & DATA HELPERS ---
     const activeProfile = useMemo(() => profiles.find(p => p.id === activeProfileId) || profiles[0], [profiles, activeProfileId]);
+    const investmentsEnabled = activeProfile?.settings?.investmentsEnabled === true;
 
     const activeProfileData = useMemo(() => {
         const data = dataByProfile[activeProfileId] || initialData;
@@ -366,9 +367,22 @@ const App: React.FC = () => {
     
     // --- NAVIGATION & MODAL HANDLERS ---
     const handleNavigate = useCallback((page: Page) => { 
+        if (page === 'investments' && !investmentsEnabled) {
+            showNotification('info', 'Halaman Investasi sedang disembunyikan. Aktifkan lagi di Pengaturan > Feature Flags.');
+            setCurrentPage('settings');
+            setIsSidebarOpen(false);
+            return;
+        }
         setCurrentPage(page); 
         setIsSidebarOpen(false);
-    }, []);
+    }, [investmentsEnabled, showNotification]);
+
+    useEffect(() => {
+        if (!investmentsEnabled && currentPage === 'investments') {
+            setCurrentPage('dashboard');
+            showNotification('info', 'Halaman Investasi dinonaktifkan. Aktifkan kembali di Pengaturan > Feature Flags.');
+        }
+    }, [investmentsEnabled, currentPage, showNotification]);
 
     const handleSwitchProfile = useCallback((id: string) => setActiveProfileId(id), []);
     const handleOpenAddTransaction = useCallback(() => { 
@@ -641,7 +655,7 @@ const App: React.FC = () => {
     }, [activeProfileId, budgets, setDataForProfile, showNotification]);
     
     const handleAddProfile = useCallback((profileData: Omit<Profile, 'id'>) => {
-        const newProfile = { ...profileData, id: 'prof-' + new Date().getTime(), settings: { allowEdit: true, showDeleted: false } };
+        const newProfile = { ...profileData, id: 'prof-' + new Date().getTime(), settings: { allowEdit: true, showDeleted: false, investmentsEnabled: false } };
         setProfiles(p => [...p, newProfile]);
         setDataByProfile(d => ({ ...d, [newProfile.id]: JSON.parse(JSON.stringify(initialData)) }));
         setActiveProfileId(newProfile.id);
@@ -1165,7 +1179,7 @@ const App: React.FC = () => {
     return (
         <I18nProvider locale={locale}>
             <div className="flex h-screen bg-gray-100 dark:bg-brand-primary font-sans">
-                <Sidebar isMobileOpen={isSidebarOpen} onMobileClose={() => setIsSidebarOpen(false)} isMini={isSidebarMini} setIsMini={setIsSidebarMini} currentPage={currentPage} onNavigate={handleNavigate} />
+                <Sidebar isMobileOpen={isSidebarOpen} onMobileClose={() => setIsSidebarOpen(false)} isMini={isSidebarMini} setIsMini={setIsSidebarMini} currentPage={currentPage} onNavigate={handleNavigate} showInvestments={investmentsEnabled} />
                 <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${isSidebarMini ? 'lg:ml-20' : 'lg:ml-64'}`}>
                     <Header onMenuClick={() => setIsSidebarOpen(true)} profiles={profiles} activeProfile={activeProfile} onSwitchProfile={handleSwitchProfile} onManageProfiles={() => handleNavigate('settings')} theme={theme} onSetTheme={handleSetTheme} />
                     <main className="flex-1 overflow-x-hidden overflow-y-auto">

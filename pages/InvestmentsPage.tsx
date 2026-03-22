@@ -398,7 +398,7 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
             </div>
 
             {/* Dashboard Cards */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
                 
                 {/* 1. Wallet Card */}
                 <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md border-l-4 border-blue-500 min-w-0">
@@ -544,7 +544,7 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency
 
             {/* AI Market Insights */}
             <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
                     {isLoadingRecs ? (
                         [1, 2, 3].map(i => <div key={i} className="h-40 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>)
                     ) : (
