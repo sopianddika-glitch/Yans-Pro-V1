@@ -28,9 +28,8 @@ export async function getBudgetSuggestion(...args: any[]): Promise<any> {
   // compatibility fallback mock (auto-generated)
   // TODO: replace with real implementation in services/geminiService.ts
   return {
-    ok: false,
-    name: 'getBudgetSuggestion',
-    note: 'Development fallback: implement getBudgetSuggestion in services/geminiService.ts'
+    suggestedAmount: 0,
+    explanation: 'AI budget suggestions are unavailable in this build.'
   };
 }
 
@@ -38,40 +37,28 @@ export async function getGoalSuggestion(...args: any[]): Promise<any> {
   // compatibility fallback mock (auto-generated)
   // TODO: replace with real implementation in services/geminiService.ts
   return {
-    ok: false,
-    name: 'getGoalSuggestion',
-    note: 'Development fallback: implement getGoalSuggestion in services/geminiService.ts'
+    name: 'Suggested Goal',
+    targetAmount: 0,
+    reasoning: 'AI goal suggestions are unavailable in this build.'
   };
 }
 
 export async function searchAssets(...args: any[]): Promise<any> {
   // compatibility fallback mock (auto-generated)
   // TODO: replace with real implementation in services/geminiService.ts
-  return {
-    ok: false,
-    name: 'searchAssets',
-    note: 'Development fallback: implement searchAssets in services/geminiService.ts'
-  };
+  return [];
 }
 
 export async function generateCashFlowForecast(...args: any[]): Promise<any> {
   // compatibility fallback mock (auto-generated)
   // TODO: replace with real implementation in services/geminiService.ts
-  return {
-    ok: false,
-    name: 'generateCashFlowForecast',
-    note: 'Development fallback: implement generateCashFlowForecast in services/geminiService.ts'
-  };
+  return [];
 }
 
 export async function getInvoiceReminderDraft(...args: any[]): Promise<any> {
   // compatibility fallback mock (auto-generated)
   // TODO: replace with real implementation in services/geminiService.ts
-  return {
-    ok: false,
-    name: 'getInvoiceReminderDraft',
-    note: 'Development fallback: implement getInvoiceReminderDraft in services/geminiService.ts'
-  };
+  return 'AI reminder drafting is unavailable in this build.';
 }
 
 export async function generateExecutiveSummary(...args: any[]): Promise<any> {
@@ -87,20 +74,15 @@ export async function generateExecutiveSummary(...args: any[]): Promise<any> {
 export async function getPortfolioMarketData(...args: any[]): Promise<any> {
   // compatibility fallback mock (auto-generated)
   // TODO: replace with real implementation in services/geminiService.ts
-  return {
-    ok: false,
-    name: 'getPortfolioMarketData',
-    note: 'Development fallback: implement getPortfolioMarketData in services/geminiService.ts'
-  };
+  return {};
 }
 
 export async function getMarketRecommendations(...args: any[]): Promise<any> {
   // compatibility fallback mock (auto-generated)
   // TODO: replace with real implementation in services/geminiService.ts
   return {
-    ok: false,
-    name: 'getMarketRecommendations',
-    note: 'Development fallback: implement getMarketRecommendations in services/geminiService.ts'
+    recommendations: [],
+    sources: []
   };
 }
 
@@ -108,9 +90,8 @@ export async function getAiPortfolioAnalysis(...args: any[]): Promise<any> {
   // compatibility fallback mock (auto-generated)
   // TODO: replace with real implementation in services/geminiService.ts
   return {
-    ok: false,
-    name: 'getAiPortfolioAnalysis',
-    note: 'Development fallback: implement getAiPortfolioAnalysis in services/geminiService.ts'
+    suggestions: [],
+    sources: []
   };
 }
 

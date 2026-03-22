@@ -583,10 +583,14 @@
     "subtitle": "Dapatkan saran real-time berdasarkan kepemilikan Anda dan tren pasar.",
     "getAdvice": "Dapatkan Saran AI",
     "analyzing": "Menganalisis Portofolio...",
+    "noSuggestions": "Belum ada saran yang tersedia. Coba segarkan setelah data pasar diperbarui.",
     "symbol": "Simbol",
     "action": "Aksi",
     "reasoning": "Analisis",
     "risk": "Risiko",
+    "targetPrice": "Harga Target",
+    "sources": "Sumber",
+    "disclaimer": "Konten AI ini hanya untuk informasi umum dan bukan nasihat keuangan.",
     "buy": "BELI",
     "sell": "JUAL",
     "hold": "TAHAN",
@@ -638,41 +642,68 @@
     "getReminder": "Dapatkan Pengingat AI"
   },
   "investmentsPage": {
-      "title": "Portofolio Investasi",
+      "title": "Ringkasan Investasi",
+      "subtitle": "Pantau performa portofolio, alokasi kas, dan pergerakan pasar dari satu halaman yang rapi.",
       "refresh": "Perbarui Data Pasar",
       "refreshing": "Memperbarui...",
-      "add": "Tambah Aset",
+      "add": "Tambah Investasi",
       "wallet": "Dompet Tunai Portofolio",
       "deposit": "Setor",
       "withdraw": "Tarik",
       "buyingPower": "Daya Beli",
-      "manage": "Kelola",
+      "manage": "Kelola Posisi",
+      "chartTitle": "Performa Investasi",
+      "chartSubtitle": "Bandingkan modal awal dengan nilai pasar terkini untuk aset aktif Anda.",
+      "allocationTitle": "Alokasi Portofolio",
+      "allocationSubtitle": "Lihat sebaran portofolio Anda di tiap aset.",
+      "holdingsTitle": "Kepemilikan Portofolio",
+      "detailsTitle": "Ringkasan Portofolio",
+      "emptyTitle": "Belum ada investasi",
+      "emptyDescription": "Tambahkan investasi pertama Anda untuk mulai melacak performa dan alokasi portofolio.",
+      "noChartData": "Tambahkan setidaknya satu investasi aktif agar grafik performa dapat ditampilkan.",
+      "noAllocationData": "Rincian alokasi akan muncul setelah Anda menambahkan aset aktif.",
+      "prompts": {
+          "deposit": "Jumlah yang ingin disetor:",
+          "withdraw": "Jumlah yang ingin ditarik:",
+          "insufficientFunds": "Dana di dompet tidak mencukupi."
+      },
       "totalFunds": {
         "title": "Total Dana Perusahaan",
         "operating": "Saldo Operasional",
         "portfolio": "Nilai Portofolio"
       },
       "stats": {
-          "totalValue": "Total Nilai",
-          "totalReturn": "L/R Belum Terealisasi",
-          "dailyChange": "Perubahan 24j"
+          "totalInvested": "Total Diinvestasikan",
+          "totalReturns": "Total Imbal Hasil",
+          "growth": "Tingkat Pertumbuhan",
+          "activeInvestments": "Investasi Aktif"
+      },
+      "recentActivity": {
+          "title": "Aktivitas Investasi Terkini",
+          "empty": "Belum ada pembaruan investasi terbaru.",
+          "buy": "Beli",
+          "sell": "Jual",
+          "updated": "Diperbarui {date}",
+          "amount": "Jumlah"
       },
       "table": {
           "asset": "Aset",
           "qty": "Jml",
-          "avgPrice": "Harga Rata2",
+          "avgPrice": "Harga Rata-rata",
           "currentPrice": "Harga Saat Ini",
           "value": "Nilai",
           "alloc": "Alokasi %",
           "target": "Target %",
-          "return": "Kembali",
+          "return": "Imbal Hasil",
           "actions": "Aksi",
-          "deleteConfirm": "Hapus aset ini dari portofolio Anda?"
+          "deleteConfirm": "Hapus aset ini dari portofolio Anda?",
+          "empty": "Belum ada investasi aktif."
       },
       "marketInsights": {
           "title": "Peluang Pasar AI",
-          "subtitle": "Tren & rekomendasi real-time didukung oleh Google Search",
-          "refresh": "Perbarui Wawasan"
+          "subtitle": "Tren dan rekomendasi real-time yang didukung Google Search",
+          "refresh": "Perbarui Wawasan",
+          "empty": "Sinyal pasar akan muncul di sini setelah rekomendasi tersedia."
       }
   }
 }

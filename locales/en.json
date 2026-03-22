@@ -583,10 +583,14 @@
     "subtitle": "Get real-time suggestions based on your holdings and market trends.",
     "getAdvice": "Get AI Advice",
     "analyzing": "Analyzing Portfolio...",
+    "noSuggestions": "No suggestions available right now. Try refreshing after market data updates.",
     "symbol": "Symbol",
     "action": "Action",
     "reasoning": "Analysis",
     "risk": "Risk",
+    "targetPrice": "Target Price",
+    "sources": "Sources",
+    "disclaimer": "AI-generated content for informational purposes only. Not financial advice.",
     "buy": "BUY",
     "sell": "SELL",
     "hold": "HOLD",
@@ -638,24 +642,49 @@
     "getReminder": "Get AI Reminder"
   },
   "investmentsPage": {
-    "title": "Investment Portfolio",
+    "title": "Investments Overview",
+    "subtitle": "Track portfolio performance, cash allocation, and market movements without leaving the dashboard.",
     "refresh": "Refresh Market Data",
     "refreshing": "Updating...",
-    "add": "Add Asset",
+    "add": "Add Investment",
     "wallet": "Portfolio Cash Wallet",
     "deposit": "Deposit",
     "withdraw": "Withdraw",
     "buyingPower": "Buying Power",
-    "manage": "Manage",
+    "manage": "Manage Position",
+    "chartTitle": "Investment Performance",
+    "chartSubtitle": "Compare cost basis against current market value for your active holdings.",
+    "allocationTitle": "Portfolio Allocation",
+    "allocationSubtitle": "See how your portfolio is distributed across assets.",
+    "holdingsTitle": "Portfolio Holdings",
+    "detailsTitle": "Portfolio Snapshot",
+    "emptyTitle": "No investments yet",
+    "emptyDescription": "Add your first investment to start tracking performance and allocation.",
+    "noChartData": "Add at least one active investment to render performance charts.",
+    "noAllocationData": "Allocation details will appear after you add active assets.",
+    "prompts": {
+      "deposit": "Amount to deposit:",
+      "withdraw": "Amount to withdraw:",
+      "insufficientFunds": "Insufficient funds in wallet."
+    },
     "totalFunds": {
-        "title": "Total Company Funds",
-        "operating": "Operating Cash",
-        "portfolio": "Portfolio Value"
+      "title": "Total Company Funds",
+      "operating": "Operating Cash",
+      "portfolio": "Portfolio Value"
     },
     "stats": {
-      "totalValue": "Total Value",
-      "totalReturn": "Unrealized P/L",
-      "dailyChange": "24h Change"
+      "totalInvested": "Total Invested",
+      "totalReturns": "Total Returns",
+      "growth": "Growth Rate",
+      "activeInvestments": "Active Investments"
+    },
+    "recentActivity": {
+      "title": "Recent Investment Activity",
+      "empty": "No recent investment updates yet.",
+      "buy": "Buy",
+      "sell": "Sell",
+      "updated": "Updated {date}",
+      "amount": "Amount"
     },
     "table": {
       "asset": "Asset",
@@ -667,12 +696,14 @@
       "target": "Target %",
       "return": "Return",
       "actions": "Actions",
-      "deleteConfirm": "Remove this asset from your portfolio?"
+      "deleteConfirm": "Remove this asset from your portfolio?",
+      "empty": "No active investments yet."
     },
     "marketInsights": {
       "title": "AI Market Opportunities",
-      "subtitle": "Real-time trends & recommendations powered by Google Search",
-      "refresh": "Refresh Insights"
+      "subtitle": "Real-time trends and recommendations powered by Google Search",
+      "refresh": "Refresh Insights",
+      "empty": "Market signals will appear here after recommendations are available."
     }
   }
 }

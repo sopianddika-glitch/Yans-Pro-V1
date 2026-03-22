@@ -1,33 +1,33 @@
 {
-  "name": "Yans Pro V1",
+  "name": "Yans Pro",
   "short_name": "YansPro",
   "description": "A professional business finance tracker with AI-powered insights to help manage revenue, expenses, budgets, and invoices.",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/Yans-Pro-V1/docs/",
+  "scope": "/Yans-Pro-V1/docs/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "./icon-192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any"
     },
     {
-      "src": "icon-192.png",
+      "src": "./icon-192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "./icon-512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "./icon-512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
@@ -41,7 +41,7 @@
       "url": "./?action=new_transaction",
       "icons": [
         {
-          "src": "icon-192.png",
+          "src": "./icon-192.png",
           "sizes": "192x192"
         }
       ]
@@ -53,7 +53,7 @@
       "url": "./?action=new_invoice",
       "icons": [
         {
-          "src": "icon-192.png",
+          "src": "./icon-192.png",
           "sizes": "192x192"
         }
       ]

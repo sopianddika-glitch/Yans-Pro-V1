@@ -14,6 +14,8 @@ interface PortfolioAdvisorModalProps {
 
 const PortfolioAdvisorModal: React.FC<PortfolioAdvisorModalProps> = ({ isOpen, onClose, suggestions, isLoading, sources }) => {
     const { t } = useI18n();
+    const safeSuggestions = Array.isArray(suggestions) ? suggestions : [];
+    const safeSources = Array.isArray(sources) ? sources : [];
 
     if (!isOpen) return null;
 
@@ -53,13 +55,13 @@ const PortfolioAdvisorModal: React.FC<PortfolioAdvisorModalProps> = ({ isOpen, o
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-accent mb-4"></div>
                             <p className="text-gray-500 dark:text-brand-muted">{t('portfolioAdvisor.analyzing')}</p>
                         </div>
-                    ) : suggestions.length === 0 ? (
-                        <div className="text-center py-8 text-gray-500">No suggestions available. Try refreshing.</div>
+                    ) : safeSuggestions.length === 0 ? (
+                        <div className="text-center py-8 text-gray-500 dark:text-brand-muted">{t('portfolioAdvisor.noSuggestions')}</div>
                     ) : (
                         <div className="space-y-4">
                             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{t('portfolioAdvisor.subtitle')}</p>
-                            
-                            {suggestions.map((item, idx) => (
+
+                            {safeSuggestions.map((item, idx) => (
                                 <div key={idx} className="bg-white dark:bg-brand-primary/50 border border-gray-100 dark:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
                                     <div className="flex justify-between items-start mb-2">
                                         <div className="flex items-center gap-3">
@@ -76,7 +78,7 @@ const PortfolioAdvisorModal: React.FC<PortfolioAdvisorModalProps> = ({ isOpen, o
                                                 {item.riskLevel} {t('portfolioAdvisor.risk')}
                                             </span>
                                             {item.targetPrice && (
-                                                <p className="text-xs text-gray-500 mt-1">Target: ${item.targetPrice}</p>
+                                                <p className="text-xs text-gray-500 mt-1">{t('portfolioAdvisor.targetPrice')}: ${item.targetPrice}</p>
                                             )}
                                         </div>
                                     </div>
@@ -88,13 +90,13 @@ const PortfolioAdvisorModal: React.FC<PortfolioAdvisorModalProps> = ({ isOpen, o
                         </div>
                     )}
                 </div>
-                
+
                 <div className="bg-gray-50 dark:bg-brand-primary p-4 border-t border-gray-200 dark:border-gray-700 text-center text-xs text-gray-400">
-                    <p>AI-generated content for informational purposes only. Not financial advice.</p>
-                    {sources && sources.length > 0 && (
+                    <p>{t('portfolioAdvisor.disclaimer')}</p>
+                    {safeSources.length > 0 && (
                         <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700 flex flex-wrap justify-center gap-2">
-                            <span className="font-semibold">Sources:</span>
-                            {sources.map((s, i) => (
+                            <span className="font-semibold">{t('portfolioAdvisor.sources')}:</span>
+                            {safeSources.map((s, i) => (
                                 <a key={i} href={s.uri} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
                                     {s.title}
                                 </a>

@@ -64,9 +64,15 @@ const AddInvestmentModal: React.FC<AddInvestmentModalProps> = ({ isOpen, onClose
         if (!searchQuery.trim()) return;
         setIsSearching(true);
         setSearchResults([]);
-        const results = await searchAssets(searchQuery);
-        setSearchResults(results);
-        setIsSearching(false);
+        try {
+            const results = await searchAssets(searchQuery);
+            setSearchResults(Array.isArray(results) ? results : []);
+        } catch (error) {
+            console.error(error);
+            setSearchResults([]);
+        } finally {
+            setIsSearching(false);
+        }
     };
 
     const handleSelectAsset = (asset: AssetSearchResult) => {

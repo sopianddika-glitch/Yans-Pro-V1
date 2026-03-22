@@ -1,12 +1,22 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Investment, MarketTrendRecommendation, PortfolioSuggestion } from '../types';
-import { AddIcon, TrendingUpIcon, SparklesIcon, DeleteIcon, ProfitIcon, BalanceIcon, BriefcaseIcon, CheckIcon } from '../components/Icons';
+import {
+    AddIcon,
+    BalanceIcon,
+    BriefcaseIcon,
+    DeleteIcon,
+    ProfitIcon,
+    SparklesIcon,
+    TrendingUpIcon,
+} from '../components/Icons';
 import { useI18n } from '../hooks/useI18n';
 import AddInvestmentModal from '../components/AddInvestmentModal';
 import ManageInvestmentModal from '../components/ManageInvestmentModal';
 import PortfolioAdvisorModal from '../components/PortfolioAdvisorModal';
-import { getPortfolioMarketData, getMarketRecommendations, getAiPortfolioAnalysis } from '../services/geminiService';
-import { Treemap, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
+import EmptyState from '../components/EmptyState';
+import { getAiPortfolioAnalysis, getMarketRecommendations, getPortfolioMarketData } from '../services/geminiService';
+import { formatCurrency, formatDate, getLocaleCode } from '../utils/intl';
 
 interface InvestmentsPageProps {
     investments: Investment[];
@@ -18,588 +28,839 @@ interface InvestmentsPageProps {
     onBatchUpdate: (investments: Investment[]) => void;
 }
 
-const COLORS = ['#2F81F7', '#2DA44E', '#E5534B', '#DB6D28', '#A371F7', '#087D9A'];
+const ASSET_TYPES = new Set(['Stock', 'Crypto', 'Bond', 'Real Estate', 'Mutual Fund', 'Cash']);
+const ALLOCATION_COLORS = ['#2F81F7', '#2DA44E', '#DB6D28', '#A371F7', '#E5534B', '#087D9A'];
 
-// --- SAP 2025 Widget Component ---
-const SapStructureWidget: React.FC<{ investments: Investment[], currentValue: number }> = ({ investments, currentValue }) => {
-    const { t } = useI18n();
+const toFiniteNumber = (value: unknown, fallback = 0): number => {
+    const parsed = typeof value === 'number' ? value : Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+};
 
-    // Logic to categorize investments
-    const structure = useMemo(() => {
-        let core = 0;
-        let satellite = 0;
-        let defensive = 0;
+const parseDateFromInvestment = (investment: Investment): Date | null => {
+    if (investment.lastUpdated) {
+        const direct = new Date(investment.lastUpdated);
+        if (!Number.isNaN(direct.getTime())) {
+            return direct;
+        }
+    }
 
-        investments.forEach(inv => {
-            const value = (inv.currentPrice || inv.avgBuyPrice) * inv.quantity;
-            switch(inv.type) {
-                case 'Stock':
-                case 'Real Estate':
-                case 'Mutual Fund':
-                    core += value;
-                    break;
-                case 'Crypto':
-                    satellite += value;
-                    break;
-                case 'Bond':
-                case 'Cash':
-                    defensive += value;
-                    break;
-                default:
-                    core += value;
-            }
-        });
+    const match = investment.id.match(/(\d{10,})$/);
+    if (!match) {
+        return null;
+    }
 
-        const total = Math.max(currentValue, 1); // Avoid division by zero
-        return {
-            core: { value: core, percent: (core / total) * 100, target: 60 },
-            satellite: { value: satellite, percent: (satellite / total) * 100, target: 15 },
-            defensive: { value: defensive, percent: (defensive / total) * 100, target: 25 }
-        };
-    }, [investments, currentValue]);
+    const fromId = new Date(Number(match[1]));
+    return Number.isNaN(fromId.getTime()) ? null : fromId;
+};
+
+const normalizeInvestment = (investment: Partial<Investment>, index: number): Investment => {
+    const fallbackSymbol = `AST${index + 1}`;
+    const quantity = Math.max(0, toFiniteNumber(investment.quantity));
+    const avgBuyPrice = Math.max(0, toFiniteNumber(investment.avgBuyPrice));
+    const currentPrice = Math.max(0, toFiniteNumber(investment.currentPrice, avgBuyPrice || 0));
+    const type = ASSET_TYPES.has(String(investment.type)) ? String(investment.type) : 'Stock';
+
+    return {
+        id: typeof investment.id === 'string' && investment.id.trim() ? investment.id : `investment-${index}`,
+        symbol: typeof investment.symbol === 'string' && investment.symbol.trim() ? investment.symbol.toUpperCase() : fallbackSymbol,
+        name: typeof investment.name === 'string' && investment.name.trim() ? investment.name : `Asset ${index + 1}`,
+        quantity,
+        avgBuyPrice,
+        currentPrice,
+        type: type as Investment['type'],
+        targetAllocation: Number.isFinite(Number(investment.targetAllocation)) ? Number(investment.targetAllocation) : undefined,
+        lastUpdated: typeof investment.lastUpdated === 'string' ? investment.lastUpdated : undefined,
+    };
+};
+
+const MetricCard: React.FC<{
+    title: string;
+    value: string;
+    description: string;
+    icon: React.ReactNode;
+    tone: 'positive' | 'negative' | 'neutral' | 'accent';
+}> = ({ title, value, description, icon, tone }) => {
+    const toneClasses = {
+        positive: {
+            icon: 'bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300',
+            value: 'text-green-600 dark:text-green-300',
+            border: 'border-green-100 dark:border-green-500/20',
+        },
+        negative: {
+            icon: 'bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-300',
+            value: 'text-red-600 dark:text-red-300',
+            border: 'border-red-100 dark:border-red-500/20',
+        },
+        accent: {
+            icon: 'bg-brand-accent/10 text-brand-accent dark:bg-brand-accent/20 dark:text-blue-300',
+            value: 'text-brand-accent dark:text-blue-300',
+            border: 'border-blue-100 dark:border-brand-accent/20',
+        },
+        neutral: {
+            icon: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-200',
+            value: 'text-gray-900 dark:text-white',
+            border: 'border-gray-200 dark:border-gray-700',
+        },
+    }[tone];
 
     return (
-        <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md border-l-4 border-purple-500">
-            <div className="mb-4">
-                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-                    {t('sap2025.title')}
-                    <span className="bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded-full dark:bg-purple-900 dark:text-purple-300">AI Strategy</span>
-                </h3>
-                <p className="text-sm text-gray-500 dark:text-brand-muted">{t('sap2025.subtitle')}</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Core Bucket */}
-                <div className="bg-gray-50 dark:bg-brand-primary p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <div className="flex justify-between items-center mb-2">
-                        <span className="font-bold text-gray-800 dark:text-white">{t('sap2025.core')}</span>
-                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono">{structure.core.percent.toFixed(1)}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-2">
-                        <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${Math.min(structure.core.percent, 100)}%` }}></div>
-                    </div>
-                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-                        <span>{t('sap2025.target')}: {structure.core.target}%</span>
-                        <span className={Math.abs(structure.core.percent - structure.core.target) > 5 ? 'text-orange-500' : 'text-green-500'}>
-                            {structure.core.percent > structure.core.target ? '+' : ''}{(structure.core.percent - structure.core.target).toFixed(1)}%
-                        </span>
-                    </div>
-                    <p className="text-[10px] text-gray-400 mt-2">{t('sap2025.coreDesc')}</p>
+        <article className={`rounded-3xl border bg-white p-5 shadow-sm dark:bg-brand-secondary ${toneClasses.border}`}>
+            <div className="flex items-start gap-4">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${toneClasses.icon}`}>
+                    {icon}
                 </div>
-
-                {/* Satellite Bucket */}
-                <div className="bg-gray-50 dark:bg-brand-primary p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <div className="flex justify-between items-center mb-2">
-                        <span className="font-bold text-gray-800 dark:text-white">{t('sap2025.satellite')}</span>
-                        <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded font-mono">{structure.satellite.percent.toFixed(1)}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-2">
-                        <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: `${Math.min(structure.satellite.percent, 100)}%` }}></div>
-                    </div>
-                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-                        <span>{t('sap2025.target')}: {structure.satellite.target}%</span>
-                        <span className={Math.abs(structure.satellite.percent - structure.satellite.target) > 5 ? 'text-orange-500' : 'text-green-500'}>
-                            {structure.satellite.percent > structure.satellite.target ? '+' : ''}{(structure.satellite.percent - structure.satellite.target).toFixed(1)}%
-                        </span>
-                    </div>
-                    <p className="text-[10px] text-gray-400 mt-2">{t('sap2025.satelliteDesc')}</p>
-                </div>
-
-                {/* Defensive Bucket */}
-                <div className="bg-gray-50 dark:bg-brand-primary p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <div className="flex justify-between items-center mb-2">
-                        <span className="font-bold text-gray-800 dark:text-white">{t('sap2025.defensive')}</span>
-                        <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded font-mono">{structure.defensive.percent.toFixed(1)}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-2">
-                        <div className="bg-green-600 h-2.5 rounded-full" style={{ width: `${Math.min(structure.defensive.percent, 100)}%` }}></div>
-                    </div>
-                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-                        <span>{t('sap2025.target')}: {structure.defensive.target}%</span>
-                        <span className={Math.abs(structure.defensive.percent - structure.defensive.target) > 5 ? 'text-orange-500' : 'text-green-500'}>
-                            {structure.defensive.percent > structure.defensive.target ? '+' : ''}{(structure.defensive.percent - structure.defensive.target).toFixed(1)}%
-                        </span>
-                    </div>
-                    <p className="text-[10px] text-gray-400 mt-2">{t('sap2025.defensiveDesc')}</p>
+                <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-gray-500 dark:text-brand-muted">{title}</p>
+                    <p className={`mt-2 text-2xl font-bold ${toneClasses.value}`}>{value}</p>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-brand-muted">{description}</p>
                 </div>
             </div>
-            
-            <div className="mt-4 flex flex-wrap gap-4 text-[10px] text-gray-400 border-t border-gray-100 dark:border-gray-700 pt-3">
-                <span className="font-semibold">DATA SOURCES:</span>
-                <span>Yahoo Finance API</span>
-                <span>•</span>
-                <span>Bloomberg</span>
-                <span>•</span>
-                <span>CoinMarketCap</span>
-                <span>•</span>
-                <span>TradingView</span>
-                <span>•</span>
-                <span>FRED</span>
-            </div>
-        </div>
+        </article>
     );
 };
 
+const getSentimentClasses = (sentiment: MarketTrendRecommendation['sentiment']) => {
+    switch (sentiment) {
+        case 'Bullish':
+            return 'bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300';
+        case 'Bearish':
+            return 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300';
+        default:
+            return 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300';
+    }
+};
 
-const InvestmentsPage: React.FC<InvestmentsPageProps> = ({ investments, currency, operatingBalance, onAddInvestment, onDeleteInvestment, onUpdatePrices, onBatchUpdate }) => {
-    const { t } = useI18n();
+const getActionClasses = (action: MarketTrendRecommendation['suggestedAction']) => {
+    switch (action) {
+        case 'Buy':
+            return 'text-green-600 dark:text-green-300';
+        case 'Hold':
+            return 'text-amber-600 dark:text-amber-300';
+        default:
+            return 'text-blue-600 dark:text-blue-300';
+    }
+};
+
+const InvestmentsPage: React.FC<InvestmentsPageProps> = ({
+    investments,
+    currency,
+    operatingBalance,
+    onAddInvestment,
+    onDeleteInvestment,
+    onUpdatePrices,
+    onBatchUpdate,
+}) => {
+    const { t, locale } = useI18n();
+    const localeCode = getLocaleCode(locale);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [recommendations, setRecommendations] = useState<MarketTrendRecommendation[]>([]);
     const [recommendationSources, setRecommendationSources] = useState<{ title: string; uri: string }[]>([]);
     const [isLoadingRecs, setIsLoadingRecs] = useState(false);
-    
-    // Advisor State
     const [isAdvisorOpen, setIsAdvisorOpen] = useState(false);
     const [advisorSuggestions, setAdvisorSuggestions] = useState<PortfolioSuggestion[]>([]);
     const [advisorSources, setAdvisorSources] = useState<{ title: string; uri: string }[]>([]);
     const [isLoadingAdvisor, setIsLoadingAdvisor] = useState(false);
-    
-    // Manage Modal State
     const [managingAsset, setManagingAsset] = useState<Investment | null>(null);
 
-    // Initial load for recommendations
-    useEffect(() => {
-        if (recommendations.length === 0) {
-            handleRefreshRecommendations();
+    const safeInvestments = useMemo(() => {
+        if (!Array.isArray(investments)) {
+            return [];
+        }
+
+        return investments.reduce<Investment[]>((acc, investment, index) => {
+            if (!investment || typeof investment !== 'object') {
+                return acc;
+            }
+
+            acc.push(normalizeInvestment(investment, index));
+            return acc;
+        }, []);
+    }, [investments]);
+
+    const safeOperatingBalance = toFiniteNumber(operatingBalance);
+
+    const cashWallet = useMemo<Investment>(() => {
+        return safeInvestments.find(investment => investment.type === 'Cash') ?? {
+            id: 'virtual-cash',
+            symbol: currency,
+            name: 'Cash Wallet',
+            quantity: 0,
+            avgBuyPrice: 1,
+            currentPrice: 1,
+            type: 'Cash',
+        };
+    }, [currency, safeInvestments]);
+
+    const activeInvestments = useMemo(() => {
+        return safeInvestments.filter(investment => investment.type !== 'Cash' && investment.quantity > 0);
+    }, [safeInvestments]);
+
+    const portfolioSummary = useMemo(() => {
+        const totalInvested = activeInvestments.reduce((sum, investment) => sum + investment.avgBuyPrice * investment.quantity, 0);
+        const currentValue = activeInvestments.reduce(
+            (sum, investment) => sum + (investment.currentPrice || investment.avgBuyPrice) * investment.quantity,
+            0,
+        );
+        const totalReturns = currentValue - totalInvested;
+        const growthRate = totalInvested > 0 ? (totalReturns / totalInvested) * 100 : 0;
+
+        return {
+            totalInvested,
+            currentValue,
+            totalReturns,
+            growthRate,
+            activeCount: activeInvestments.length,
+        };
+    }, [activeInvestments]);
+
+    const totalCompanyFunds = safeOperatingBalance + cashWallet.quantity + portfolioSummary.currentValue;
+    const chartAxisFormatter = useMemo(
+        () => new Intl.NumberFormat(localeCode, { notation: 'compact', maximumFractionDigits: 1 }),
+        [localeCode],
+    );
+    const percentFormatter = useMemo(
+        () => new Intl.NumberFormat(localeCode, { maximumFractionDigits: 1 }),
+        [localeCode],
+    );
+
+    const performanceData = useMemo(() => {
+        return activeInvestments
+            .map(investment => {
+                const invested = investment.avgBuyPrice * investment.quantity;
+                const current = (investment.currentPrice || investment.avgBuyPrice) * investment.quantity;
+
+                return {
+                    id: investment.id,
+                    symbol: investment.symbol,
+                    name: investment.name,
+                    invested,
+                    current,
+                };
+            })
+            .sort((a, b) => b.current - a.current)
+            .slice(0, 8);
+    }, [activeInvestments]);
+
+    const allocationData = useMemo(() => {
+        const total = Math.max(portfolioSummary.currentValue, 1);
+        return performanceData.map((item, index) => ({
+            ...item,
+            allocation: (item.current / total) * 100,
+            color: ALLOCATION_COLORS[index % ALLOCATION_COLORS.length],
+        }));
+    }, [performanceData, portfolioSummary.currentValue]);
+
+    const holdingsRows = useMemo(() => {
+        const total = Math.max(portfolioSummary.currentValue, 1);
+
+        return activeInvestments
+            .map(investment => {
+                const currentPrice = investment.currentPrice || investment.avgBuyPrice;
+                const invested = investment.avgBuyPrice * investment.quantity;
+                const value = currentPrice * investment.quantity;
+                const returnValue = value - invested;
+                const returnRate = invested > 0 ? (returnValue / invested) * 100 : 0;
+
+                return {
+                    investment,
+                    value,
+                    returnValue,
+                    returnRate,
+                    allocation: (value / total) * 100,
+                };
+            })
+            .sort((a, b) => b.value - a.value);
+    }, [activeInvestments, portfolioSummary.currentValue]);
+
+    const recentActivity = useMemo(() => {
+        return safeInvestments
+            .filter(investment => investment.type !== 'Cash')
+            .map(investment => ({
+                id: investment.id,
+                symbol: investment.symbol,
+                name: investment.name,
+                amount: (investment.currentPrice || investment.avgBuyPrice) * investment.quantity,
+                date: parseDateFromInvestment(investment),
+                status: investment.quantity > 0 ? t('investmentsPage.recentActivity.buy') : t('investmentsPage.recentActivity.sell'),
+            }))
+            .sort((a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0))
+            .slice(0, 6);
+    }, [safeInvestments, t]);
+
+    const safeRecommendations = useMemo(() => {
+        return Array.isArray(recommendations) ? recommendations : [];
+    }, [recommendations]);
+
+    const handleRefreshRecommendations = useCallback(async () => {
+        setIsLoadingRecs(true);
+        try {
+            const response = await getMarketRecommendations();
+            setRecommendations(Array.isArray(response?.recommendations) ? response.recommendations : []);
+            setRecommendationSources(Array.isArray(response?.sources) ? response.sources : []);
+        } catch (error) {
+            console.error(error);
+            setRecommendations([]);
+            setRecommendationSources([]);
+        } finally {
+            setIsLoadingRecs(false);
         }
     }, []);
 
-    // Ensure Cash Wallet Exists
-    const cashWallet = useMemo(() => {
-        return investments.find(inv => inv.type === 'Cash') || {
-            id: 'virtual-cash', 
-            symbol: currency, 
-            name: 'Cash Wallet', 
-            quantity: 0, 
-            avgBuyPrice: 1, 
-            currentPrice: 1, 
-            type: 'Cash'
-        } as Investment;
-    }, [investments, currency]);
-
-    // --- Derived Data ---
-
-    const portfolioSummary = useMemo(() => {
-        let totalInvested = 0;
-        let currentValue = 0;
-
-        investments.forEach(inv => {
-            if (inv.type === 'Cash') {
-                currentValue += inv.quantity; // Cash is 1:1
-                totalInvested += inv.quantity; 
-            } else {
-                totalInvested += inv.avgBuyPrice * inv.quantity;
-                currentValue += (inv.currentPrice || inv.avgBuyPrice) * inv.quantity;
-            }
-        });
-
-        const nonCashInvested = investments.filter(i => i.type !== 'Cash').reduce((sum, i) => sum + i.avgBuyPrice * i.quantity, 0);
-        const nonCashValue = investments.filter(i => i.type !== 'Cash').reduce((sum, i) => sum + (i.currentPrice || i.avgBuyPrice) * i.quantity, 0);
-        
-        const totalReturn = nonCashValue - nonCashInvested;
-        const returnPercentage = nonCashInvested > 0 ? (totalReturn / nonCashInvested) * 100 : 0;
-
-        return { currentValue, totalReturn, returnPercentage };
-    }, [investments]);
-
-    // Calculate Grand Total
-    const totalCompanyFunds = operatingBalance + portfolioSummary.currentValue;
+    useEffect(() => {
+        if (safeRecommendations.length === 0) {
+            void handleRefreshRecommendations();
+        }
+    }, [handleRefreshRecommendations, safeRecommendations.length]);
 
     const handleRefreshPrices = async () => {
+        if (activeInvestments.length === 0) {
+            return;
+        }
+
         setIsRefreshing(true);
-        const symbols = investments.filter(i => i.type !== 'Cash').map(inv => inv.symbol);
-        
-        // Map current prices for simulation fallback
-        const currentPrices: {[key: string]: number} = {};
-        investments.forEach(inv => {
-            if (inv.type !== 'Cash') {
-                currentPrices[inv.symbol] = inv.currentPrice || inv.avgBuyPrice;
-            }
-        });
+        try {
+            const symbols = activeInvestments.map(investment => investment.symbol);
+            const currentPrices: { [key: string]: number } = {};
 
-        const prices = await getPortfolioMarketData(symbols, currentPrices);
-        onUpdatePrices(prices);
-        setIsRefreshing(false);
-    };
+            activeInvestments.forEach(investment => {
+                currentPrices[investment.symbol] = investment.currentPrice || investment.avgBuyPrice;
+            });
 
-    const handleRefreshRecommendations = async () => {
-        setIsLoadingRecs(true);
-        const { recommendations: recs, sources } = await getMarketRecommendations();
-        setRecommendations(recs);
-        setRecommendationSources(sources);
-        setIsLoadingRecs(false);
+            const response = await getPortfolioMarketData(symbols, currentPrices);
+            const safePriceMap = response && typeof response === 'object' && !Array.isArray(response) ? response : {};
+            onUpdatePrices(safePriceMap as { [symbol: string]: number });
+        } finally {
+            setIsRefreshing(false);
+        }
     };
 
     const handleGetAiAdvice = async () => {
         setIsAdvisorOpen(true);
         setIsLoadingAdvisor(true);
-        setAdvisorSuggestions([]); // Clear previous
+        setAdvisorSuggestions([]);
         setAdvisorSources([]);
+
         try {
-            const { suggestions, sources } = await getAiPortfolioAnalysis(investments, portfolioSummary.currentValue);
-            setAdvisorSuggestions(suggestions);
-            setAdvisorSources(sources);
-        } catch (e) {
-            console.error(e);
+            const response = await getAiPortfolioAnalysis(activeInvestments, portfolioSummary.currentValue);
+            setAdvisorSuggestions(Array.isArray(response?.suggestions) ? response.suggestions : []);
+            setAdvisorSources(Array.isArray(response?.sources) ? response.sources : []);
+        } catch (error) {
+            console.error(error);
+            setAdvisorSuggestions([]);
+            setAdvisorSources([]);
         } finally {
             setIsLoadingAdvisor(false);
         }
     };
 
-    // --- Helpers for Modal Actions ---
+    const promptForWalletAmount = (mode: 'deposit' | 'withdraw') => {
+        const promptText = mode === 'deposit' ? t('investmentsPage.prompts.deposit') : t('investmentsPage.prompts.withdraw');
+        const rawValue = window.prompt(promptText);
+        if (rawValue === null) return null;
 
-    const handleWalletAction = (amount: number, isDeposit: boolean) => {
-        const newQty = isDeposit ? cashWallet.quantity + amount : cashWallet.quantity - amount;
-        if (newQty < 0) return alert("Insufficient funds");
-        
-        const updatedCash: Investment = { ...cashWallet, quantity: newQty };
-        
-        if (updatedCash.id === 'virtual-cash') {
-            updatedCash.id = 'inv-cash-' + new Date().getTime();
+        const amount = Number(rawValue);
+        if (!Number.isFinite(amount) || amount <= 0) return null;
+        if (mode === 'withdraw' && amount > cashWallet.quantity) {
+            window.alert(t('investmentsPage.prompts.insufficientFunds'));
+            return null;
         }
-        onBatchUpdate([updatedCash]);
+
+        return amount;
+    };
+
+    const handleWalletAction = (mode: 'deposit' | 'withdraw') => {
+        const amount = promptForWalletAmount(mode);
+        if (!amount) return;
+
+        onBatchUpdate([{
+            ...cashWallet,
+            id: cashWallet.id === 'virtual-cash' ? `inv-cash-${Date.now()}` : cashWallet.id,
+            quantity: mode === 'deposit' ? cashWallet.quantity + amount : cashWallet.quantity - amount,
+            lastUpdated: new Date().toISOString(),
+        }]);
     };
 
     const handleBuyAsset = (qty: number, price: number) => {
         if (!managingAsset) return;
+
         const cost = qty * price;
-        
-        // Update Cash
-        let updatedCash = { ...cashWallet };
-        updatedCash.quantity -= cost;
-        if (updatedCash.id === 'virtual-cash') updatedCash.id = 'inv-cash-' + new Date().getTime();
-
-        // Update Asset (Weighted Average)
-        const oldTotalCost = managingAsset.quantity * managingAsset.avgBuyPrice;
-        const newTotalCost = oldTotalCost + cost;
-        const newTotalQty = managingAsset.quantity + qty;
-        const newAvgPrice = newTotalQty > 0 ? newTotalCost / newTotalQty : price;
-
-        const updatedAsset = {
+        const newQty = managingAsset.quantity + qty;
+        const updatedCash: Investment = {
+            ...cashWallet,
+            id: cashWallet.id === 'virtual-cash' ? `inv-cash-${Date.now()}` : cashWallet.id,
+            quantity: cashWallet.quantity - cost,
+            lastUpdated: new Date().toISOString(),
+        };
+        const updatedAsset: Investment = {
             ...managingAsset,
-            quantity: newTotalQty,
-            avgBuyPrice: newAvgPrice,
-            currentPrice: price 
+            quantity: newQty,
+            avgBuyPrice: newQty > 0 ? ((managingAsset.quantity * managingAsset.avgBuyPrice) + cost) / newQty : price,
+            currentPrice: price,
+            lastUpdated: new Date().toISOString(),
         };
 
         onBatchUpdate([updatedCash, updatedAsset]);
+        setManagingAsset(updatedAsset);
     };
 
     const handleSellAsset = (qty: number, price: number) => {
         if (!managingAsset) return;
-        const proceeds = qty * price;
 
-        // Update Cash
-        let updatedCash = { ...cashWallet };
-        updatedCash.quantity += proceeds;
-        if (updatedCash.id === 'virtual-cash') updatedCash.id = 'inv-cash-' + new Date().getTime();
-
-        // Update Asset
-        const updatedAsset = {
+        const updatedCash: Investment = {
+            ...cashWallet,
+            id: cashWallet.id === 'virtual-cash' ? `inv-cash-${Date.now()}` : cashWallet.id,
+            quantity: cashWallet.quantity + (qty * price),
+            lastUpdated: new Date().toISOString(),
+        };
+        const updatedAsset: Investment = {
             ...managingAsset,
-            quantity: managingAsset.quantity - qty,
-            currentPrice: price
+            quantity: Math.max(0, managingAsset.quantity - qty),
+            currentPrice: price,
+            lastUpdated: new Date().toISOString(),
         };
 
         onBatchUpdate([updatedCash, updatedAsset]);
+        setManagingAsset(updatedAsset.quantity > 0 ? updatedAsset : null);
     };
 
     const handleUpdateTarget = (targetPercent: number) => {
         if (!managingAsset) return;
-        onBatchUpdate([{ ...managingAsset, targetAllocation: targetPercent }]);
-    };
 
-    const treemapData = useMemo(() => {
-        return investments
-            .filter(inv => inv.type !== 'Cash' && inv.quantity > 0)
-            .map(inv => ({
-                name: inv.symbol,
-                size: (inv.currentPrice || inv.avgBuyPrice) * inv.quantity,
-                fill: '#8884d8' // Will be overridden
-            }))
-            .sort((a, b) => b.size - a.size);
-    }, [investments]);
-
-    const formatCurrency = (val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(val);
-
-    // Custom Treemap Content
-    const CustomizedContent = (props: any) => {
-        const { root, depth, x, y, width, height, index, name, size } = props;
-        return (
-            <g>
-                <rect x={x} y={y} width={width} height={height} style={{ fill: COLORS[index % COLORS.length], stroke: '#fff', strokeWidth: 2, opacity: 0.9 }} />
-                {width > 30 && height > 30 && (
-                    <text x={x + width / 2} y={y + height / 2 + 7} textAnchor="middle" fill="#fff" fontSize={12} fontWeight="bold">
-                        {name}
-                    </text>
-                )}
-            </g>
-        );
+        const updatedAsset = { ...managingAsset, targetAllocation: targetPercent, lastUpdated: new Date().toISOString() };
+        onBatchUpdate([updatedAsset]);
+        setManagingAsset(updatedAsset);
     };
 
     const handleDelete = (id: string) => {
         if (window.confirm(t('investmentsPage.table.deleteConfirm'))) {
             onDeleteInvestment(id);
+            if (managingAsset?.id === id) {
+                setManagingAsset(null);
+            }
         }
-    }
+    };
+
+    const formatMoney = (value: number) => {
+        return formatCurrency(value, currency, locale, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    };
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-brand-primary min-h-full space-y-6">
-            
-            {/* Top Header */}
-            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">{t('investmentsPage.title')}</h1>
-                <div className="flex flex-wrap gap-2">
-                    <button onClick={handleGetAiAdvice} className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-md">
-                        <SparklesIcon className="w-5 h-5" />
-                        {t('portfolioAdvisor.getAdvice')}
-                    </button>
-                    <button onClick={handleRefreshPrices} disabled={isRefreshing} className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors disabled:opacity-50">
-                        <TrendingUpIcon className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
-                        {isRefreshing ? t('investmentsPage.refreshing') : t('investmentsPage.refresh')}
-                    </button>
-                    <button onClick={() => setIsAddModalOpen(true)} className="flex items-center gap-2 bg-brand-accent hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-bold transition-colors">
-                        <AddIcon />
-                        {t('investmentsPage.add')}
-                    </button>
-                </div>
-            </div>
-
-            {/* Total Company Funds Card */}
-            <div className="bg-gray-900 dark:bg-black rounded-xl p-6 text-white shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                    <BriefcaseIcon className="w-32 h-32" />
-                </div>
-                <div className="relative z-10 flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
-                    <div>
-                        <p className="text-gray-400 text-sm font-semibold uppercase tracking-wider">{t('investmentsPage.totalFunds.title')}</p>
-                        <p className="text-4xl md:text-5xl font-bold mt-2">{formatCurrency(totalCompanyFunds)}</p>
-                    </div>
-                    <div className="flex gap-8 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                        <div>
-                            <p className="text-gray-400 text-[10px] uppercase font-bold">{t('investmentsPage.totalFunds.operating')}</p>
-                            <p className="font-mono font-semibold text-lg">{formatCurrency(operatingBalance)}</p>
+        <main className="min-h-full bg-gray-50 dark:bg-brand-primary">
+            <div className="mx-auto flex max-w-[1600px] flex-col gap-6 px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+                <header className="grid gap-4 xl:grid-cols-[minmax(0,1.7fr)_minmax(340px,0.95fr)]">
+                    <section className="overflow-hidden rounded-[2rem] border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-brand-secondary">
+                        <div className="bg-gradient-to-r from-brand-accent/10 via-white to-green-50/70 p-6 dark:from-brand-accent/10 dark:via-brand-secondary dark:to-brand-primary/70 sm:p-8">
+                            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-accent">{t('investmentsPage.title')}</p>
+                            <h1 className="mt-3 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">{t('investmentsPage.title')}</h1>
+                            <p className="mt-4 max-w-3xl text-sm leading-7 text-gray-600 dark:text-brand-muted sm:text-base">{t('investmentsPage.subtitle')}</p>
                         </div>
-                        <div className="w-px bg-white/20"></div>
-                        <div>
-                            <p className="text-gray-400 text-[10px] uppercase font-bold">{t('investmentsPage.totalFunds.portfolio')}</p>
-                            <p className="font-mono font-semibold text-lg text-brand-accent">{formatCurrency(portfolioSummary.currentValue)}</p>
+                    </section>
+
+                    <aside className="rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-brand-secondary sm:p-6">
+                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gray-400 dark:text-brand-muted">{t('investmentsPage.detailsTitle')}</p>
+                        <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{formatMoney(totalCompanyFunds)}</p>
+                        <div className="mt-5 grid gap-3">
+                            <button
+                                onClick={handleGetAiAdvice}
+                                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-600"
+                            >
+                                <SparklesIcon className="h-4 w-4 text-white" />
+                                {t('portfolioAdvisor.getAdvice')}
+                            </button>
+                            <button
+                                onClick={handleRefreshPrices}
+                                disabled={isRefreshing || activeInvestments.length === 0}
+                                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gray-200 px-4 py-3 text-sm font-semibold text-gray-800 transition hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                            >
+                                <TrendingUpIcon className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                                {isRefreshing ? t('investmentsPage.refreshing') : t('investmentsPage.refresh')}
+                            </button>
+                            <button
+                                onClick={() => setIsAddModalOpen(true)}
+                                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gray-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+                            >
+                                <AddIcon className="h-4 w-4" />
+                                {t('investmentsPage.add')}
+                            </button>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </aside>
+                </header>
 
-            {/* Dashboard Cards */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                {/* 1. Wallet Card */}
-                <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md border-l-4 border-blue-500">
-                    <div className="flex justify-between items-start mb-4">
-                        <div>
-                            <p className="text-sm font-semibold text-gray-500 dark:text-brand-muted uppercase tracking-wider">{t('investmentsPage.wallet')}</p>
-                            <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{formatCurrency(cashWallet.quantity)}</p>
-                        </div>
-                        <BriefcaseIcon className="w-8 h-8 text-blue-500 opacity-50" />
-                    </div>
-                    <div className="flex gap-2 mt-4">
-                        <button 
-                            onClick={() => { const amt = prompt("Amount to deposit:"); if(amt) handleWalletAction(parseFloat(amt), true); }}
-                            className="flex-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 py-2 rounded-lg text-sm font-bold hover:bg-blue-100 transition-colors"
-                        >
-                            + {t('investmentsPage.deposit')}
-                        </button>
-                        <button 
-                            onClick={() => { const amt = prompt("Amount to withdraw:"); if(amt) handleWalletAction(parseFloat(amt), false); }}
-                            className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-2 rounded-lg text-sm font-bold hover:bg-gray-200 transition-colors"
-                        >
-                            - {t('investmentsPage.withdraw')}
-                        </button>
-                    </div>
-                </div>
+                <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                    <MetricCard
+                        title={t('investmentsPage.stats.totalInvested')}
+                        value={formatMoney(portfolioSummary.totalInvested)}
+                        description={t('investmentsPage.chartSubtitle')}
+                        icon={<BriefcaseIcon className="h-6 w-6" />}
+                        tone="neutral"
+                    />
+                    <MetricCard
+                        title={t('investmentsPage.stats.totalReturns')}
+                        value={formatMoney(portfolioSummary.totalReturns)}
+                        description={formatMoney(portfolioSummary.currentValue)}
+                        icon={<ProfitIcon className="h-6 w-6" />}
+                        tone={portfolioSummary.totalReturns >= 0 ? 'positive' : 'negative'}
+                    />
+                    <MetricCard
+                        title={t('investmentsPage.stats.growth')}
+                        value={`${portfolioSummary.growthRate.toFixed(2)}%`}
+                        description={t('investmentsPage.allocationSubtitle')}
+                        icon={<TrendingUpIcon className="h-6 w-6" />}
+                        tone={portfolioSummary.growthRate >= 0 ? 'accent' : 'negative'}
+                    />
+                    <MetricCard
+                        title={t('investmentsPage.stats.activeInvestments')}
+                        value={String(portfolioSummary.activeCount)}
+                        description={t('investmentsPage.holdingsTitle')}
+                        icon={<BalanceIcon className="h-6 w-6" />}
+                        tone="accent"
+                    />
+                </section>
 
-                {/* 2. Portfolio Stats */}
-                <div className="bg-white dark:bg-brand-secondary p-6 rounded-xl shadow-md flex flex-col justify-between">
-                    <div>
-                        <p className="text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.stats.totalValue')}</p>
-                        <p className="text-3xl font-bold text-gray-900 dark:text-white">{formatCurrency(portfolioSummary.currentValue)}</p>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                        <p className="text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.stats.totalReturn')}</p>
-                        <div className="flex items-baseline gap-2">
-                            <span className={`text-xl font-bold ${portfolioSummary.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                {portfolioSummary.totalReturn >= 0 ? '+' : ''}{formatCurrency(portfolioSummary.totalReturn)}
-                            </span>
-                            <span className={`text-sm font-semibold px-2 py-0.5 rounded ${portfolioSummary.returnPercentage >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                {portfolioSummary.returnPercentage.toFixed(2)}%
-                            </span>
-                        </div>
-                    </div>
-                </div>
+                {safeInvestments.length === 0 && (
+                    <EmptyState
+                        Icon={BriefcaseIcon}
+                        title={t('investmentsPage.emptyTitle')}
+                        message={t('investmentsPage.emptyDescription')}
+                        action={{ label: t('investmentsPage.add'), onClick: () => setIsAddModalOpen(true) }}
+                    />
+                )}
 
-                {/* 3. Allocation Treemap */}
-                <div className="bg-white dark:bg-brand-secondary p-4 rounded-xl shadow-md h-64 flex flex-col overflow-hidden">
-                    <p className="text-sm font-semibold text-gray-500 dark:text-brand-muted mb-2 flex-shrink-0">Asset Allocation</p>
-                    <div className="flex-grow w-full overflow-hidden min-h-[200px]" style={{ minHeight: '200px' }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            {treemapData.length > 0 ? (
-                                <Treemap
-                                    data={treemapData}
-                                    dataKey="size"
-                                    aspectRatio={4 / 3}
-                                    stroke="#fff"
-                                    content={<CustomizedContent />}
-                                >
-                                    <RechartsTooltip 
-                                        formatter={(value: any) => formatCurrency(value)} 
-                                        contentStyle={{backgroundColor: '#1F2937', color: 'white', borderRadius: '8px', border: 'none'}}
-                                    />
-                                </Treemap>
-                            ) : (
-                                <div className="h-full flex items-center justify-center text-gray-400 text-sm">No assets to display</div>
-                            )}
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-            </div>
+                <section className="grid gap-6 xl:grid-cols-[minmax(0,1.65fr)_minmax(340px,1fr)]">
+                    <article className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-brand-secondary sm:p-6">
+                        <header>
+                            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('investmentsPage.chartTitle')}</h2>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.chartSubtitle')}</p>
+                        </header>
 
-            {/* STRUKTUR INTI PORTOFOLIO — SAP 2025 */}
-            <div className="animate-fade-in-scale">
-                <SapStructureWidget investments={investments} currentValue={portfolioSummary.currentValue} />
-            </div>
+                        {performanceData.length > 0 ? (
+                            <div className="mt-6 h-[320px] w-full min-w-0 md:h-[360px]">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={performanceData} margin={{ top: 8, right: 12, left: 0, bottom: 8 }}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
+                                        <XAxis dataKey="symbol" tickLine={false} axisLine={false} tick={{ fontSize: 12 }} />
+                                        <YAxis
+                                            width={72}
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tick={{ fontSize: 12 }}
+                                            tickFormatter={(value: number) => chartAxisFormatter.format(value)}
+                                        />
+                                        <Tooltip
+                                            formatter={(value: number, name: string) => [formatMoney(value), name]}
+                                            contentStyle={{
+                                                borderRadius: '16px',
+                                                borderColor: '#E5E7EB',
+                                                boxShadow: '0 10px 30px rgba(15, 23, 42, 0.12)',
+                                            }}
+                                        />
+                                        <Bar dataKey="invested" name={t('investmentsPage.stats.totalInvested')} fill="#94A3B8" radius={[10, 10, 0, 0]} />
+                                        <Bar dataKey="current" name={t('investmentsPage.totalFunds.portfolio')} fill="#2F81F7" radius={[10, 10, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        ) : (
+                            <div className="mt-8 flex min-h-[320px] items-center justify-center rounded-3xl border border-dashed border-gray-200 bg-gray-50/80 text-center dark:border-gray-700 dark:bg-brand-primary/40">
+                                <p className="max-w-sm text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.noChartData')}</p>
+                            </div>
+                        )}
+                    </article>
 
-            {/* Asset Table */}
-            <div className="bg-white dark:bg-brand-secondary rounded-xl shadow-md overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead className="bg-gray-50 dark:bg-gray-800/50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('investmentsPage.table.asset')}</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('investmentsPage.table.qty')}</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">{t('investmentsPage.table.avgPrice')}</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('investmentsPage.table.value')}</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">{t('investmentsPage.table.target')}</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('investmentsPage.table.actions')}</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                            {investments.filter(i => i.type !== 'Cash').map((inv) => {
-                                const currentPrice = inv.currentPrice || inv.avgBuyPrice;
-                                const currentValue = currentPrice * inv.quantity;
-                                const allocationPct = (currentValue / portfolioSummary.currentValue) * 100;
-                                const deviation = inv.targetAllocation ? allocationPct - inv.targetAllocation : 0;
-
-                                return (
-                                    <tr key={inv.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-brand-accent/10 flex items-center justify-center text-brand-accent font-bold text-xs">
-                                                    {inv.symbol.substring(0, 2)}
-                                                </div>
-                                                <div>
-                                                    <span className="block font-bold text-gray-900 dark:text-white">{inv.symbol}</span>
-                                                    <span className="text-xs text-gray-500 dark:text-gray-400">{inv.name}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-800 dark:text-gray-200">{inv.quantity}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500 dark:text-gray-400 hidden sm:table-cell">{formatCurrency(inv.avgBuyPrice)}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900 dark:text-white">{formatCurrency(currentValue)}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm hidden md:table-cell">
-                                            {inv.targetAllocation ? (
-                                                <div className="flex flex-col items-end">
-                                                    <span className="text-gray-800 dark:text-gray-200 font-medium">{inv.targetAllocation}%</span>
-                                                    <span className={`text-xs ${Math.abs(deviation) < 5 ? 'text-green-500' : 'text-orange-500'}`}>
-                                                        {allocationPct.toFixed(1)}% (act)
-                                                    </span>
-                                                </div>
-                                            ) : (
-                                                <span className="text-gray-400 text-xs">-</span>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                            <div className="flex justify-end gap-2">
-                                                <button onClick={(e) => { e.stopPropagation(); setManagingAsset(inv); }} className="bg-brand-accent/10 hover:bg-brand-accent text-brand-accent hover:text-white px-3 py-1 rounded-md text-xs font-bold transition-colors">
-                                                    {t('investmentsPage.manage')}
-                                                </button>
-                                                <button onClick={(e) => { e.stopPropagation(); handleDelete(inv.id); }} className="text-gray-400 hover:text-red-500 p-1 transition-colors">
-                                                    <DeleteIcon className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            {/* AI Market Insights */}
-            <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {isLoadingRecs ? (
-                        [1, 2, 3].map(i => <div key={i} className="h-40 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>)
-                    ) : (
-                        recommendations.map((rec, idx) => (
-                            <div key={idx} className="bg-white dark:bg-brand-secondary p-5 rounded-xl shadow-md border-t-4 border-brand-accent flex flex-col hover:-translate-y-1 transition-transform">
-                                <div className="flex justify-between items-start mb-2">
-                                    <h3 className="font-bold text-gray-800 dark:text-white">{rec.sector}</h3>
-                                    <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${rec.sentiment === 'Bullish' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{rec.sentiment}</span>
+                    <div className="grid gap-6">
+                        <article className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-brand-secondary sm:p-6">
+                            <header className="flex items-start justify-between gap-3">
+                                <div>
+                                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('investmentsPage.detailsTitle')}</h2>
+                                    <p className="mt-1 text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.totalFunds.title')}</p>
                                 </div>
-                                <p className="text-sm text-gray-600 dark:text-gray-300 italic mb-4 flex-grow">"{rec.reasoning}"</p>
-                                <div className="flex justify-between text-xs font-semibold pt-3 border-t border-gray-100 dark:border-gray-700">
-                                    <span className={`${rec.riskLevel === 'High' ? 'text-red-500' : 'text-blue-500'}`}>{rec.riskLevel} Risk</span>
-                                    <span className="text-gray-800 dark:text-white">{rec.suggestedAction}</span>
+                                <BriefcaseIcon className="h-6 w-6 text-brand-accent" />
+                            </header>
+
+                            <div className="mt-6 space-y-4">
+                                <div className="rounded-2xl bg-gray-900 p-4 text-white dark:bg-black">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/60">{t('investmentsPage.wallet')}</p>
+                                    <p className="mt-2 text-2xl font-bold">{formatMoney(cashWallet.quantity)}</p>
+                                    <div className="mt-4 grid grid-cols-2 gap-2">
+                                        <button onClick={() => handleWalletAction('deposit')} className="rounded-xl bg-white/10 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/20">
+                                            + {t('investmentsPage.deposit')}
+                                        </button>
+                                        <button onClick={() => handleWalletAction('withdraw')} className="rounded-xl bg-white/10 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/20">
+                                            - {t('investmentsPage.withdraw')}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-3">
+                                    <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-brand-primary/50">
+                                        <span className="text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.totalFunds.operating')}</span>
+                                        <span className="font-semibold text-gray-900 dark:text-white">{formatMoney(safeOperatingBalance)}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-brand-primary/50">
+                                        <span className="text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.totalFunds.portfolio')}</span>
+                                        <span className="font-semibold text-gray-900 dark:text-white">{formatMoney(portfolioSummary.currentValue)}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-brand-primary/50">
+                                        <span className="text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.buyingPower')}</span>
+                                        <span className="font-semibold text-gray-900 dark:text-white">{formatMoney(cashWallet.quantity)}</span>
+                                    </div>
                                 </div>
                             </div>
-                        ))
-                    )}
-                </div>
-                {recommendationSources.length > 0 && !isLoadingRecs && (
-                    <div className="bg-gray-50 dark:bg-brand-secondary/50 p-3 rounded-lg text-xs text-gray-500 dark:text-gray-400">
-                        <span className="font-bold mr-2">Search Sources:</span>
-                        {recommendationSources.map((source, idx) => (
-                            <a key={idx} href={source.uri} target="_blank" rel="noopener noreferrer" className="mr-3 hover:text-brand-accent underline decoration-dotted">
-                                {source.title}
-                            </a>
-                        ))}
+                        </article>
+
+                        <article className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-brand-secondary sm:p-6">
+                            <header>
+                                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('investmentsPage.allocationTitle')}</h2>
+                                <p className="mt-1 text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.allocationSubtitle')}</p>
+                            </header>
+
+                            {allocationData.length > 0 ? (
+                                <ul className="mt-6 space-y-4">
+                                    {allocationData.slice(0, 5).map(item => (
+                                        <li key={item.id}>
+                                            <div className="flex items-center justify-between gap-3">
+                                                <div className="min-w-0">
+                                                    <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">{item.symbol}</p>
+                                                    <p className="truncate text-xs text-gray-500 dark:text-brand-muted">{item.name}</p>
+                                                </div>
+                                                <span className="text-sm font-semibold text-gray-900 dark:text-white">{item.allocation.toFixed(1)}%</span>
+                                            </div>
+                                            <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
+                                                <div className="h-full rounded-full" style={{ width: `${Math.min(item.allocation, 100)}%`, backgroundColor: item.color }} />
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <div className="mt-8 flex min-h-[220px] items-center justify-center rounded-3xl border border-dashed border-gray-200 bg-gray-50/80 text-center dark:border-gray-700 dark:bg-brand-primary/40">
+                                    <p className="max-w-sm text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.noAllocationData')}</p>
+                                </div>
+                            )}
+                        </article>
                     </div>
-                )}
+                </section>
+
+                <section className="grid gap-6 xl:grid-cols-[minmax(0,1.65fr)_minmax(340px,1fr)]">
+                    <article className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-brand-secondary sm:p-6">
+                        <header className="flex items-center justify-between gap-3">
+                            <div>
+                                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('investmentsPage.holdingsTitle')}</h2>
+                                <p className="mt-1 text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.chartSubtitle')}</p>
+                            </div>
+                            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600 dark:bg-gray-800 dark:text-gray-200">
+                                {portfolioSummary.activeCount}
+                            </span>
+                        </header>
+
+                        <div className="mt-6 overflow-hidden rounded-3xl border border-gray-200 dark:border-gray-700">
+                            {holdingsRows.length > 0 ? (
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                        <thead className="bg-gray-50 dark:bg-brand-primary/60">
+                                            <tr>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-brand-muted">{t('investmentsPage.table.asset')}</th>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-brand-muted">{t('investmentsPage.table.qty')}</th>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-brand-muted">{t('investmentsPage.table.avgPrice')}</th>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-brand-muted">{t('investmentsPage.table.currentPrice')}</th>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-brand-muted">{t('investmentsPage.table.value')}</th>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-brand-muted">{t('investmentsPage.table.alloc')}</th>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-brand-muted">{t('investmentsPage.table.target')}</th>
+                                                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-brand-muted">{t('investmentsPage.table.return')}</th>
+                                                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-brand-muted">{t('investmentsPage.table.actions')}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-brand-secondary">
+                                            {holdingsRows.map(row => (
+                                                <tr key={row.investment.id} className="align-top">
+                                                    <td className="px-4 py-4">
+                                                        <div className="min-w-[180px]">
+                                                            <p className="font-semibold text-gray-900 dark:text-white">{row.investment.symbol}</p>
+                                                            <p className="mt-1 text-sm text-gray-500 dark:text-brand-muted">{row.investment.name}</p>
+                                                            <p className="mt-1 text-xs uppercase tracking-[0.2em] text-gray-400 dark:text-brand-muted">{row.investment.type}</p>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-200">{row.investment.quantity.toLocaleString(localeCode, { maximumFractionDigits: 4 })}</td>
+                                                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-200">{formatMoney(row.investment.avgBuyPrice)}</td>
+                                                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-200">{formatMoney(row.investment.currentPrice || row.investment.avgBuyPrice)}</td>
+                                                    <td className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">{formatMoney(row.value)}</td>
+                                                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-200">{percentFormatter.format(row.allocation)}%</td>
+                                                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-200">
+                                                        {typeof row.investment.targetAllocation === 'number'
+                                                            ? `${percentFormatter.format(row.investment.targetAllocation)}%`
+                                                            : '--'}
+                                                    </td>
+                                                    <td className="px-4 py-4">
+                                                        <div className={row.returnValue >= 0 ? 'text-green-600 dark:text-green-300' : 'text-red-600 dark:text-red-300'}>
+                                                            <p className="text-sm font-semibold">{formatMoney(row.returnValue)}</p>
+                                                            <p className="text-xs">{percentFormatter.format(row.returnRate)}%</p>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-4 py-4">
+                                                        <div className="flex justify-end gap-2">
+                                                            <button
+                                                                onClick={() => setManagingAsset(row.investment)}
+                                                                className="rounded-xl bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                                                            >
+                                                                {t('investmentsPage.manage')}
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDelete(row.investment.id)}
+                                                                title={t('general.delete')}
+                                                                className="rounded-xl bg-red-50 p-2 text-red-600 transition hover:bg-red-100 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20"
+                                                            >
+                                                                <DeleteIcon className="h-4 w-4" />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : (
+                                <div className="flex min-h-[220px] items-center justify-center bg-gray-50/80 px-6 text-center dark:bg-brand-primary/40">
+                                    <p className="max-w-sm text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.table.empty')}</p>
+                                </div>
+                            )}
+                        </div>
+                    </article>
+
+                    <div className="grid gap-6">
+                        <article className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-brand-secondary sm:p-6">
+                            <header>
+                                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('investmentsPage.recentActivity.title')}</h2>
+                                <p className="mt-1 text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.holdingsTitle')}</p>
+                            </header>
+
+                            {recentActivity.length > 0 ? (
+                                <ul className="mt-6 space-y-3">
+                                    {recentActivity.map(activity => (
+                                        <li key={activity.id} className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 dark:border-gray-700 dark:bg-brand-primary/50">
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div className="min-w-0">
+                                                    <p className="truncate font-semibold text-gray-900 dark:text-white">{activity.symbol}</p>
+                                                    <p className="truncate text-sm text-gray-500 dark:text-brand-muted">{activity.name}</p>
+                                                </div>
+                                                <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-300">
+                                                    {activity.status}
+                                                </span>
+                                            </div>
+                                            <div className="mt-3 flex items-end justify-between gap-3">
+                                                <div>
+                                                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 dark:text-brand-muted">{t('investmentsPage.recentActivity.amount')}</p>
+                                                    <p className="mt-1 text-base font-semibold text-gray-900 dark:text-white">{formatMoney(activity.amount)}</p>
+                                                </div>
+                                                <p className="text-right text-xs text-gray-500 dark:text-brand-muted">
+                                                    {activity.date
+                                                        ? t('investmentsPage.recentActivity.updated', {
+                                                            date: formatDate(activity.date, locale, { day: '2-digit', month: 'short', year: 'numeric' }),
+                                                        })
+                                                        : '--'}
+                                                </p>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <div className="mt-8 flex min-h-[220px] items-center justify-center rounded-3xl border border-dashed border-gray-200 bg-gray-50/80 text-center dark:border-gray-700 dark:bg-brand-primary/40">
+                                    <p className="max-w-sm text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.recentActivity.empty')}</p>
+                                </div>
+                            )}
+                        </article>
+
+                        <article className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-brand-secondary sm:p-6">
+                            <header className="flex items-start justify-between gap-3">
+                                <div>
+                                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('investmentsPage.marketInsights.title')}</h2>
+                                    <p className="mt-1 text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.marketInsights.subtitle')}</p>
+                                </div>
+                                <button
+                                    onClick={handleRefreshRecommendations}
+                                    className="rounded-xl bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                                >
+                                    {isLoadingRecs ? t('investmentsPage.refreshing') : t('investmentsPage.marketInsights.refresh')}
+                                </button>
+                            </header>
+
+                            {isLoadingRecs ? (
+                                <div className="mt-8 flex min-h-[220px] items-center justify-center rounded-3xl border border-dashed border-gray-200 bg-gray-50/80 text-center dark:border-gray-700 dark:bg-brand-primary/40">
+                                    <p className="max-w-sm text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.refreshing')}</p>
+                                </div>
+                            ) : safeRecommendations.length > 0 ? (
+                                <div className="mt-6 space-y-3">
+                                    {safeRecommendations.slice(0, 4).map((item, index) => (
+                                        <article key={`${item.sector}-${index}`} className="rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-brand-primary/50">
+                                            <div className="flex flex-wrap items-center justify-between gap-3">
+                                                <div>
+                                                    <p className="font-semibold text-gray-900 dark:text-white">{item.sector}</p>
+                                                    <p className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getSentimentClasses(item.sentiment)}`}>
+                                                        {item.sentiment}
+                                                    </p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className={`text-sm font-semibold ${getActionClasses(item.suggestedAction)}`}>{item.suggestedAction}</p>
+                                                    <p className="mt-1 text-xs text-gray-500 dark:text-brand-muted">{item.riskLevel} {t('portfolioAdvisor.risk')}</p>
+                                                </div>
+                                            </div>
+                                            <p className="mt-3 text-sm leading-6 text-gray-600 dark:text-brand-muted">{item.reasoning}</p>
+                                        </article>
+                                    ))}
+
+                                    {recommendationSources.length > 0 && (
+                                        <div className="rounded-2xl border border-dashed border-gray-200 px-4 py-3 dark:border-gray-700">
+                                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-brand-muted">{t('portfolioAdvisor.sources')}</p>
+                                            <div className="mt-3 flex flex-wrap gap-2">
+                                                {recommendationSources.map((source, index) => (
+                                                    <a
+                                                        key={`${source.uri}-${index}`}
+                                                        href={source.uri}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20"
+                                                    >
+                                                        {source.title}
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="mt-8 flex min-h-[220px] items-center justify-center rounded-3xl border border-dashed border-gray-200 bg-gray-50/80 text-center dark:border-gray-700 dark:bg-brand-primary/40">
+                                    <p className="max-w-sm text-sm text-gray-500 dark:text-brand-muted">{t('investmentsPage.marketInsights.empty')}</p>
+                                </div>
+                            )}
+                        </article>
+                    </div>
+                </section>
+
+                <AddInvestmentModal
+                    isOpen={isAddModalOpen}
+                    onClose={() => setIsAddModalOpen(false)}
+                    onAdd={onAddInvestment}
+                    currency={currency}
+                />
+                <ManageInvestmentModal
+                    isOpen={Boolean(managingAsset)}
+                    onClose={() => setManagingAsset(null)}
+                    investment={managingAsset}
+                    cashBalance={cashWallet.quantity}
+                    currency={currency}
+                    onBuy={handleBuyAsset}
+                    onSell={handleSellAsset}
+                    onUpdateTarget={handleUpdateTarget}
+                    totalPortfolioValue={portfolioSummary.currentValue}
+                />
+                <PortfolioAdvisorModal
+                    isOpen={isAdvisorOpen}
+                    onClose={() => setIsAdvisorOpen(false)}
+                    suggestions={advisorSuggestions}
+                    isLoading={isLoadingAdvisor}
+                    sources={advisorSources}
+                />
             </div>
-
-            <AddInvestmentModal 
-                isOpen={isAddModalOpen} 
-                onClose={() => setIsAddModalOpen(false)} 
-                onAdd={onAddInvestment}
-                currency={currency}
-            />
-
-            <ManageInvestmentModal
-                isOpen={!!managingAsset}
-                onClose={() => setManagingAsset(null)}
-                investment={managingAsset}
-                cashBalance={cashWallet.quantity}
-                currency={currency}
-                onBuy={handleBuyAsset}
-                onSell={handleSellAsset}
-                onUpdateTarget={handleUpdateTarget}
-                totalPortfolioValue={portfolioSummary.currentValue}
-            />
-            
-            <PortfolioAdvisorModal 
-                isOpen={isAdvisorOpen}
-                onClose={() => setIsAdvisorOpen(false)}
-                suggestions={advisorSuggestions}
-                isLoading={isLoadingAdvisor}
-                sources={advisorSources}
-            />
-        </div>
+        </main>
     );
 };
 
 export default InvestmentsPage;
-
-
-
-
